@@ -54,13 +54,13 @@ public class MarqueeToolbar extends Toolbar {
             title.setMarqueeRepeatLimit(-1);
             return true;
         } catch (NoSuchFieldException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "" + e.getMessage());
             return false;
         } catch (IllegalAccessException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "" + e.getMessage());
             return false;
         } catch (NullPointerException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "" + e.getMessage());
             return false;
         }
     }

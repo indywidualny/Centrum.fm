@@ -51,7 +51,7 @@
     <string name="slide_radio">Strumień</string>
     <string name="slide_reader">Newsy</string>
     <string name="slide_fav">Ramówka</string>
-    <string name="slide_radio_desc">Wysokiej jakości strumień radia. Odtwarzacz pobiera dużo danych! Mimo blokady trybu mobilnego, urządzenie może automatycznie zmienić rodzaj połączenia z siecią, w trakcie odtwarzania.</string>
+    <string name="slide_radio_desc">Wysokiej jakości strumień radia. Mimo blokady trybu mobilnego, urządzenie może automatycznie zmienić rodzaj połączenia z siecią, w trakcie odtwarzania.</string>
     <string name="slide_reader_desc">Czytaj, słuchaj, udostępniaj notki ze strony radia. Streszczenia również offline. Możesz zdecydować ile najnowszych newsów ma zostać zachowane.</string>
     <string name="slide_fav_desc">Inteligentna ramówka i ulubione audycje, również offline. Konfigurowalne przypomnienia o nadchodzących ulubionych audycjach.</string>
 

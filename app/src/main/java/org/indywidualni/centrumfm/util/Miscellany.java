@@ -46,7 +46,7 @@ public abstract class Miscellany {
             sb.append("\nApp Version Name: ").append(pInfo.versionName);
             sb.append("\nApp Version Code: ").append(pInfo.versionCode);
         } catch (PackageManager.NameNotFoundException ex) {
-            Log.e("Misc: getDeviceInfo", ex.getMessage());
+            Log.e("Misc: getDeviceInfo", "" + ex.getMessage());
         }
 
         sb.append("\nOS Version: ").append(System.getProperty("os.version")).append(" (")
