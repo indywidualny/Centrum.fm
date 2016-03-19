@@ -55,6 +55,8 @@
     <string name="slide_reader_desc">Czytaj, słuchaj, udostępniaj notki ze strony radia. Streszczenia również offline. Możesz zdecydować ile najnowszych newsów ma zostać zachowane.</string>
     <string name="slide_fav_desc">Inteligentna ramówka i ulubione audycje, również offline. Konfigurowalne przypomnienia o nadchodzących ulubionych audycjach.</string>
 
+    <string name="acra_crash_toast">Błąd, przygotowuję raport…</string>
+
     <plurals name="eventPrettyLength">
         <item quantity="one">Audycja trwa godzinę</item>
         <item quantity="few">Audycja trwa %d godziny</item>
