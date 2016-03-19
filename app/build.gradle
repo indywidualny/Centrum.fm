@@ -8,8 +8,8 @@ android {
         applicationId "org.indywidualni.centrumfm"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 3
-        versionName "0.3alpha"
+        versionCode 4
+        versionName "0.4alpha"
     }
     buildTypes {
         release {
@@ -53,8 +53,6 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.github.paolorotolo:appintro:3.4.0'
     compile 'com.google.android.gms:play-services-analytics:8.4.0'
-
-    compile 'ch.acra:acra:4.7.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
