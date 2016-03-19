@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="newsPrefValues">
+        <item>10</item>
+        <item>20</item>
+        <item>50</item>
+    </string-array>
+
+    <string-array name="reminderPrefValues">
+        <item>0</item>
+        <item>-300000</item>
+        <item>-600000</item>
+        <item>-900000</item>
+        <item>-1800000</item>
+    </string-array>
+
+</resources>

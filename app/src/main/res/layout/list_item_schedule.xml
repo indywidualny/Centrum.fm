@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:layout_centerHorizontal="true"
+    android:id="@+id/element"
+    android:stretchColumns="1"
+    android:background="@drawable/schedule_selector">
+
+    <TableRow
+        android:gravity="center_vertical"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:id="@+id/startTime"
+            android:textSize="19sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_column="0"
+            android:padding="17dp"
+            android:textColor="@color/colorTextSecondary"
+            />
+
+        <RelativeLayout
+            android:id="@+id/contentBlock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1">
+
+            <TextView
+                android:id="@+id/title"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:textColor="@color/colorTextPrimary"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:scrollHorizontally="false"
+                android:singleLine="true"
+                />
+
+            <TextView
+                android:id="@+id/belowTitle"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title"
+                android:gravity="start"
+                android:textColor="@color/colorTextSecondary"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:scrollHorizontally="false"
+                android:singleLine="true"
+                />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/favourite"
+            android:src="@drawable/ic_favorite_border_black_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_column="2"
+            android:padding="17dp"
+            android:contentDescription="@string/action_favourite"
+            android:tint="@color/likeButton"
+            android:clickable="true"
+            />
+
+    </TableRow>
+
+</TableLayout>

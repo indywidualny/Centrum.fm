@@ -1,0 +1,87 @@
+<resources>
+    <string name="app_name">Centrum.fm</string>
+    <string name="toolbar_default_title">Radio Centrum 98.2 FM</string>
+    <string name="action_website">Centrum.fm</string>
+    <string name="action_people">Antena\u0020 –\u0020 Dyżury</string>
+    <string name="action_share">Udostępnij</string>
+    <string name="action_favourite">Polub</string>
+    <string name="fragment_news">Aktualności</string>
+    <string name="fragment_schedule">Ramówka</string>
+    <string name="fragment_favourite">Ulubione</string>
+    <string name="share_app_description">Słucham #RadioCentrum (98.2 FM #Lublin) na #Android</string>
+    <string name="news_play">odtwarzaj</string>
+    <string name="news_external">czytaj dalej</string>
+    <string name="news_share">udostępnij</string>
+    <string name="app_drawer_second">Aplikacja</string>
+    <string name="app_info">Informacje</string>
+    <string name="app_settings">Ustawienia</string>
+    <string name="error_response">Błąd</string>
+    <string name="no_response">Serwer nie odpowiada. Jesteśmy zgubieni ;)</string>
+    <string name="no_network">Brak internetów. Motyla noga!</string>
+    <string name="drawer_open">Otwórz</string>
+    <string name="drawer_close">Zamknij</string>
+    <string name="fav_list_empty">Pustka i smutek</string>
+    <string name="me_google_play">Google Play</string>
+    <string name="email_author">Napisz do autora</string>
+    <string name="choose_email_client">Wybierz klienta poczty</string>
+    <string name="github">GitHub</string>
+    <string name="mobile_restriction">Tryb mobilny zablokowany</string>
+    <string name="stream_service">Strumyczek</string>
+    <string name="akademickie_rc_umcs">Akademickie Radio Centrum UMCS</string>
+    <string name="mobile_connection">Połączenie mobilne</string>
+    <string name="wifi_connection">Połączenie Wi-Fi</string>
+    <string name="app_intro">Wprowadzenie</string>
+    <string name="app_settings_category">Działanie aplikacji</string>
+    <string name="mobile_connection_stream_pref">Mobilny streaming</string>
+    <string name="mobile_connection_stream_pref_description">Upewnij się, że masz duży pakiet danych</string>
+    <string name="number_news_keep_pref">Liczba newsów</string>
+    <string name="fav_notifications_pref">Przypomnienia o ulubionych</string>
+    <string name="server_status_category">Status serwera</string>
+    <string name="indywidualni_server_pref">indywidualni.org/centrum</string>
+    <string name="indywidualni_server_ok">Pośrednik jest aktywny\nWersja serwera: %1$s</string>
+    <string name="indywidualni_server_not_ok">Błąd pośrednika: %1$d</string>
+    <string name="indywidualni_server_failure">Brak połączenia z pośrednikiem</string>
+    <string name="nerd_category">Informacje o aplikacji</string>
+    <string name="open_source_libraries_pref">Biblioteki open source</string>
+    <string name="soon">Niebawem %1$s</string>
+    <string name="event_starting">Audycja rozpocznie się za %1$d minut</string>
+    <string name="preparing_playback">Zastanawiam się…</string>
+    <string name="stream">Strumień</string>
+    <string name="audio_focus_problem">System nie pozwala mi dojść do głosu</string>
+    <string name="slide_radio">Strumień</string>
+    <string name="slide_reader">Newsy</string>
+    <string name="slide_fav">Ramówka</string>
+    <string name="slide_radio_desc">Wysokiej jakości strumień radia. Odtwarzacz pobiera dużo danych! Mimo blokady trybu mobilnego, urządzenie może automatycznie zmienić rodzaj połączenia z siecią, w trakcie odtwarzania.</string>
+    <string name="slide_reader_desc">Czytaj, słuchaj, udostępniaj notki ze strony radia. Streszczenia również offline. Możesz zdecydować ile najnowszych newsów ma zostać zachowane.</string>
+    <string name="slide_fav_desc">Inteligentna ramówka i ulubione audycje, również offline. Konfigurowalne przypomnienia o nadchodzących ulubionych audycjach.</string>
+
+    <plurals name="eventPrettyLength">
+        <item quantity="one">Audycja trwa godzinę</item>
+        <item quantity="few">Audycja trwa %d godziny</item>
+        <item quantity="other">Audycja trwa %d godzin</item>
+    </plurals>
+
+    <array name="weekdays">
+        <item>Niedziela</item>
+        <item>Poniedziałek</item>
+        <item>Wtorek</item>
+        <item>Środa</item>
+        <item>Czwartek</item>
+        <item>Piątek</item>
+        <item>Sobota</item>
+    </array>
+
+    <string-array name="newsPrefTitles">
+        <item>Domyślnie</item>
+        <item>Więcej</item>
+        <item>Mnóstwo</item>
+    </string-array>
+
+    <string-array name="reminderPrefTitles">
+        <item>Brak przypomnień</item>
+        <item>5 minut przed</item>
+        <item>10 minut przed</item>
+        <item>Kwadrans przed</item>
+        <item>Pół godziny przed</item>
+    </string-array>
+</resources>

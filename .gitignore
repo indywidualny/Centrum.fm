@@ -1,0 +1,10 @@
+*.apk
+*.iml
+*.directory
+.gradle
+.idea/
+/local.properties
+.DS_Store
+/build
+#/.idea/workspace.xml
+#/.idea/libraries
