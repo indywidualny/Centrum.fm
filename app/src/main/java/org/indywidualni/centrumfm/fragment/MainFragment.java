@@ -86,18 +86,23 @@ public class MainFragment extends TrackedFragment {
             }
             @Override
             protected void onPostExecute(Void arg) {
-                // set the right adapter now
-                mRecyclerView.setAdapter(new NewsAdapter(rssItems, getActivity()));
-
-                // now go online and update items
-                if (Connectivity.isConnected(getActivity())) {
-                    mSwipeRefreshLayout.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mSwipeRefreshLayout.setRefreshing(true);
-                        }
-                    });
-                    getRSS();
+                try {
+                    // set the right adapter now
+                    mRecyclerView.setAdapter(new NewsAdapter(rssItems, getActivity()));
+    
+                    // now go online and update items
+                    if (Connectivity.isConnected(getActivity())) {
+                        mSwipeRefreshLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mSwipeRefreshLayout.setRefreshing(true);
+                            }
+                        });
+                        getRSS();
+                    }
+                } catch (NullPointerException e) {
+                    // fragment was destroyed while AsyncTask was running
+                    e.printStackTrace();
                 }
             }
         }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
@@ -141,7 +146,8 @@ public class MainFragment extends TrackedFragment {
                     }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                 } else {
                     // error response, no access to resource?
-                    mSwipeRefreshLayout.setRefreshing(false);
+                    if (mSwipeRefreshLayout != null)
+                        mSwipeRefreshLayout.setRefreshing(false);
 
                     tracker.send(new HitBuilders.EventBuilder()
                             .setCategory("Error response")
@@ -154,7 +160,8 @@ public class MainFragment extends TrackedFragment {
             @Override
             public void onFailure(Call<RSS> call, Throwable t) {
                 Log.e(TAG, "getRSS: " + t.getLocalizedMessage());
-                mSwipeRefreshLayout.setRefreshing(false);
+                if (mSwipeRefreshLayout != null)
+                    mSwipeRefreshLayout.setRefreshing(false);
             }
         });
     }

@@ -49,10 +49,15 @@ public class FavouriteFragment extends TrackedFragment {
             }
             @Override
             protected void onPostExecute(List<Object> result) {
-                FavouriteAdapter adapter = new FavouriteAdapter(result);
-                adapter.setHasStableIds(true);
-                mRecyclerView.setEmptyView(view.findViewById(R.id.empty_view));
-                mRecyclerView.setAdapter(adapter);
+                try {
+                    FavouriteAdapter adapter = new FavouriteAdapter(result);
+                    adapter.setHasStableIds(true);
+                    mRecyclerView.setEmptyView(view.findViewById(R.id.empty_view));
+                    mRecyclerView.setAdapter(adapter);
+                } catch (NullPointerException e) {
+                    // fragment was destroyed while AsyncTask was running
+                    e.printStackTrace();
+                }
             }
         }.execute();
     }
