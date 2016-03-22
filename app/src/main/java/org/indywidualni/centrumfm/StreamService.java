@@ -97,7 +97,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         stopPlayer();
-        return false;
+        return true;
     }
 
     @Override

@@ -137,18 +137,17 @@ public class MainActivity extends AppCompatActivity
                     public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState
                             previousState, SlidingUpPanelLayout.PanelState newState) {
                         if (newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
-                            fab.hide();
                             ScrollAwareFABBehavior.setDisableBehaviourPermanently(true);
+                            fab.hide();
 
                             playerSetConnectionType();
                             startPlayerUpdater();
                         } else if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-                            fab.show();
                             ScrollAwareFABBehavior.setDisableBehaviourPermanently(false);
+                            fab.show();
 
-                            if (mBound) {
+                            if (mBound)
                                 mService.stopPlayer();
-                            }
 
                             stopPlayerUpdater();
                         }
@@ -179,9 +178,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        customTabActivityHelper.bindCustomTabsService(this);
-
         bindStreamService();
+        customTabActivityHelper.bindCustomTabsService(this);
     }
 
     @Override
@@ -338,8 +336,10 @@ public class MainActivity extends AppCompatActivity
                     updateTitle(response.body());
                 } else {
                     // error response, no access to resource?
-                    toolbar.setTitle(getString(R.string.toolbar_default_title));
-                    toolbar.setSubtitle(null);
+                    if (toolbar != null) {
+                        toolbar.setTitle(getString(R.string.toolbar_default_title));
+                        toolbar.setSubtitle(null);
+                    }
                     
                     tracker.send(new HitBuilders.EventBuilder()
                     .setCategory("Error response")
@@ -352,13 +352,18 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<List<RDS>> call, Throwable t) {
                 Log.e(TAG, "getRDS: " + t.getLocalizedMessage());
-                toolbar.setTitle(getString(R.string.toolbar_default_title));
-                toolbar.setSubtitle(null);
+                if (toolbar != null) {
+                    toolbar.setTitle(getString(R.string.toolbar_default_title));
+                    toolbar.setSubtitle(null);
+                }
             }
         });
     }
 
     private void updateTitle(List<RDS> items){
+        if (toolbar == null)
+            return;
+            
         RDS now = items.get(0);
         RDS soon = items.get(1);
 

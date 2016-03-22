@@ -119,12 +119,14 @@ public class SettingsFragment extends PreferenceFragment {
                 Log.v(TAG, "getServerStatus: response " + response.code());
 
                 if (response.isSuccess()) {
-                    status.setSummary(String.format(getString(R.string.indywidualni_server_ok),
-                            response.body().getVersion()));
+                    if (status != null)
+                        status.setSummary(String.format(getString(R.string.indywidualni_server_ok),
+                                response.body().getVersion()));
                 } else {
                     // error response, no access to resource?
-                    status.setSummary(String.format(getString(R.string.indywidualni_server_not_ok),
-                            response.code()));
+                    if (status != null)
+                        status.setSummary(String.format(getString(R.string.indywidualni_server_not_ok),
+                               response.code()));
                             
                     tracker.send(new HitBuilders.EventBuilder()
                             .setCategory("Error response")
@@ -137,7 +139,8 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public void onFailure(Call<Server> call, Throwable t) {
                 Log.e(TAG, "getServerStatus: " + t.getLocalizedMessage());
-                status.setSummary(getString(R.string.indywidualni_server_failure));
+                if (status != null)
+                    status.setSummary(getString(R.string.indywidualni_server_failure));
             }
         });
     }
