@@ -1,4 +1,5 @@
-# Centrum.fm
+# Centrum.fm [![Build Status](https://travis-ci.org/indywidualny/Centrum.fm.svg?branch=master)](https://travis-ci.org/indywidualny/Centrum.fm)
+
 Nieoficjalna aplikacja dla miłośników lubelskiego Radia Centrum (98.2 FM)
 
 * [Aplikacja w Google Play](https://play.google.com/store/apps/details?id=org.indywidualni.centrumfm)
