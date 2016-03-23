@@ -329,7 +329,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
         return builder.build();
     }
 
-    // show a Sync Problem Toast while not being on UI Thread
+    // show a Focus Problem Toast while not being on UI Thread
     private void focusProblemToast() {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
