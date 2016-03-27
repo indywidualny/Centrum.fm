@@ -30,10 +30,8 @@
     <style name="SplashTheme" parent="@style/AppTheme">
         <item name="android:windowBackground">@drawable/background_splash</item>
     </style>
-    
+
     <!-- Fullscreen application theme. -->
-    <style name="FullscreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowTranslucentStatus">true</item>
-    </style>
+    <style name="FullscreenTheme" parent="Theme.AppCompat.Light.NoActionBar" />
 
 </resources>
