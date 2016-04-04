@@ -22,6 +22,8 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+
 import org.indywidualni.centrumfm.activity.MainActivity;
 import org.indywidualni.centrumfm.util.Connectivity;
 
@@ -44,6 +46,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     private IntentFilter intentFilter;
     private NoisyReceiver noisyReceiver;
     private boolean isReceiverRegistered;
+    private static String currentUrl;
 
     public class LocalBinder extends Binder {
         public StreamService getService() {
@@ -97,6 +100,19 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         stopPlayer();
+        // try to restart the player
+        if (currentUrl != null) {
+            Log.e("StreamService", "An error occurred, trying to restart the player");
+            // report this error to the tracker
+            ((MyApplication) getApplication()).getDefaultTracker()
+                    .send(new HitBuilders.EventBuilder()
+                    .setCategory("Playback error")
+                    .setAction("Restart player")
+                    .setLabel("error playback")
+                    .build());
+            // reinitialize the player
+            playUrl(currentUrl);
+        }
         return true;
     }
 
@@ -109,7 +125,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     public void onDestroy() {
         super.onDestroy();
         stopPlayer();
-        Log.v("StreamService", "Service is gonna stop now");
+        Log.i("StreamService", "Service is gonna stop now");
     }
 
     public void onAudioFocusChange(int focusChange) {
@@ -181,6 +197,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
 
         switch (result) {
             case AudioManager.AUDIOFOCUS_REQUEST_GRANTED:
+                currentUrl = url;
                 initMediaPlayer(url);
                 break;
             case AudioManager.AUDIOFOCUS_REQUEST_FAILED:

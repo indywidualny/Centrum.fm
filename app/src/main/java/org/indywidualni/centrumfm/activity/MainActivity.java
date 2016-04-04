@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity
 
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setSubtitleTextColor(Color.WHITE);
+        toolbar.setTitle(getString(R.string.toolbar_default_title));
         setSupportActionBar(toolbar);
 
         mDrawer.setNavigationItemSelectedListener(this);
