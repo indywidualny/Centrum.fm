@@ -101,17 +101,18 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     public boolean onError(MediaPlayer mp, int what, int extra) {
         stopPlayer();
         // try to restart the player
-        if (currentUrl != null) {
+        if (currentUrl != null && Connectivity.isConnected(this)) {
             Log.e("StreamService", "An error occurred, trying to restart the player");
             // report this error to the tracker
             ((MyApplication) getApplication()).getDefaultTracker()
                     .send(new HitBuilders.EventBuilder()
-                    .setCategory("Playback error")
+                    .setCategory("Playback error " + what + " " + extra)
                     .setAction("Restart player")
                     .setLabel("error playback")
                     .build());
             // reinitialize the player
             playUrl(currentUrl);
+            foregroundStart();
         }
         return true;
     }
@@ -331,10 +332,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
                 .setContentText(getString(R.string.stream))
                 .setContentTitle(getString(R.string.toolbar_default_title));
 
-        if (Connectivity.isConnectedMobile(this))
-            builder.setContentInfo(getString(R.string.mobile_connection));
-        else
-            builder.setContentInfo(getString(R.string.wifi_connection));
+        builder.setContentInfo(getString(R.string.high_quality));
 
         if (paused)
             builder.addAction(R.drawable.ic_play_arrow_white_24dp, "play", retrievePlaybackAction(1));
