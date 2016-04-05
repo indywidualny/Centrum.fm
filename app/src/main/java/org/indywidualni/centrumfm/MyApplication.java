@@ -29,7 +29,7 @@ public class MyApplication extends Application {
         if (mTracker == null) {
             // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            analytics.setDryRun(false);
+            analytics.setDryRun(true);
 
             mTracker = analytics.newTracker(R.xml.global_tracker);
             mTracker.enableAutoActivityTracking(true);

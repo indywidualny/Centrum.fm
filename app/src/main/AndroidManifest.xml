@@ -106,6 +106,28 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".MyWidgetProvider" >
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_provider" />
+        </receiver>
+
+        <receiver
+            android:name=".MyWidgetIntentReceiver"
+            android:label="widgetBroadcastReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="org.indywidualni.centrumfm.intent.action.QUICK_PLAY" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_provider" />
+        </receiver>
+
     </application>
 
 </manifest>
