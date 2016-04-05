@@ -20,7 +20,10 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+import android.widget.RemoteViews;
 import android.widget.Toast;
+
+import com.google.android.gms.analytics.HitBuilders;
 
 import org.indywidualni.centrumfm.activity.MainActivity;
 import org.indywidualni.centrumfm.util.Connectivity;
@@ -44,6 +47,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     private IntentFilter intentFilter;
     private NoisyReceiver noisyReceiver;
     private boolean isReceiverRegistered;
+    private static String currentUrl;
 
     public class LocalBinder extends Binder {
         public StreamService getService() {
@@ -97,6 +101,20 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         stopPlayer();
+        // try to restart the player
+        if (currentUrl != null && Connectivity.isConnected(this)) {
+            Log.e("StreamService", "An error occurred, trying to restart the player");
+            // report this error to the tracker
+            ((MyApplication) getApplication()).getDefaultTracker()
+                    .send(new HitBuilders.EventBuilder()
+                    .setCategory("Playback error " + what + " " + extra)
+                    .setAction("Restart player")
+                    .setLabel("error playback")
+                    .build());
+            // reinitialize the player
+            playUrl(currentUrl);
+            foregroundStart();
+        }
         return true;
     }
 
@@ -109,7 +127,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     public void onDestroy() {
         super.onDestroy();
         stopPlayer();
-        Log.v("StreamService", "Service is gonna stop now");
+        Log.i("StreamService", "Service is gonna stop now");
     }
 
     public void onAudioFocusChange(int focusChange) {
@@ -169,6 +187,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
 
         try {
             mMediaPlayer.prepareAsync();
+            updateWidget(true);
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
@@ -181,6 +200,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
 
         switch (result) {
             case AudioManager.AUDIOFOCUS_REQUEST_GRANTED:
+                currentUrl = url;
                 initMediaPlayer(url);
                 break;
             case AudioManager.AUDIOFOCUS_REQUEST_FAILED:
@@ -201,6 +221,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
         audioManager.abandonAudioFocus(this);
         unlockWifi();
         stopForeground(true);
+        updateWidget(false);
     }
 
     private void pausePlayer() {
@@ -245,6 +266,16 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     private void unlockWifi() {
         if (wifiLock.isHeld())
             wifiLock.release();
+    }
+
+    private void updateWidget(boolean isPlaying) {
+        RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_quick_play);
+        if (isPlaying)
+            views.setImageViewResource(R.id.button, R.drawable.ic_stop_white_48dp);
+        else
+            views.setImageViewResource(R.id.button, R.drawable.ic_play_arrow_white_48dp);
+        views.setOnClickPendingIntent(R.id.button, WidgetProvider.buildButtonPendingIntent(this));
+        WidgetProvider.pushWidgetUpdate(getApplicationContext(), views);
     }
 
     public int getCurrentPosition() {
@@ -314,10 +345,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
                 .setContentText(getString(R.string.stream))
                 .setContentTitle(getString(R.string.toolbar_default_title));
 
-        if (Connectivity.isConnectedMobile(this))
-            builder.setContentInfo(getString(R.string.mobile_connection));
-        else
-            builder.setContentInfo(getString(R.string.wifi_connection));
+        builder.setContentInfo(getString(R.string.high_quality));
 
         if (paused)
             builder.addAction(R.drawable.ic_play_arrow_white_24dp, "play", retrievePlaybackAction(1));

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:background="@android:color/transparent">
+
+    <ImageView
+        android:id="@+id/button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="10dp"
+        android:src="@drawable/ic_play_arrow_white_48dp"
+        android:background="@drawable/background_circle"
+        android:contentDescription="@string/action_play_stop"
+        android:layout_centerInParent="true"
+        android:scaleType="fitCenter"
+        />
+
+</RelativeLayout>

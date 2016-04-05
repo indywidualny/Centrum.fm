@@ -3,6 +3,8 @@ package org.indywidualni.centrumfm.rest.adapter;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.indywidualni.centrumfm.MyApplication;
 import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.activity.MainActivity;
 import org.indywidualni.centrumfm.rest.model.Channel;
@@ -23,6 +26,9 @@ import java.util.Locale;
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     private static PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+    private SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(
+            MyApplication.getContextOfApplication());
+
     private List<Channel.Item> mDataset;
     private static Context mContext;
     private boolean shouldHide;
@@ -120,6 +126,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
         return new ViewHolder(v, new ViewHolder.ViewHolderClicks() {
             public void onExpand(TextView caller) {
+                // don't continue when all the news should be expanded
+                if (preferences.getBoolean("show_all_news", false))
+                    return;
+
                 final RelativeLayout expandable = (RelativeLayout) v.findViewById(R.id.expandable);
                 if (!expandable.isShown()) {
                     expandable.setVisibility(View.VISIBLE);
@@ -179,6 +189,12 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         } else {
             viewHolder.getPlay().setEnabled(true);
             viewHolder.getPlay().setAlpha(1);
+        }
+
+        // don't continue when all the news should be expanded
+        if (preferences.getBoolean("show_all_news", false)) {
+            viewHolder.getExpandable().setVisibility(View.VISIBLE);
+            return;
         }
 
         // expand the first item

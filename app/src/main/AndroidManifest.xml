@@ -33,6 +33,7 @@
                 <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
             </intent-filter>
         </receiver>
+
         <service
             android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
@@ -104,6 +105,28 @@
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
                 <data android:scheme="package" android:path="org.indywidualni.centrumfm" />
             </intent-filter>
+        </receiver>
+
+        <receiver android:name=".WidgetProvider"
+            android:label="@string/widget_quick_play_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_provider" />
+        </receiver>
+
+        <receiver
+            android:name=".WidgetIntentReceiver"
+            android:label="@string/widget_broadcast_receiver"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="org.indywidualni.centrumfm.intent.action.QUICK_PLAY" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_provider" />
         </receiver>
 
     </application>

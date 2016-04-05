@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String WEBSITE_URL = "http://centrum.fm";
     private static final String WEBSITE_PEOPLE = "http://centrum.fm/dyzury/";
-    private static final String STREAM_URL = "http://5.201.13.191:80/live";
+    public static final String STREAM_URL = "http://5.201.13.191:80/live";
     private static final String APP_PLAY_URL = "https://play.google.com/store/apps/details?id=" +
             "org.indywidualni.centrumfm";
     private static final int RDS_REFRESH_INTERVAL = 30000;
@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity
 
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setSubtitleTextColor(Color.WHITE);
+        toolbar.setTitle(getString(R.string.toolbar_default_title));
         setSupportActionBar(toolbar);
 
         mDrawer.setNavigationItemSelectedListener(this);

@@ -11,6 +11,13 @@
             android:defaultValue="false"
             />
 
+        <SwitchPreference
+            android:key="show_all_news"
+            android:title="@string/show_all_news_pref"
+            android:summary="@string/show_all_news_pref_description"
+            android:defaultValue="false"
+            />
+
         <ListPreference
             android:key="news_keep_max"
             android:title="@string/number_news_keep_pref"
