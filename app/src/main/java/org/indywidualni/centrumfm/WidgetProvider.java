@@ -8,7 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
-public class MyWidgetProvider extends AppWidgetProvider {
+public class WidgetProvider extends AppWidgetProvider {
 
     public static final String QUICK_PLAY = "org.indywidualni.centrumfm.intent.action.QUICK_PLAY";
 
@@ -28,7 +28,7 @@ public class MyWidgetProvider extends AppWidgetProvider {
     }
 
     public static void pushWidgetUpdate(Context context, RemoteViews remoteViews) {
-        ComponentName myWidget = new ComponentName(context, MyWidgetProvider.class);
+        ComponentName myWidget = new ComponentName(context, WidgetProvider.class);
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
         manager.updateAppWidget(myWidget, remoteViews);
     }

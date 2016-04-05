@@ -33,6 +33,7 @@
                 <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
             </intent-filter>
         </receiver>
+
         <service
             android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
@@ -106,8 +107,9 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".MyWidgetProvider" >
-            <intent-filter >
+        <receiver android:name=".WidgetProvider"
+            android:label="@string/widget_quick_play_label">
+            <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
@@ -116,9 +118,8 @@
         </receiver>
 
         <receiver
-            android:name=".MyWidgetIntentReceiver"
-            android:label="widgetBroadcastReceiver"
-            android:exported="true"
+            android:name=".WidgetIntentReceiver"
+            android:label="@string/widget_broadcast_receiver"
             tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="org.indywidualni.centrumfm.intent.action.QUICK_PLAY" />

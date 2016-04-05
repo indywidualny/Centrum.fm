@@ -20,6 +20,7 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
@@ -186,6 +187,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
 
         try {
             mMediaPlayer.prepareAsync();
+            updateWidget(true);
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
@@ -219,6 +221,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
         audioManager.abandonAudioFocus(this);
         unlockWifi();
         stopForeground(true);
+        updateWidget(false);
     }
 
     private void pausePlayer() {
@@ -263,6 +266,16 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     private void unlockWifi() {
         if (wifiLock.isHeld())
             wifiLock.release();
+    }
+
+    private void updateWidget(boolean isPlaying) {
+        RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_quick_play);
+        if (isPlaying)
+            views.setImageViewResource(R.id.button, R.drawable.ic_stop_white_48dp);
+        else
+            views.setImageViewResource(R.id.button, R.drawable.ic_play_arrow_white_48dp);
+        views.setOnClickPendingIntent(R.id.button, WidgetProvider.buildButtonPendingIntent(this));
+        WidgetProvider.pushWidgetUpdate(getApplicationContext(), views);
     }
 
     public int getCurrentPosition() {

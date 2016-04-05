@@ -57,7 +57,9 @@
     <string name="show_all_news_pref">Rozwiń wszystkie newsy</string>
     <string name="show_all_news_pref_description">Nie zawijaj newsów, pokaż całe karty</string>
     <string name="high_quality">Wysoka jakość</string>
-    <string name="action_play">Odtwarzaj</string>
+    <string name="action_play_stop">Odtwarzaj / zatrzymaj</string>
+    <string name="widget_broadcast_receiver">Widget Broadcast Receiver</string>
+    <string name="widget_quick_play_label">Szybki start</string>
 
     <plurals name="eventPrettyLength">
         <item quantity="one">Audycja trwa godzinę</item>
