@@ -2,6 +2,13 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:drawable="@drawable/background_circle" />
-    <item android:drawable="@drawable/ic_play_arrow_white_48dp" />
+    <item 
+        android:top="8dp"
+        android:bottom="8dp"
+        android:left="8dp" 
+        android:right="8dp"
+        android:start="8dp"
+        android:end="8dp"
+        android:drawable="@drawable/ic_play_arrow_white_48dp" />
 
 </layer-list>
