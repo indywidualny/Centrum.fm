@@ -3,6 +3,7 @@ package org.indywidualni.centrumfm.activity;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -24,6 +25,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -45,6 +47,7 @@ import org.indywidualni.centrumfm.fragment.MainFragment;
 import org.indywidualni.centrumfm.fragment.ScheduleFragment;
 import org.indywidualni.centrumfm.rest.RestClient;
 import org.indywidualni.centrumfm.rest.model.RDS;
+import org.indywidualni.centrumfm.util.ChangeLog;
 import org.indywidualni.centrumfm.util.Connectivity;
 import org.indywidualni.centrumfm.util.customtabs.CustomTabActivityHelper;
 import org.indywidualni.centrumfm.util.ui.MarqueeToolbar;
@@ -164,6 +167,18 @@ public class MainActivity extends AppCompatActivity
         customTabActivityHelper.setConnectionCallback(this);
 
         startStreamService();
+
+        // show changelog once for a version
+        ChangeLog cl = new ChangeLog(this);
+        if (cl.isFirstRun()) {
+            AlertDialog dialog = cl.getLogDialog();
+            dialog.show();
+            // use accent colors for dialog buttons
+            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+                    ContextCompat.getColor(this, R.color.colorAccent));
+            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(
+                    ContextCompat.getColor(this, R.color.colorAccent));
+        }
     }
 
     @Override

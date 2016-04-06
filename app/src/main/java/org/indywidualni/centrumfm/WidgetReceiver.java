@@ -17,7 +17,7 @@ import com.google.android.gms.analytics.Tracker;
 import org.indywidualni.centrumfm.activity.MainActivity;
 import org.indywidualni.centrumfm.util.Connectivity;
 
-public class WidgetIntentReceiver extends BroadcastReceiver {
+public class WidgetReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {

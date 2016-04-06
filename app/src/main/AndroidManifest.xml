@@ -94,7 +94,7 @@
         <receiver android:name=".AlarmReceiver" />
 
         <receiver
-            android:name=".StartupBroadcastReceiver"
+            android:name=".StartupReceiver"
             android:enabled="true"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
@@ -118,7 +118,7 @@
         </receiver>
 
         <receiver
-            android:name=".WidgetIntentReceiver"
+            android:name=".WidgetReceiver"
             android:label="@string/widget_broadcast_receiver"
             tools:ignore="ExportedReceiver">
             <intent-filter>
