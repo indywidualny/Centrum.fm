@@ -52,6 +52,11 @@
         android:title="@string/nerd_category">
 
         <Preference
+            android:key="changelog"
+            android:title="@string/changelog_full_title"
+            />
+
+        <Preference
             android:key="open_source_libraries"
             android:title="@string/open_source_libraries_pref"
             />

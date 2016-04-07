@@ -40,6 +40,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.XmlResourceParser;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.SparseArray;
@@ -54,7 +55,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 
 /**
  * Display a dialog showing a full or partial (What's New) change log.
@@ -81,7 +81,8 @@ public class ChangeLog {
      * Default CSS styles used to format the change log.
      */
     public static final String DEFAULT_CSS =
-            "h1 { margin-left: 0px; font-size: 1.2em; }" + "\n" +
+            "body { margin-top: 1.1em; }" + "\n" +
+            "h1 { margin-left: 0px; font-size: 1.1em; }" + "\n" +
                     "li { margin-left: 0px; }" + "\n" +
                     "ul { padding-left: 2em; }";
 
@@ -285,7 +286,7 @@ public class ChangeLog {
      *
      * @return A dialog containing the (partial) change log.
      */
-    protected AlertDialog getDialog(boolean full) {
+    protected AlertDialog getDialog(final boolean full) {
         WebView wv = new WebView(mContext);
         //wv.setBackgroundColor(0); // transparent
         wv.loadDataWithBaseURL(null, getLog(full), "text/html", "UTF-8", null);
@@ -319,7 +320,21 @@ public class ChangeLog {
                     });
         }
 
-        return builder.create();
+        final AlertDialog dialog = builder.create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat
+                        .getColor(mContext, R.color.colorAccent));
+                if (!full) {
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat
+                            .getColor(mContext, R.color.colorAccent));
+                }
+            }
+        });
+
+        return dialog;
     }
 
     /**
