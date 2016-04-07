@@ -51,8 +51,7 @@ public class SettingsFragment extends PreferenceFragment
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         // update server status
-        Preference status = findPreference("indywidualni_server_status");
-        getServerStatus(status);
+        getServerStatus();
 
         // shared preference changed
         prefChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -122,12 +121,13 @@ public class SettingsFragment extends PreferenceFragment
         preferences.unregisterOnSharedPreferenceChangeListener(prefChangeListener);
     }
 
-    private void getServerStatus(final Preference status) {
+    private void getServerStatus() {
         Call<Server> call = RestClient.getClientJSON().getServerStatus();
         call.enqueue(new Callback<Server>() {
             @Override
             public void onResponse(Call<Server> call, Response<Server> response) {
                 Log.v(TAG, "getServerStatus: response " + response.code());
+                Preference status = findPreference("indywidualni_server_status");
 
                 if (response.isSuccess()) {
                     if (status != null)
@@ -150,6 +150,7 @@ public class SettingsFragment extends PreferenceFragment
             @Override
             public void onFailure(Call<Server> call, Throwable t) {
                 Log.e(TAG, "getServerStatus: " + t.getLocalizedMessage());
+                Preference status = findPreference("indywidualni_server_status");
                 if (status != null)
                     status.setSummary(getString(R.string.indywidualni_server_failure));
             }
