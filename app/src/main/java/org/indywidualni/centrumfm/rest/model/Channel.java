@@ -16,6 +16,8 @@ import java.util.List;
 @NamespaceList({
         @Namespace(reference = "http://www.w3.org/2005/Atom", prefix = "atom")
 })
+
+@SuppressWarnings("UnusedDeclaration")
 @Root(strict = false)
 public class Channel {
 

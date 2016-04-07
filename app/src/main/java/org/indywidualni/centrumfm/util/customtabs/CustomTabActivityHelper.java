@@ -13,6 +13,7 @@ import java.util.List;
 /**
  * This is a helper class to manage the connection to the Custom Tabs Service.
  */
+@SuppressWarnings("javadoc, UnusedDeclaration")
 public class CustomTabActivityHelper implements ServiceConnectionCallback {
     private CustomTabsSession mCustomTabsSession;
     private CustomTabsClient mClient;
@@ -101,9 +102,7 @@ public class CustomTabActivityHelper implements ServiceConnectionCallback {
         if (mClient == null) return false;
 
         CustomTabsSession session = getSession();
-        if (session == null) return false;
-
-        return session.mayLaunchUrl(uri, extras, otherLikelyBundles);
+        return session != null && session.mayLaunchUrl(uri, extras, otherLikelyBundles);
     }
 
     @Override

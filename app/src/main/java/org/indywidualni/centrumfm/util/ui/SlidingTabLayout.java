@@ -50,6 +50,7 @@ import org.indywidualni.centrumfm.R;
  * The views used as tabs can be customized by calling {@link #setCustomTabView(int, int)},
  * providing the layout ID of your custom layout.
  */
+@SuppressWarnings("UnusedDeclaration")
 public class SlidingTabLayout extends HorizontalScrollView {
     /**
      * Allows complete control over the colors drawn in the tab layout. Set with

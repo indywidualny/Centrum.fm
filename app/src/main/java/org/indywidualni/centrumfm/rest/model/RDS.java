@@ -1,5 +1,6 @@
 package org.indywidualni.centrumfm.rest.model;
 
+@SuppressWarnings("UnusedDeclaration")
 public class RDS {
 
     private String id;
