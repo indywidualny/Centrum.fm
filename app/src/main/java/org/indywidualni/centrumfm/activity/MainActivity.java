@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity
         drawerToggle.onConfigurationChanged(newConfig);
 
         if (sup.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED)
-            panelMain.setPadding(0, 0, 0, sup.findViewById(R.id.panel_slider).getHeight());
+            panelMain.setPadding(0, 0, 0, panelSlider.getHeight());
         else
             panelMain.setPadding(0, 0, 0, 0);
     }
@@ -540,9 +540,15 @@ public class MainActivity extends AppCompatActivity
             // when the service is bound there is no need to display a notification (foreground)
             mService.foregroundStop();
 
-            if (mService.isPlaying())
+            if (mService.isPlaying()) {
                 sup.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-            else
+                panelSlider.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        panelMain.setPadding(0, 0, 0, panelSlider.getHeight());
+                    }
+                });
+            } else
                 sup.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         }
         @Override
