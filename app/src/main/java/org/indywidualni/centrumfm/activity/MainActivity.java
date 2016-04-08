@@ -1,5 +1,6 @@
 package org.indywidualni.centrumfm.activity;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -410,6 +411,7 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
+    @TargetApi(21)
     public void shareTextUrl(String url, String description) {
         tracker.send(new HitBuilders.EventBuilder()
                 .setCategory("Share")

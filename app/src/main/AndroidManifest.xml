@@ -129,6 +129,8 @@
                 android:resource="@xml/widget_provider" />
         </receiver>
 
+        <service android:name=".util.customtabs.KeepAliveService" />
+
     </application>
 
 </manifest>

@@ -1,4 +1,7 @@
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="PluralsCandidate">
+
     <string name="app_name">Centrum.fm</string>
     <string name="toolbar_default_title">Radio Centrum 98.2 FM</string>
     <string name="action_website">Centrum.fm</string>
@@ -98,4 +101,5 @@
         <item>Kwadrans przed</item>
         <item>Pół godziny przed</item>
     </string-array>
+
 </resources>
