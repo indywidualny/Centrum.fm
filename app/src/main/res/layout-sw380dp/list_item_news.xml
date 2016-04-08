@@ -101,7 +101,7 @@
                                 android:id="@+id/itemReadMore"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/news_external_low_density"
+                                android:text="@string/news_external"
                                 android:drawableLeft="@drawable/ic_open_in_browser_black_18dp"
                                 android:drawableStart="@drawable/ic_open_in_browser_black_18dp"
                                 android:drawablePadding="2dp"

@@ -9,6 +9,7 @@ import org.simpleframework.xml.Root;
 
 import java.util.List;
 
+@SuppressWarnings("UnusedDeclaration")
 public class Schedule {
 
     @ElementList(name = "event", inline = true)

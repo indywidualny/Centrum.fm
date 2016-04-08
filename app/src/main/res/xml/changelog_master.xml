@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelog>
+    <release version="0.9" versioncode="9">
+        <change>widget szybkiego startu odtwarzania strumienia radia</change>
+        <change>możliwość rozwinięcia wszystkich kart newsów</change>
+        <change>odtwarzacz spróbuje wznowić pracę przy błędzie w tle</change>
+        <change>poprawki wyglądu dla urządzeń z małym ekranem</change>
+    </release>
+    <release version="0.7" versioncode="7">
+        <change>odtwarzaj strumień radia gdziekolwiek jesteś (pomarańczowy guzik play)</change>
+        <change>czytaj newsy ze strony radia i odtwarzaj ich załączniki</change>
+        <change>inteligentna ramówka i dodawanie audycji do ulubionych</change>
+        <change>powiadomienia o zbliżających się ulubionych audycjach</change>
+    </release>
+</changelog>

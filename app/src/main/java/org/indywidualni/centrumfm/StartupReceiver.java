@@ -7,7 +7,7 @@ import android.util.Log;
 
 import org.indywidualni.centrumfm.util.AlarmHelper;
 
-public class StartupBroadcastReceiver extends BroadcastReceiver {
+public class StartupReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {

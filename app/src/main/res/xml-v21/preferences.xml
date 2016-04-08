@@ -4,14 +4,14 @@
     <PreferenceCategory
         android:title="@string/app_settings_category">
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="mobile_streaming"
             android:title="@string/mobile_connection_stream_pref"
             android:summary="@string/mobile_connection_stream_pref_description"
             android:defaultValue="false"
             />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="show_all_news"
             android:title="@string/show_all_news_pref"
             android:summary="@string/show_all_news_pref_description"

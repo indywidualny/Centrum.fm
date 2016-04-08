@@ -7,6 +7,7 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
+@SuppressWarnings("UnusedDeclaration")
 public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
 
     private static boolean disableBehaviourPermanently;

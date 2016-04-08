@@ -1,5 +1,6 @@
 package org.indywidualni.centrumfm;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -32,6 +33,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         WakeLocker.release();
     }
 
+    @TargetApi(16)
     private void notify(String title, int timeToStart) {
         String soon = String.format(context.getString(R.string.soon), title);
         String eventStarting = String.format(context.getString(R.string.event_starting), timeToStart);

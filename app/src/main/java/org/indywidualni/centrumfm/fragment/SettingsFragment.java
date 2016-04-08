@@ -21,13 +21,15 @@ import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.rest.RestClient;
 import org.indywidualni.centrumfm.rest.model.Server;
 import org.indywidualni.centrumfm.util.AlarmHelper;
+import org.indywidualni.centrumfm.util.ChangeLog;
 import org.indywidualni.centrumfm.util.Miscellany;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends PreferenceFragment
+        implements Preference.OnPreferenceClickListener {
 
     private static final String TAG = SettingsFragment.class.getSimpleName();
     public static final String DEFAULT_REMINDER_OFFSET = "-300000";
@@ -49,33 +51,33 @@ public class SettingsFragment extends PreferenceFragment {
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         // update server status
-        Preference status = findPreference("indywidualni_server_status");
-        getServerStatus(status);
+        getServerStatus();
 
         // shared preference changed
         prefChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                 switch (key) {
                     case "reminders_mode":
-
                         // reset reminders
                         if (prefs.getString("reminders_mode", DEFAULT_REMINDER_OFFSET).equals("0"))
                             AlarmHelper.cancelAllAlarms();
                         else
                             AlarmHelper.setAllAlarms();
-
                         break;
                 }
-
                 Log.v("SharedPreferenceChange", key + " changed in SettingsFragment");
             }
         };
 
-        // show open source libraries dialog
-        final Preference libraries = findPreference("open_source_libraries");
-        libraries.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
+        // set listeners
+        findPreference("open_source_libraries").setOnPreferenceClickListener(this);
+        findPreference("changelog").setOnPreferenceClickListener(this);
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        switch (preference.getKey()) {
+            case "open_source_libraries":
                 int padding = Miscellany.dpToPx(17);
 
                 ScrollView scroller = new ScrollView(getActivity());
@@ -90,33 +92,42 @@ public class SettingsFragment extends PreferenceFragment {
                 scroller.addView(msg);
 
                 AlertDialog.Builder ab = new AlertDialog.Builder(getActivity());
-                ab.setTitle(getString(R.string.open_source_libraries_pref)).setView(scroller).setCancelable(true).create()
-                        .show();
+                ab.setTitle(getString(R.string.open_source_libraries_pref)).setView(scroller)
+                        .setCancelable(true).create().show();
                 return true;
-            }
-        });
+
+            case "changelog":
+                AlertDialog dialog = new ChangeLog(getActivity()).getFullLogDialog();
+                dialog.setCancelable(true);
+                dialog.show();
+                return true;
+
+            default:
+                return false;
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // register the listener
+        // register listener
         preferences.registerOnSharedPreferenceChangeListener(prefChangeListener);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        // unregister the listener
+        // unregister listener
         preferences.unregisterOnSharedPreferenceChangeListener(prefChangeListener);
     }
 
-    private void getServerStatus(final Preference status) {
+    private void getServerStatus() {
         Call<Server> call = RestClient.getClientJSON().getServerStatus();
         call.enqueue(new Callback<Server>() {
             @Override
             public void onResponse(Call<Server> call, Response<Server> response) {
                 Log.v(TAG, "getServerStatus: response " + response.code());
+                Preference status = findPreference("indywidualni_server_status");
 
                 if (response.isSuccess()) {
                     if (status != null)
@@ -139,6 +150,7 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public void onFailure(Call<Server> call, Throwable t) {
                 Log.e(TAG, "getServerStatus: " + t.getLocalizedMessage());
+                Preference status = findPreference("indywidualni_server_status");
                 if (status != null)
                     status.setSummary(getString(R.string.indywidualni_server_failure));
             }

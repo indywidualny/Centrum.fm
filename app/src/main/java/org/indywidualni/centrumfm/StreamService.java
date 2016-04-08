@@ -14,6 +14,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.wifi.WifiManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -325,8 +326,6 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     }
 
     private Notification buildNotification(boolean paused) {
-        Bitmap artwork = BitmapFactory.decodeResource(getResources(), R.drawable.logo_big_artwork);
-
         Intent showTaskIntent = new Intent(getApplicationContext(), MainActivity.class);
         showTaskIntent.setAction(Intent.ACTION_MAIN);
         showTaskIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -338,7 +337,6 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
         NotificationCompat.Builder builder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                 .setShowWhen(false)
                 .setStyle(new NotificationCompat.MediaStyle().setShowActionsInCompactView(0, 1))
-                .setLargeIcon(artwork)
                 .setSmallIcon(R.drawable.ic_radio_white_24dp)
                 .setContentIntent(contentIntent)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -346,6 +344,11 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
                 .setContentTitle(getString(R.string.toolbar_default_title));
 
         builder.setContentInfo(getString(R.string.high_quality));
+
+        if (Build.VERSION.SDK_INT >= 16) {
+            Bitmap artwork = BitmapFactory.decodeResource(getResources(), R.drawable.logo_big_artwork);
+            builder.setLargeIcon(artwork);
+        }
 
         if (paused)
             builder.addAction(R.drawable.ic_play_arrow_white_24dp, "play", retrievePlaybackAction(1));

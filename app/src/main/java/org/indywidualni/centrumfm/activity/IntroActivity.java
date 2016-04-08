@@ -11,6 +11,7 @@ import com.github.paolorotolo.appintro.AppIntroFragment;
 
 import org.indywidualni.centrumfm.MyApplication;
 import org.indywidualni.centrumfm.R;
+import org.indywidualni.centrumfm.util.ChangeLog;
 
 public class IntroActivity extends AppIntro2 {
 
@@ -24,6 +25,9 @@ public class IntroActivity extends AppIntro2 {
                 getString(R.string.slide_reader_desc), R.drawable.slide_reader, color));
         addSlide(AppIntroFragment.newInstance(getString(R.string.slide_fav),
                 getString(R.string.slide_fav_desc), R.drawable.slide_fav, color));
+
+        // to avoid showing changelog after this intro
+        new ChangeLog(this).updateVersionInPreferences();
     }
 
     private void loadMainActivity() {

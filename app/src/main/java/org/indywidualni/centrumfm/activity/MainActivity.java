@@ -1,5 +1,6 @@
 package org.indywidualni.centrumfm.activity;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.IdRes;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -45,6 +47,7 @@ import org.indywidualni.centrumfm.fragment.MainFragment;
 import org.indywidualni.centrumfm.fragment.ScheduleFragment;
 import org.indywidualni.centrumfm.rest.RestClient;
 import org.indywidualni.centrumfm.rest.model.RDS;
+import org.indywidualni.centrumfm.util.ChangeLog;
 import org.indywidualni.centrumfm.util.Connectivity;
 import org.indywidualni.centrumfm.util.customtabs.CustomTabActivityHelper;
 import org.indywidualni.centrumfm.util.ui.MarqueeToolbar;
@@ -60,6 +63,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@SuppressWarnings("UnusedDeclaration")
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         CustomTabActivityHelper.ConnectionCallback {
@@ -95,7 +99,7 @@ public class MainActivity extends AppCompatActivity
     @Bind(R.id.playerStop) ImageView playerStop;
 
     private ActionBarDrawerToggle drawerToggle;
-    private int mSelectedId;
+    @IdRes private int mSelectedId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,8 +124,9 @@ public class MainActivity extends AppCompatActivity
         drawerToggle.syncState();
 
         // set the first item as selected by default
-        mSelectedId = savedInstanceState == null ? R.id.navigation_news
-                : savedInstanceState.getInt("SELECTED_ID");
+        //noinspection ResourceType
+        mSelectedId = savedInstanceState == null ? R.id.navigation_news : savedInstanceState
+                .getInt("SELECTED_ID");
         itemSelection(mSelectedId);
         mDrawer.setCheckedItem(mSelectedId);
 
@@ -164,6 +169,11 @@ public class MainActivity extends AppCompatActivity
         customTabActivityHelper.setConnectionCallback(this);
 
         startStreamService();
+
+        // show changelog once for a version
+        ChangeLog cl = new ChangeLog(this);
+        if (cl.isFirstRun())
+            cl.getLogDialog().show();
     }
 
     @Override
@@ -270,7 +280,7 @@ public class MainActivity extends AppCompatActivity
         drawerToggle.onConfigurationChanged(newConfig);
 
         if (sup.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED)
-            panelMain.setPadding(0, 0, 0, sup.findViewById(R.id.panel_slider).getHeight());
+            panelMain.setPadding(0, 0, 0, panelSlider.getHeight());
         else
             panelMain.setPadding(0, 0, 0, 0);
     }
@@ -341,7 +351,7 @@ public class MainActivity extends AppCompatActivity
                         toolbar.setTitle(getString(R.string.toolbar_default_title));
                         toolbar.setSubtitle(null);
                     }
-                    
+
                     tracker.send(new HitBuilders.EventBuilder()
                     .setCategory("Error response")
                             .setAction("Get RDS")
@@ -364,7 +374,7 @@ public class MainActivity extends AppCompatActivity
     private void updateTitle(List<RDS> items){
         if (toolbar == null)
             return;
-            
+
         RDS now = items.get(0);
         RDS soon = items.get(1);
 
@@ -401,6 +411,7 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
+    @TargetApi(21)
     public void shareTextUrl(String url, String description) {
         tracker.send(new HitBuilders.EventBuilder()
                 .setCategory("Share")
@@ -423,11 +434,11 @@ public class MainActivity extends AppCompatActivity
 
         startActivity(Intent.createChooser(share, getString(R.string.action_share)));
     }
-    
+
     public void playEnclosure(String url) {
         if (url == null)
             return;
-            
+
         tracker.send(new HitBuilders.EventBuilder()
                 .setCategory("Play Enclosure")
                 .setAction(url)
@@ -462,7 +473,7 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     mService.playUrl(STREAM_URL);
                     sup.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-                    
+
                     if (Connectivity.isConnectedMobile(this)) {
                         tracker.send(new HitBuilders.EventBuilder()
                                 .setCategory("Play Radio")
@@ -492,7 +503,7 @@ public class MainActivity extends AppCompatActivity
         if (mBound)
             mService.pauseResumePlayer();
     }
-    
+
     private void restoreFab() {
         if (sup.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED)
             fab.show();
@@ -529,9 +540,15 @@ public class MainActivity extends AppCompatActivity
             // when the service is bound there is no need to display a notification (foreground)
             mService.foregroundStop();
 
-            if (mService.isPlaying())
+            if (mService.isPlaying()) {
                 sup.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-            else
+                panelSlider.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        panelMain.setPadding(0, 0, 0, panelSlider.getHeight());
+                    }
+                });
+            } else
                 sup.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         }
         @Override

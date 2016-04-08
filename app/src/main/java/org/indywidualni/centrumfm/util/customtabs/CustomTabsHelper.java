@@ -15,6 +15,7 @@ import java.util.List;
 /**
  * Helper class for Custom Tabs.
  */
+@SuppressWarnings("UnusedDeclaration")
 public class CustomTabsHelper {
     private static final String TAG = "CustomTabsHelper";
     static final String STABLE_PACKAGE = "com.android.chrome";
