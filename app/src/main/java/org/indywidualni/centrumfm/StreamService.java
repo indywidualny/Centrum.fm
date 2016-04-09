@@ -49,6 +49,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     private NoisyReceiver noisyReceiver;
     private boolean isReceiverRegistered;
     private static String currentUrl;
+    private static int reportedErrors;
     public static boolean shouldServiceStopSoon = true;
 
     public class LocalBinder extends Binder {
@@ -110,12 +111,15 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
         if (currentUrl != null && Connectivity.isConnected(this)) {
             Log.e("StreamService", "An error occurred, trying to restart the player");
             // report this error to the tracker
-            ((MyApplication) getApplication()).getDefaultTracker()
-                    .send(new HitBuilders.EventBuilder()
-                    .setCategory("Playback error " + what + " " + extra)
-                    .setAction("Restart player")
-                    .setLabel("error playback")
-                    .build());
+            if (reportedErrors < 3) {
+                ((MyApplication) getApplication()).getDefaultTracker()
+                        .send(new HitBuilders.EventBuilder()
+                        .setCategory("Playback error " + what + " " + extra)
+                        .setAction("Restart player")
+                        .setLabel("error playback")
+                        .build());
+                reportedErrors++;
+            }
             // reinitialize the player
             playUrl(currentUrl);
             foregroundStart();
