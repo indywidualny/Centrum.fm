@@ -59,7 +59,7 @@
     <string name="slide_reader_desc">Czytaj, słuchaj, udostępniaj newsy, również offline. Możesz zdecydować ile świeżych newsów ma zostać zachowane.</string>
     <string name="slide_fav_desc">Inteligentna ramówka i ulubione audycje, również offline. Przypomnienia o nadchodzących ulubionych audycjach.</string>
     <string name="show_all_news_pref">Rozwiń wszystkie newsy</string>
-    <string name="show_all_news_pref_description">Nie zawijaj newsów, pokaż całe karty</string>
+    <string name="show_all_news_pref_description">Nie zwijaj newsów, pokaż całe karty</string>
     <string name="high_quality">Wysoka jakość</string>
     <string name="action_play_stop">Odtwarzaj / zatrzymaj</string>
     <string name="widget_broadcast_receiver">Widget Broadcast Receiver</string>
