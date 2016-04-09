@@ -169,6 +169,7 @@ public class MainActivity extends AppCompatActivity
         customTabActivityHelper.setConnectionCallback(this);
 
         startStreamService();
+        StreamService.shouldServiceStopSoon = false;
 
         // show changelog once for a version
         ChangeLog cl = new ChangeLog(this);
@@ -239,6 +240,8 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
         ButterKnife.unbind(this);
         customTabActivityHelper.setConnectionCallback(null);
+
+        StreamService.shouldServiceStopSoon = true;
 
         if (mService != null && !mService.isPlaying())
             stopStreamService();

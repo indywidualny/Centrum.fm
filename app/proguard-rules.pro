@@ -35,3 +35,8 @@
 
 # fragment classes names
 -keepnames class org.indywidualni.centrumfm.fragment.*
+
+# remove logs from releases
+-assumenosideeffects class android.util.Log {
+    public * ;
+}

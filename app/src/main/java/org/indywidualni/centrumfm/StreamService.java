@@ -49,6 +49,7 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     private NoisyReceiver noisyReceiver;
     private boolean isReceiverRegistered;
     private static String currentUrl;
+    public static boolean shouldServiceStopSoon = true;
 
     public class LocalBinder extends Binder {
         public StreamService getService() {
@@ -77,8 +78,11 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
             } else if (ACTION_RESUME.equals(action)) {
                 resumePlayer();
                 startForeground(NOTIFICATION_ID, buildNotification(false));
-            } else if (ACTION_STOP.equals(action))
+            } else if (ACTION_STOP.equals(action)) {
                 stopPlayer();
+                if (shouldServiceStopSoon)
+                    stopSelf();
+            }
         }
 
         return START_STICKY;

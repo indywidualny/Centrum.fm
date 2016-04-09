@@ -8,7 +8,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
@@ -22,11 +21,11 @@ public class WidgetReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (WidgetProvider.QUICK_PLAY.equals(intent.getAction()))
-            bindStreamService(context);
+            bindStreamService();
     }
 
-    private void bindStreamService(Context context) {
-        context = context.getApplicationContext();
+    private void bindStreamService() {
+        Context context = MyApplication.getContextOfApplication();
         Intent intent = new Intent(context, StreamService.class);
         context.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
@@ -34,7 +33,6 @@ public class WidgetReceiver extends BroadcastReceiver {
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
-            Log.d("ServiceConnectionWidget", "connected");
             StreamService.LocalBinder binder = (StreamService.LocalBinder) service;
             StreamService streamService = binder.getService();
 
@@ -75,7 +73,7 @@ public class WidgetReceiver extends BroadcastReceiver {
         }
         @Override
         public void onServiceDisconnected(ComponentName className) {
-            Log.d("ServiceConnectionWidget", "disconnected");
+            // silence is golden
         }
     };
 
