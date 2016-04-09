@@ -44,6 +44,7 @@ public class WidgetReceiver extends BroadcastReceiver {
 
             if (streamService.isPlaying()) {
                 streamService.stopPlayer();
+                context.unbindService(this);
             } else {
                 if (Connectivity.isConnected(context)) {
                     if (Connectivity.isConnectedMobile(context)
