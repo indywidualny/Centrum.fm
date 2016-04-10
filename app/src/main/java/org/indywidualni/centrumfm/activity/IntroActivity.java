@@ -27,7 +27,7 @@ public class IntroActivity extends AppIntro2 {
                 getString(R.string.slide_fav_desc), R.drawable.slide_fav, color));
 
         // to avoid showing changelog after this intro
-        new ChangeLog(this).updateVersionInPreferences();
+        new ChangeLog(this).skipLogDialog();
     }
 
     private void loadMainActivity() {

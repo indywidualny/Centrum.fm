@@ -6,6 +6,12 @@ Nieoficjalna aplikacja dla miłośników lubelskiego Radia Centrum (98.2 FM)
 * [Strona radia](http://centrum.fm/)
 * [Serwer (źródło)](/server)
 
+## Nowości
+* widget szybkiego startu odtwarzania strumienia
+* możliwość rozwinięcia wszystkich kart newsów
+* poprawki wyglądu dla małych ekranów
+* odtwarzacz spróbuje wznowić pracę po błędzie w tle innym niż brak sieci
+
 ## Listing
 * odtwarzaj strumień radia gdziekolwiek jesteś (pomarańczowy guzik play)
 * czytaj newsy ze strony radia (również offline) i odtwarzaj ich załączniki

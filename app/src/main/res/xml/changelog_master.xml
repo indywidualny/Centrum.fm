@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-    <release version="0.9" versioncode="9">
+    <release version="1.0" versioncode="10">
         <change>widget szybkiego startu odtwarzania strumienia radia</change>
         <change>możliwość rozwinięcia wszystkich kart newsów</change>
-        <change>odtwarzacz spróbuje wznowić pracę przy błędzie w tle</change>
         <change>poprawki wyglądu dla urządzeń z małym ekranem</change>
+        <change>odtwarzacz spróbuje wznowić pracę po błędzie w tle innym niż brak sieci</change>
     </release>
     <release version="0.7" versioncode="7">
         <change>odtwarzaj strumień radia gdziekolwiek jesteś (pomarańczowy guzik play)</change>

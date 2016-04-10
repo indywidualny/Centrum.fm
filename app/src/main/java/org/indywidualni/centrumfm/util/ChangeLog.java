@@ -265,7 +265,8 @@ public class ChangeLog {
      *         {@code ChangeLog} then the full log dialog is show.
      */
     public AlertDialog getLogDialog() {
-        return getDialog(isFirstRunEver());
+        //return getDialog(isFirstRunEver());
+        return getDialog(false);
     }
 
     /**
@@ -340,7 +341,7 @@ public class ChangeLog {
     /**
      * Write current version code to the preferences.
      */
-    public void updateVersionInPreferences() {
+    protected void updateVersionInPreferences() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt(VERSION_KEY, mCurrentVersionCode);
