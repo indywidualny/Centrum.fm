@@ -1,6 +1,3 @@
-# saxrssreader library
--keep class nl.matshofman.saxrssreader.** { *; }
-
 # retrofit
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }
