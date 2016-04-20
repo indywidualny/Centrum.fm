@@ -1,17 +1,12 @@
 package org.indywidualni.centrumfm.fragment;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.View;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -21,8 +16,6 @@ import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.rest.RestClient;
 import org.indywidualni.centrumfm.rest.model.Server;
 import org.indywidualni.centrumfm.util.AlarmHelper;
-import org.indywidualni.centrumfm.util.ChangeLog;
-import org.indywidualni.centrumfm.util.Miscellany;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,7 +28,30 @@ public class SettingsFragment extends PreferenceFragment
     public static final String DEFAULT_REMINDER_OFFSET = "-300000";
     private SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener;
     private SharedPreferences preferences;
+    private IFragmentToActivity mCallback;
     private Tracker tracker;
+
+    public interface IFragmentToActivity {
+        void showChangelog();
+        void showLibraries();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (IFragmentToActivity) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement IFragmentToActivity");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        mCallback = null;
+        super.onDetach();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,9 +65,6 @@ public class SettingsFragment extends PreferenceFragment
 
         // get Shared Preferences
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-        // update server status
-        getServerStatus();
 
         // shared preference changed
         prefChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -75,43 +88,12 @@ public class SettingsFragment extends PreferenceFragment
     }
 
     @Override
-    public boolean onPreferenceClick(Preference preference) {
-        switch (preference.getKey()) {
-            case "open_source_libraries":
-                int padding = Miscellany.dpToPx(17);
-
-                ScrollView scroller = new ScrollView(getActivity());
-                scroller.setPadding(padding, padding, padding, padding);
-                scroller.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_INSET);
-                scroller.setClipToPadding(false);
-
-                TextView msg = new TextView(getActivity());
-                msg.setMovementMethod(LinkMovementMethod.getInstance());
-                msg.setText(Html.fromHtml(Miscellany.readFromAssets("libraries.html")));
-
-                scroller.addView(msg);
-
-                AlertDialog.Builder ab = new AlertDialog.Builder(getActivity());
-                ab.setTitle(getString(R.string.open_source_libraries_pref)).setView(scroller)
-                        .setCancelable(true).create().show();
-                return true;
-
-            case "changelog":
-                AlertDialog dialog = new ChangeLog(getActivity()).getFullLogDialog();
-                dialog.setCancelable(true);
-                dialog.show();
-                return true;
-
-            default:
-                return false;
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         // register listener
         preferences.registerOnSharedPreferenceChangeListener(prefChangeListener);
+        // update server status
+        getServerStatus();
     }
 
     @Override
@@ -119,6 +101,24 @@ public class SettingsFragment extends PreferenceFragment
         super.onPause();
         // unregister listener
         preferences.unregisterOnSharedPreferenceChangeListener(prefChangeListener);
+        // cancel Retrofit calls
+        RestClient.getClientJSON().getServerStatus().cancel();
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        switch (preference.getKey()) {
+            case "open_source_libraries":
+                mCallback.showLibraries();
+                return true;
+
+            case "changelog":
+                mCallback.showChangelog();
+                return true;
+
+            default:
+                return false;
+        }
     }
 
     private void getServerStatus() {
@@ -130,12 +130,12 @@ public class SettingsFragment extends PreferenceFragment
                 Preference status = findPreference("indywidualni_server_status");
 
                 if (response.isSuccess()) {
-                    if (status != null)
+                    if (isAdded())
                         status.setSummary(String.format(getString(R.string.indywidualni_server_ok),
                                 response.body().getVersion()));
                 } else {
                     // error response, no access to resource?
-                    if (status != null)
+                    if (isAdded())
                         status.setSummary(String.format(getString(R.string.indywidualni_server_not_ok),
                                response.code()));
                             
@@ -151,7 +151,7 @@ public class SettingsFragment extends PreferenceFragment
             public void onFailure(Call<Server> call, Throwable t) {
                 Log.e(TAG, "getServerStatus: " + t.getLocalizedMessage());
                 Preference status = findPreference("indywidualni_server_status");
-                if (status != null)
+                if (isAdded())
                     status.setSummary(getString(R.string.indywidualni_server_failure));
             }
         });
