@@ -13,15 +13,16 @@ import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.activity.SongsActivity;
 import org.indywidualni.centrumfm.util.ui.SlidingTabLayout;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class SongsFragment extends TrackedFragment implements SongsActivity.IActivityToFragment {
 
     public static final String CURRENT_POSITION = "position";
 
-    @Bind(R.id.pager)
-    ViewPager viewPager;
+    @BindView(R.id.pager) ViewPager viewPager;
+    private Unbinder unbinder;
 
     private SlidingTabLayout slidingTabLayout;
 
@@ -29,7 +30,7 @@ public class SongsFragment extends TrackedFragment implements SongsActivity.IAct
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
         slidingTabLayout = ButterKnife.findById(getActivity(), R.id.tabs);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -66,11 +67,10 @@ public class SongsFragment extends TrackedFragment implements SongsActivity.IAct
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
-
         slidingTabLayout.setCustomTabColorizer(null);
         slidingTabLayout.setViewPager(null);
         slidingTabLayout = null;
+        unbinder.unbind();
     }
 
     @Override

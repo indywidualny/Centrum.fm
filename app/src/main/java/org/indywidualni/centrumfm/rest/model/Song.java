@@ -17,6 +17,7 @@ public class Song implements Parcelable, Comparable<Song> {
             return new Song[size];
         }
     };
+    
     private String id;
     private String sum;
     private String title;

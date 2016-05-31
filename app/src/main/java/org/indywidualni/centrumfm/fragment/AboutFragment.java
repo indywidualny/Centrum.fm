@@ -12,21 +12,21 @@ import android.widget.TextView;
 import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.util.Miscellany;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class AboutFragment extends Fragment {
 
-    @Bind(R.id.aboutRadio)
-    TextView aboutRadio;
-    @Bind(R.id.aboutText)
-    TextView aboutText;
+    @BindView(R.id.aboutRadio) TextView aboutRadio;
+    @BindView(R.id.aboutText) TextView aboutText;
+    private Unbinder unbinder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_about, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -41,7 +41,7 @@ public class AboutFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
 }

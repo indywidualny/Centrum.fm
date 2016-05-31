@@ -17,13 +17,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class FavouriteFragment extends TrackedFragment {
 
-    @Bind(R.id.recycler_view)
-    RecyclerViewEmptySupport mRecyclerView;
+    @BindView(R.id.recycler_view) RecyclerViewEmptySupport mRecyclerView;
+    private Unbinder unbinder;
 
     private View emptyView;
 
@@ -32,7 +33,7 @@ public class FavouriteFragment extends TrackedFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favourite, container, false);
         emptyView = view.findViewById(R.id.empty_view);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -85,7 +86,7 @@ public class FavouriteFragment extends TrackedFragment {
     public void onDestroyView() {
         super.onDestroyView();
         emptyView = null;
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
 }

@@ -18,10 +18,12 @@ import java.util.Calendar;
 import java.util.List;
 
 public abstract class AlarmHelper {
-
+  
+    private static Context context = MyApplication.getContextOfApplication();
+    
     public static final String EVENT_TITLE = "event_title";
     public static final String TIME_TO_START = "time_to_start";
-    private static Context context = MyApplication.getContextOfApplication();
+
     private static SharedPreferences preferences = PreferenceManager
             .getDefaultSharedPreferences(context);
 

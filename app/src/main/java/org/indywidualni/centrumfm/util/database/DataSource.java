@@ -22,6 +22,13 @@ import java.util.Locale;
 import java.util.Random;
 
 public class DataSource {
+  
+    private static volatile DataSource instance;
+    private SQLiteDatabase database;
+    private Random random = new Random();
+    
+    private SharedPreferences preferences = PreferenceManager
+            .getDefaultSharedPreferences(MyApplication.getContextOfApplication());
 
     private static final String[] NEWS_COLUMNS = {
             MySQLiteHelper.COLUMN_NEWS_GUID, MySQLiteHelper.COLUMN_NEWS_LINK,
@@ -29,21 +36,18 @@ public class DataSource {
             MySQLiteHelper.COLUMN_NEWS_DESCRIPTION, MySQLiteHelper.COLUMN_NEWS_CATEGORY,
             MySQLiteHelper.COLUMN_NEWS_ENCLOSURE
     };
+    
     private static final String[] SCHEDULE_COLUMNS = {
             MySQLiteHelper.COLUMN_SCHEDULE_ID, MySQLiteHelper.COLUMN_SCHEDULE_NAME,
             MySQLiteHelper.COLUMN_SCHEDULE_BAND, MySQLiteHelper.COLUMN_SCHEDULE_DAYS,
             MySQLiteHelper.COLUMN_SCHEDULE_DATE, MySQLiteHelper.COLUMN_SCHEDULE_LENGTH
     };
+    
     private static final String[] SONGS_COLUMNS = {
             MySQLiteHelper.COLUMN_SONGS_ID, MySQLiteHelper.COLUMN_SONGS_TITLE,
             MySQLiteHelper.COLUMN_SONGS_ARTIST, MySQLiteHelper.COLUMN_SONGS_DURATION
     };
-    private static volatile DataSource instance;
-    private SQLiteDatabase database;
-    private Random random = new Random();
-    private SharedPreferences preferences = PreferenceManager
-            .getDefaultSharedPreferences(MyApplication.getContextOfApplication());
-
+    
     private DataSource() {
         MySQLiteHelper dbHelper = new MySQLiteHelper();
         database = dbHelper.getWritableDatabase();

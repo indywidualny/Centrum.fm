@@ -10,15 +10,16 @@ import android.view.ViewGroup;
 
 import org.indywidualni.centrumfm.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class WeekdayFragment extends Fragment {
 
     public static final String ARG_WEEKDAY = "ARG_WEEKDAY";
 
-    @Bind(R.id.recycler_view)
-    RecyclerView mRecyclerView;
+    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
+    private Unbinder unbinder;
 
     private int mPage;
 
@@ -40,7 +41,7 @@ public class WeekdayFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_weekday, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -56,7 +57,7 @@ public class WeekdayFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
 }

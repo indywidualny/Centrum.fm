@@ -37,24 +37,34 @@ public class Schedule {
         };
         @Attribute(name = "id")
         private int id;
+        
         @Element(name = "end_date")
         private String endDate;
+        
         @Element(name = "text")
         private String name;
+        
         @Element(name = "pasmo")
         private String band;
+        
         @Element(name = "rec_type")
         private String weekdays;
+        
         @Element(name = "opis", required = false)
         private String description;
+        
         @Element(name = "event_pid")
         private String eventPid;
+        
         @Element(name = "start_date")
         private String startDate;
+        
         @Element(name = "user")
         private String user;
+        
         @Element(name = "event_length")
         private int eventLength;
+        
         private boolean favourite;
 
         public Event() {

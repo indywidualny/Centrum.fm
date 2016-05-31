@@ -21,9 +21,11 @@ public class RestClient {
 
     private static final String BASE_URL = "http://indywidualni.org";
     private static final String RSS_URL = "http://feeds.feedburner.com";
+    
     private static final Object LOCK_JSON = new Object();
     private static final Object LOCK_XML = new Object();
     private static final Object LOCK_RSS = new Object();
+    
     private static volatile ApiEndpointInterface apiInterfaceJSON;
     private static volatile ApiEndpointInterface apiInterfaceXML;
     private static volatile ApiEndpointInterface apiInterfaceRSS;

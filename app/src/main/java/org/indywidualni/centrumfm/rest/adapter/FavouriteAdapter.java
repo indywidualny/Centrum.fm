@@ -18,6 +18,7 @@ import java.util.List;
 public class FavouriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int EVENT = 0, LABEL = 1;
+    
     // The items to display in your RecyclerView
     private List<Object> items;
 

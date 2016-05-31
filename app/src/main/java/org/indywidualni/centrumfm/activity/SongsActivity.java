@@ -32,7 +32,7 @@ import org.indywidualni.centrumfm.util.Miscellany;
 import org.indywidualni.centrumfm.util.database.AsyncWrapper;
 import org.indywidualni.centrumfm.util.database.DataSource;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SongsActivity extends AppCompatActivity
@@ -41,8 +41,9 @@ public class SongsActivity extends AppCompatActivity
 
     private static final String TAG_FRAGMENT = "songs_fragment";
     public static int currentPosition;
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
+    
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    
     private IActivityToFragment songsFragmentCallback;
 
     @Override
@@ -81,7 +82,6 @@ public class SongsActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         songsFragmentCallback = null;
-        ButterKnife.unbind(this);
     }
 
     @Override

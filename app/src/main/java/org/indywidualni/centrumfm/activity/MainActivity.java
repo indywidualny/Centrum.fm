@@ -53,13 +53,14 @@ import org.indywidualni.centrumfm.rest.RestClient;
 import org.indywidualni.centrumfm.rest.model.RDS;
 import org.indywidualni.centrumfm.util.ChangeLog;
 import org.indywidualni.centrumfm.util.Connectivity;
+import org.indywidualni.centrumfm.util.Miscellany;
 import org.indywidualni.centrumfm.util.customtabs.CustomTabActivityHelper;
 import org.indywidualni.centrumfm.util.ui.MarqueeToolbar;
 import org.indywidualni.centrumfm.util.ui.ScrollAwareFabBehaviorMain;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Call;
@@ -71,53 +72,48 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         CustomTabActivityHelper.ConnectionCallback, NewsableActivity {
 
-    public static final String STREAM_URL = "http://5.201.13.191:80/live";
     private static final String TAG = MainActivity.class.getSimpleName();
+
     private static final String TAG_FRAGMENT_MAIN = "fragment_main";
     private static final String TAG_FRAGMENT_SCHEDULE = "fragment_schedule";
     private static final String TAG_FRAGMENT_FAV = "fragment_favourite";
+    
+    public static final String STREAM_URL = "http://5.201.13.191:80/live";
     private static final String SELECTED_ID = "selected_id";
-    private static final int RDS_REFRESH_INTERVAL = 30000;
     private static final String WEBSITE_URL = "http://centrum.fm";
     private static final String WEBSITE_PEOPLE = "http://centrum.fm/dyzury/";
     private static final String APP_PLAY_URL = "https://play.google.com/store/apps/details?id=" +
             "org.indywidualni.centrumfm";
-    @Bind(R.id.toolbar)
-    MarqueeToolbar toolbar;
-    @Bind(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
-    @Bind(R.id.panel_main)
-    CoordinatorLayout panelMain;
-    @Bind(R.id.sliding_layout)
-    SlidingUpPanelLayout sup;
-    @Bind(R.id.fab)
-    FloatingActionButton fab;
-    @Bind(R.id.main_drawer)
-    NavigationView mDrawer;
-    @Bind(R.id.panel_slider)
-    LinearLayout panelSlider;
-    @Bind(R.id.playerElapsed)
-    TextView playerElapsed;
-    @Bind(R.id.playerConnection)
-    TextView playerConnection;
-    @Bind(R.id.playerPauseResume)
-    ImageView playerPauseResume;
-    @Bind(R.id.playerStop)
-    ImageView playerStop;
-    // to avoid creating new Strings every second
-    String elapsed;
-    String duration;
-    long totalDuration;
+            
+    private static final int RDS_REFRESH_INTERVAL = 30000;
+            
+    @BindView(R.id.toolbar) MarqueeToolbar toolbar;
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.panel_main) CoordinatorLayout panelMain;
+    @BindView(R.id.sliding_layout) SlidingUpPanelLayout sup;
+    @BindView(R.id.fab) FloatingActionButton fab;
+    @BindView(R.id.main_drawer) NavigationView mDrawer;
+    @BindView(R.id.panel_slider) LinearLayout panelSlider;
+    @BindView(R.id.playerElapsed) TextView playerElapsed;
+    @BindView(R.id.playerConnection) TextView playerConnection;
+    @BindView(R.id.playerPauseResume) ImageView playerPauseResume;
+    @BindView(R.id.playerStop) ImageView playerStop;
+    
     private Handler rdsHandler = new Handler();
     private Handler playerHandler = new Handler();
     private SharedPreferences preferences;
     private CustomTabActivityHelper customTabActivityHelper;
     private Tracker tracker;
     private StreamService mService;
-    private boolean mBound;
     private ActionBarDrawerToggle drawerToggle;
-    @IdRes
-    private int mSelectedId;
+    private boolean mBound;
+    
+    @IdRes private int mSelectedId;
+    
+    private String elapsed;
+    private String duration;
+    private long totalDuration;
+    
     private Runnable rdsRunnable = new Runnable() {
         @Override
         public void run() {
@@ -127,6 +123,7 @@ public class MainActivity extends AppCompatActivity
             rdsHandler.postDelayed(rdsRunnable, RDS_REFRESH_INTERVAL);
         }
     };
+    
     private Runnable playerRunnable = new Runnable() {
         @Override
         public void run() {
@@ -137,9 +134,9 @@ public class MainActivity extends AppCompatActivity
                     if (totalDuration / 1000 == 0)
                         duration = "\u221e";
                     else
-                        duration = convertMillisToHuman(totalDuration);
+                        duration = Miscellany.convertMillisToHuman(totalDuration);
 
-                    elapsed = convertMillisToHuman(mService.getCurrentPosition()) + " / " + duration;
+                    elapsed = Miscellany.convertMillisToHuman(mService.getCurrentPosition()) + " / " + duration;
                     if (playerElapsed != null)
                         playerElapsed.setText(elapsed);
                     playerSetConnectionType();
@@ -162,6 +159,7 @@ public class MainActivity extends AppCompatActivity
             playerHandler.postDelayed(playerRunnable, 1000);
         }
     };
+    
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -194,13 +192,6 @@ public class MainActivity extends AppCompatActivity
             mBound = false;
         }
     };
-
-    private static String convertMillisToHuman(long total) {
-        total /= 1000;
-        int minutes = (int) (total % 3600) / 60;
-        int seconds = (int) total % 60;
-        return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -326,9 +317,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ButterKnife.unbind(this);
         customTabActivityHelper.setConnectionCallback(null);
-
         StreamService.shouldServiceStopSoon = true;
 
         if (mService != null && !mService.isPlaying())
@@ -367,7 +356,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
         drawerToggle.onConfigurationChanged(newConfig);
     }
 

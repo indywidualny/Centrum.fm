@@ -29,8 +29,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,11 +42,13 @@ public class ScheduleFragment extends TrackedFragment {
 
     private static final String DATA_PARCEL = "data_parcel";
     private static List<Schedule.Event> eventList;
-    @Bind(R.id.pager)
-    ViewPager viewPager;
-    @Bind(R.id.loading)
-    RelativeLayout loading;
+    
+    @BindView(R.id.pager) ViewPager viewPager;
+    @BindView(R.id.loading) RelativeLayout loading;
+    private Unbinder unbinder;
+        
     private SlidingTabLayout slidingTabLayout;
+    
     private Tracker tracker;
 
     public static WeekdayAdapter getAdapter(int day) {
@@ -61,7 +64,7 @@ public class ScheduleFragment extends TrackedFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
         slidingTabLayout = ButterKnife.findById(getActivity(), R.id.tabs);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -88,11 +91,10 @@ public class ScheduleFragment extends TrackedFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
-
         slidingTabLayout.setCustomTabColorizer(null);
         slidingTabLayout.setViewPager(null);
         slidingTabLayout = null;
+        unbinder.unbind();
     }
 
     private void onItemsLoadComplete() {

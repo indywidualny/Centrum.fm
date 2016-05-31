@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import butterknife.ButterKnife;
-
 public class FavouriteSongsFragment extends Fragment implements SearchView.OnQueryTextListener,
         UpdatableFragment {
 
@@ -71,7 +69,6 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
         coordinatorLayout = (CoordinatorLayout) getActivity().findViewById(R.id.coordinator_layout);
         mRecyclerView = (RecyclerViewEmptySupport) view.findViewById(R.id.recycler_view);
         emptyView = view.findViewById(R.id.empty_view);
-        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -192,14 +189,11 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
         coordinatorLayout = null;
         mRecyclerView = null;
         emptyView = null;
-        ButterKnife.unbind(this);
     }
 
     public interface IFragmentToActivity {
         void unfavouriteSong(Song song);
-
         void playSong(Song song);
-
         void shareSong(Song song);
     }
 

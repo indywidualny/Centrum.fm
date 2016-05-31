@@ -27,10 +27,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     private static PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
     private static Context mContext;
-    private SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(
-            MyApplication.getContextOfApplication());
     private List<Channel.Item> mDataset;
     private boolean shouldHide;
+
+    private SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(
+            MyApplication.getContextOfApplication());
 
     // provide a suitable constructor
     public NewsAdapter(List<Channel.Item> myDataset, Context context) {
@@ -213,11 +214,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
         public interface ViewHolderClicks {
             void onExpand(TextView caller, int position);
-
             void onPlay(TextView caller, int position);
-
             void onMore(TextView caller, int position);
-
             void onShare(TextView caller, int position);
         }
     }

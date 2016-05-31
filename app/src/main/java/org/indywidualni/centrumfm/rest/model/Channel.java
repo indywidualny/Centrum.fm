@@ -46,23 +46,32 @@ public class Channel {
         };
         @Element(name = "title", required = true)
         private String title;
+        
         @Element(name = "link", required = true)
         private String link;
+        
         @Element(name = "description", required = true)
         private String description;
+        
         @ElementList(entry = "category", inline = true, required = false)
         private List<String> categories;
+        
         @Path("enclosure")
         @Attribute(name = "url", required = false)
         private String enclosureUrl;
+        
         @Element(name = "guid", required = false)
         private String guid;
+        
         @Element(name = "pubDate", required = false)
         private String pubDate;
+        
         // it's filled manually
         private String category;
+        
         // it's filled manually
         private Date date;
+        
         // it's filled manually
         private boolean expanded;
 

@@ -7,7 +7,10 @@ import android.util.Log;
 import org.indywidualni.centrumfm.MyApplication;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
-
+  
+    private static final String DATABASE_NAME = "centrum.db";
+    private static final int DATABASE_VERSION = 2;
+    
     public static final String TABLE_NEWS = "News";
     public static final String COLUMN_NEWS_GUID = "guid";
     public static final String COLUMN_NEWS_LINK = "link";
@@ -16,6 +19,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_NEWS_DESCRIPTION = "description";
     public static final String COLUMN_NEWS_CATEGORY = "category";
     public static final String COLUMN_NEWS_ENCLOSURE = "enclosure";
+    
     public static final String TABLE_SCHEDULE = "Schedule";
     public static final String TABLE_FAVOURITE = "Favourite";
     public static final String COLUMN_SCHEDULE_ID = "id";
@@ -24,13 +28,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_SCHEDULE_DAYS = "weekdays";
     public static final String COLUMN_SCHEDULE_DATE = "start";
     public static final String COLUMN_SCHEDULE_LENGTH = "length";
+    
     public static final String TABLE_FAVOURITE_SONGS = "FavouriteSongs";
     public static final String COLUMN_SONGS_ID = "id";
     public static final String COLUMN_SONGS_TITLE = "title";
     public static final String COLUMN_SONGS_ARTIST = "artist";
     public static final String COLUMN_SONGS_DURATION = "duration";
-    private static final String DATABASE_NAME = "centrum.db";
-    private static final int DATABASE_VERSION = 2;
 
     public MySQLiteHelper() {
         super(MyApplication.getContextOfApplication(), DATABASE_NAME, null, DATABASE_VERSION);

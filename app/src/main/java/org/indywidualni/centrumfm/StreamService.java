@@ -40,9 +40,11 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     public static final String ACTION_RESUME = "action_resume";
     private static final String ACTION_NOISY = "android.media.AUDIO_BECOMING_NOISY";
     private static final int NOTIFICATION_ID = 999;
+    
     public static boolean shouldServiceStopSoon = true;
     private static String currentUrl;
     private static int reportedErrors;
+    
     private final IBinder mBinder = new LocalBinder();
     private MediaPlayer mMediaPlayer;
     private WifiManager.WifiLock wifiLock;

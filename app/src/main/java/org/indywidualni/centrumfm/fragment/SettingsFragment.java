@@ -24,8 +24,10 @@ import retrofit2.Response;
 public class SettingsFragment extends PreferenceFragment
         implements Preference.OnPreferenceClickListener {
 
-    public static final String DEFAULT_REMINDER_OFFSET = "-300000";
     private static final String TAG = SettingsFragment.class.getSimpleName();
+    
+    public static final String DEFAULT_REMINDER_OFFSET = "-300000";
+        
     private SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener;
     private SharedPreferences preferences;
     private IFragmentToActivity mCallback;
@@ -154,7 +156,6 @@ public class SettingsFragment extends PreferenceFragment
 
     public interface IFragmentToActivity {
         void showChangelog();
-
         void showLibraries();
     }
 

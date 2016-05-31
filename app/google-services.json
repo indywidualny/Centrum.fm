@@ -1,12 +1,12 @@
 {
   "project_info": {
-    "project_number": "000000000000",
+    "project_number": "XXXXXXXXXXXX",
     "project_id": "radio-centrum"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:xxxxxxxxxxxx:android:xxxxxxxxxxxxxxxx",
+        "mobilesdk_app_id": "1:XXXXXXXXXXXX:android:XXXXXXXXXXXXXXXX",
         "android_client_info": {
           "package_name": "org.indywidualni.centrumfm"
         }
@@ -14,14 +14,14 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          "current_key": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
         }
       ],
       "services": {
         "analytics_service": {
           "status": 2,
           "analytics_property": {
-            "tracking_id": "UA-xxxxxx-xx"
+            "tracking_id": "UA-XXXXXX-XX"
           }
         },
         "appinvite_service": {

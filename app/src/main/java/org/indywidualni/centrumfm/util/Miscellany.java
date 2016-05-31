@@ -34,6 +34,13 @@ public abstract class Miscellany {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
+    
+    public static String convertMillisToHuman(long total) {
+        total /= 1000;
+        int minutes = (int) (total % 3600) / 60;
+        int seconds = (int) total % 60;
+        return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+    }
 
     // get some information about the device (needed for e-mail signature)
     public static String getDeviceInfo(Activity activity) {

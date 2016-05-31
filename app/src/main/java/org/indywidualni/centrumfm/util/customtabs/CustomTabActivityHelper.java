@@ -15,6 +15,7 @@ import java.util.List;
  */
 @SuppressWarnings("javadoc, UnusedDeclaration")
 public class CustomTabActivityHelper implements ServiceConnectionCallback {
+  
     private CustomTabsSession mCustomTabsSession;
     private CustomTabsClient mClient;
     private CustomTabsServiceConnection mConnection;

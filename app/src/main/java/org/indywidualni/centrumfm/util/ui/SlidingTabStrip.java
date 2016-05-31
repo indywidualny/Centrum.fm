@@ -160,4 +160,5 @@ class SlidingTabStrip extends LinearLayout {
             mIndicatorColors = colors;
         }
     }
+    
 }

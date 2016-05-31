@@ -11,19 +11,11 @@ import android.view.MenuItem;
 import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.util.Miscellany;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ButterKnife.unbind(this);
-    }
+    @BindView(R.id.toolbar) Toolbar toolbar;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

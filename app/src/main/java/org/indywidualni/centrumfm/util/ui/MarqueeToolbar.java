@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 public class MarqueeToolbar extends Toolbar {
 
     private static final String TAG = MarqueeToolbar.class.getSimpleName();
+    
     boolean reflected = false;
     private TextView title;
 

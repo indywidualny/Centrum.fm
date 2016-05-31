@@ -26,7 +26,6 @@ import org.indywidualni.centrumfm.util.ui.RecyclerViewEmptySupport;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,6 +34,7 @@ import retrofit2.Response;
 public class SongArchiveFragment extends Fragment implements SearchView.OnQueryTextListener {
 
     private static final String TAG = SongArchiveFragment.class.getSimpleName();
+    
     private static final String FRAGMENT_TYPE = "fragment_type";
     private static final String DATA_PARCEL = "data_parcel";
 
@@ -84,7 +84,6 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         View view = inflater.inflate(R.layout.fragment_song_archive, container, false);
         mRecyclerView = (RecyclerViewEmptySupport) view.findViewById(R.id.recycler_view);
         emptyView = view.findViewById(R.id.empty_view);
-        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -225,14 +224,11 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         super.onDestroyView();
         mRecyclerView = null;
         emptyView = null;
-        ButterKnife.unbind(this);
     }
 
     public interface IFragmentToActivity {
         void favouriteSong(Song song);
-
         void playSong(Song song);
-
         void shareSong(Song song);
     }
 
