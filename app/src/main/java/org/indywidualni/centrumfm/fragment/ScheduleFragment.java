@@ -39,12 +39,13 @@ public class ScheduleFragment extends TrackedFragment {
 
     private static final String TAG = ScheduleFragment.class.getSimpleName();
 
-    @Bind(R.id.pager) ViewPager viewPager;
-    @Bind(R.id.loading) RelativeLayout loading;
-
-    private SlidingTabLayout slidingTabLayout;
-
+    private static final String DATA_PARCEL = "data_parcel";
     private static List<Schedule.Event> eventList;
+    @Bind(R.id.pager)
+    ViewPager viewPager;
+    @Bind(R.id.loading)
+    RelativeLayout loading;
+    private SlidingTabLayout slidingTabLayout;
     private Tracker tracker;
 
     public static WeekdayAdapter getAdapter(int day) {
@@ -71,7 +72,17 @@ public class ScheduleFragment extends TrackedFragment {
         // Google Analytics tracker
         tracker = ((MyApplication) getActivity().getApplication()).getDefaultTracker();
 
-        getSchedule();
+        if (savedInstanceState != null) {
+            eventList = savedInstanceState.getParcelableArrayList(DATA_PARCEL);
+            onItemsLoadComplete();
+        } else
+            getSchedule();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(DATA_PARCEL, (ArrayList<Schedule.Event>) eventList);
     }
 
     @Override
@@ -115,18 +126,6 @@ public class ScheduleFragment extends TrackedFragment {
         }
     }
 
-    private class LoadFallback extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            eventList = DataSource.getInstance().getScheduleNormal();
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void arg) {
-            onItemsLoadComplete();
-        }
-    }
-
     private void getSchedule() {
         Call<Schedule> call = RestClient.getClientXML().getSchedule();
         call.enqueue(new Callback<Schedule>() {
@@ -146,6 +145,7 @@ public class ScheduleFragment extends TrackedFragment {
                             AsyncWrapper.insertSchedule(eventList);
                             return null;
                         }
+
                         @Override
                         protected void onPostExecute(Void arg) {
                             onItemsLoadComplete();
@@ -168,6 +168,19 @@ public class ScheduleFragment extends TrackedFragment {
                 new LoadFallback().execute();
             }
         });
+    }
+
+    private class LoadFallback extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            eventList = DataSource.getInstance().getScheduleNormal();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void arg) {
+            onItemsLoadComplete();
+        }
     }
 
     private class MyFragmentPagerAdapter extends FragmentStatePagerAdapter {

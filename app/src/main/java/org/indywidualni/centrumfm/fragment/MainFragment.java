@@ -36,10 +36,12 @@ public class MainFragment extends TrackedFragment {
 
     private static final String TAG = MainFragment.class.getSimpleName();
 
-    @Bind(R.id.recycler_view) RecyclerView mRecyclerView;
-    @Bind(R.id.swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
-
-    private static List<Channel.Item> rssItems;
+    private static final String DATA_PARCEL = "data_parcel";
+    private static List<Channel.Item> rssItems = new ArrayList<>();
+    @Bind(R.id.recycler_view)
+    RecyclerView mRecyclerView;
+    @Bind(R.id.swipe_refresh)
+    SwipeRefreshLayout mSwipeRefreshLayout;
     private Tracker tracker;
 
     @Override
@@ -71,42 +73,52 @@ public class MainFragment extends TrackedFragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // set empty adapter first
-        mRecyclerView.setAdapter(new NewsAdapter(new ArrayList<Channel.Item>(), null));
+        if (savedInstanceState != null)
+            rssItems = savedInstanceState.getParcelableArrayList(DATA_PARCEL);
+
+        mRecyclerView.setAdapter(new NewsAdapter(rssItems, getActivity()));
 
         // Google Analytics tracker
         tracker = ((MyApplication) getActivity().getApplication()).getDefaultTracker();
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... arg0) {
-                // load offline data initially
-                rssItems = DataSource.getInstance().getAllNews();
-                return null;
-            }
-            @Override
-            protected void onPostExecute(Void arg) {
-                try {
-                    // set the right adapter now
-                    mRecyclerView.setAdapter(new NewsAdapter(rssItems, getActivity()));
-    
-                    // now go online and update items
-                    if (Connectivity.isConnected(getActivity())) {
-                        mSwipeRefreshLayout.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                mSwipeRefreshLayout.setRefreshing(true);
-                            }
-                        });
-                        getRSS();
-                    }
-                } catch (NullPointerException e) {
-                    // fragment was destroyed while AsyncTask was running
-                    e.printStackTrace();
+        if (savedInstanceState == null) {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... arg0) {
+                    // load offline data initially
+                    rssItems = DataSource.getInstance().getAllNews();
+                    return null;
                 }
-            }
-        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 
+                @Override
+                protected void onPostExecute(Void arg) {
+                    try {
+                        // set the right adapter now
+                        mRecyclerView.setAdapter(new NewsAdapter(rssItems, getActivity()));
+
+                        // now go online and update items
+                        if (Connectivity.isConnected(getActivity())) {
+                            mSwipeRefreshLayout.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mSwipeRefreshLayout.setRefreshing(true);
+                                }
+                            });
+                            getRSS();
+                        }
+                    } catch (NullPointerException e) {
+                        // fragment was destroyed while AsyncTask was running
+                        e.printStackTrace();
+                    }
+                }
+            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(DATA_PARCEL, (ArrayList<Channel.Item>) rssItems);
     }
 
     @Override
@@ -130,6 +142,7 @@ public class MainFragment extends TrackedFragment {
                                     .getChannel().getItems());
                             return DataSource.getInstance().getAllNews();
                         }
+
                         @Override
                         protected void onPostExecute(List<Channel.Item> result) {
                             try {

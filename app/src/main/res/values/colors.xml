@@ -9,6 +9,7 @@
 
     <color name="icon">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
+    <color name="emptyResource">#B6B6B6</color>
     <color name="background">#E5E5E5</color>
     <color name="activeTab">#FFFFFF</color>
     <color name="inactiveTab">#CCFFFFFF</color>

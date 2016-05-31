@@ -5,15 +5,20 @@
         <item
             android:id="@+id/navigation_news"
             android:icon="@drawable/ic_home_black_24dp"
-            android:title="@string/fragment_news"/>
+            android:title="@string/fragment_news" />
         <item
             android:id="@+id/navigation_schedule"
             android:icon="@drawable/ic_schedule_black_24dp"
-            android:title="@string/fragment_schedule"/>
+            android:title="@string/fragment_schedule" />
         <item
             android:id="@+id/navigation_favourite"
             android:icon="@drawable/ic_star_black_24dp"
-            android:title="@string/fragment_favourite"/>
+            android:title="@string/fragment_favourite" />
+
+        <item
+            android:id="@+id/navigation_songs"
+            android:icon="@drawable/ic_music_note_black_24dp"
+            android:title="@string/app_songs" />
         <item
             android:id="@+id/navigation_subheader"
             android:title="@string/app_drawer_second">
@@ -22,11 +27,11 @@
                     <item
                         android:id="@+id/navigation_about"
                         android:icon="@drawable/ic_info_black_24dp"
-                        android:title="@string/app_info"/>
+                        android:title="@string/app_info" />
                     <item
                         android:id="@+id/navigation_settings"
                         android:icon="@drawable/ic_settings_black_24dp"
-                        android:title="@string/app_settings"/>
+                        android:title="@string/app_settings" />
                 </group>
             </menu>
         </item>

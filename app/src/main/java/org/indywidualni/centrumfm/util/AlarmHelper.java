@@ -19,10 +19,9 @@ import java.util.List;
 
 public abstract class AlarmHelper {
 
-    private static Context context = MyApplication.getContextOfApplication();
     public static final String EVENT_TITLE = "event_title";
     public static final String TIME_TO_START = "time_to_start";
-
+    private static Context context = MyApplication.getContextOfApplication();
     private static SharedPreferences preferences = PreferenceManager
             .getDefaultSharedPreferences(context);
 
@@ -34,9 +33,9 @@ public abstract class AlarmHelper {
     public static void setAlarms(Schedule.Event event) {
         int offset = Integer.parseInt(preferences.getString("reminders_mode",
                 SettingsFragment.DEFAULT_REMINDER_OFFSET));
-      
+
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        
+
         List<Integer> weekdays = getWeekdays(event);
 
         for (int i = 0; i < weekdays.size(); ++i) {
@@ -45,7 +44,7 @@ public abstract class AlarmHelper {
             PendingIntent alarmIntent = generatePendingIntent(event, weekdays.get(i));
 
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time + offset,
-                AlarmManager.INTERVAL_DAY * 7, alarmIntent);
+                    AlarmManager.INTERVAL_DAY * 7, alarmIntent);
         }
     }
 
@@ -72,7 +71,7 @@ public abstract class AlarmHelper {
             cancelAlarms(event);
         }
     }
-    
+
     private static List<Schedule.Event> obtainFavourites() {
         return DataSource.getInstance().getScheduleFavourite();
     }
@@ -96,7 +95,7 @@ public abstract class AlarmHelper {
 
         return weekdays;
     }
-    
+
     private static long generateEventDateMillis(String time, int weekday) {
         String[] timeSplit = time.split(":");
         Calendar date = Calendar.getInstance();

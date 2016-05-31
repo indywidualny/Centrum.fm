@@ -14,6 +14,11 @@ public class CustomLinkMovementMethod extends LinkMovementMethod {
     private static CustomLinkMovementMethod linkMovementMethod = new CustomLinkMovementMethod();
     private static Context context;
 
+    public static android.text.method.MovementMethod getInstance(Context handlingActivity) {
+        context = handlingActivity;
+        return linkMovementMethod;
+    }
+
     public boolean onTouchEvent(android.widget.TextView widget, android.text.Spannable buffer,
                                 android.view.MotionEvent event) {
         int action = event.getAction();
@@ -48,11 +53,6 @@ public class CustomLinkMovementMethod extends LinkMovementMethod {
         }
 
         return super.onTouchEvent(widget, buffer, event);
-    }
-
-    public static android.text.method.MovementMethod getInstance(Context handlingActivity) {
-        context = handlingActivity;
-        return linkMovementMethod;
     }
 
 }

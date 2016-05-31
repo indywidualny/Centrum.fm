@@ -48,9 +48,11 @@ public class IntroActivity extends AppIntro2 {
     }
 
     @Override
-    public void onNextPressed() {}
+    public void onNextPressed() {
+    }
 
     @Override
-    public void onSlideChanged() {}
+    public void onSlideChanged() {
+    }
 
 }

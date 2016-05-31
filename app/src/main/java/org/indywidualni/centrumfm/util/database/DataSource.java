@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import org.indywidualni.centrumfm.MyApplication;
 import org.indywidualni.centrumfm.rest.model.Channel;
 import org.indywidualni.centrumfm.rest.model.Schedule;
+import org.indywidualni.centrumfm.rest.model.Song;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -22,25 +23,26 @@ import java.util.Random;
 
 public class DataSource {
 
-    private static volatile DataSource instance;
-    private SQLiteDatabase database;
-    private Random random = new Random();
-
-    private SharedPreferences preferences = PreferenceManager
-            .getDefaultSharedPreferences(MyApplication.getContextOfApplication());
-
     private static final String[] NEWS_COLUMNS = {
             MySQLiteHelper.COLUMN_NEWS_GUID, MySQLiteHelper.COLUMN_NEWS_LINK,
             MySQLiteHelper.COLUMN_NEWS_TITLE, MySQLiteHelper.COLUMN_NEWS_DATE,
             MySQLiteHelper.COLUMN_NEWS_DESCRIPTION, MySQLiteHelper.COLUMN_NEWS_CATEGORY,
             MySQLiteHelper.COLUMN_NEWS_ENCLOSURE
     };
-
     private static final String[] SCHEDULE_COLUMNS = {
             MySQLiteHelper.COLUMN_SCHEDULE_ID, MySQLiteHelper.COLUMN_SCHEDULE_NAME,
             MySQLiteHelper.COLUMN_SCHEDULE_BAND, MySQLiteHelper.COLUMN_SCHEDULE_DAYS,
             MySQLiteHelper.COLUMN_SCHEDULE_DATE, MySQLiteHelper.COLUMN_SCHEDULE_LENGTH
     };
+    private static final String[] SONGS_COLUMNS = {
+            MySQLiteHelper.COLUMN_SONGS_ID, MySQLiteHelper.COLUMN_SONGS_TITLE,
+            MySQLiteHelper.COLUMN_SONGS_ARTIST, MySQLiteHelper.COLUMN_SONGS_DURATION
+    };
+    private static volatile DataSource instance;
+    private SQLiteDatabase database;
+    private Random random = new Random();
+    private SharedPreferences preferences = PreferenceManager
+            .getDefaultSharedPreferences(MyApplication.getContextOfApplication());
 
     private DataSource() {
         MySQLiteHelper dbHelper = new MySQLiteHelper();
@@ -205,7 +207,7 @@ public class DataSource {
     public boolean isEventFavourite(int id) {
         Cursor cursor = database.rawQuery("SELECT " + MySQLiteHelper.COLUMN_SCHEDULE_ID + " FROM " +
                 MySQLiteHelper.TABLE_FAVOURITE + " WHERE " + MySQLiteHelper.COLUMN_SCHEDULE_ID +
-                "=?", new String[] { String.valueOf(id) });
+                "=?", new String[]{String.valueOf(id)});
         boolean isFavourite = cursor.getCount() > 0;
         cursor.close();
         return isFavourite;
@@ -213,8 +215,50 @@ public class DataSource {
 
     public boolean removeFavourite(int id) {
         String whereClause = MySQLiteHelper.COLUMN_SCHEDULE_ID + "=?";
-        String[] whereArgs = new String[] { String.valueOf(id) };
+        String[] whereArgs = new String[]{String.valueOf(id)};
         return database.delete(MySQLiteHelper.TABLE_FAVOURITE, whereClause, whereArgs) > 0;
+    }
+
+    public void insertFavouriteSong(Song item) {
+        ContentValues cv = new ContentValues();
+        cv.put(MySQLiteHelper.COLUMN_SONGS_TITLE, item.getTitle());
+        cv.put(MySQLiteHelper.COLUMN_SONGS_ARTIST, item.getArtist());
+        cv.put(MySQLiteHelper.COLUMN_SONGS_DURATION, item.getDuration());
+        database.insertWithOnConflict(MySQLiteHelper.TABLE_FAVOURITE_SONGS, null, cv,
+                SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public boolean removeFavouriteSong(int id) {
+        String whereClause = MySQLiteHelper.COLUMN_SONGS_ID + "=?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        return database.delete(MySQLiteHelper.TABLE_FAVOURITE_SONGS, whereClause, whereArgs) > 0;
+    }
+
+    public List<Song> getFavouriteSongs() {
+        List<Song> songs = new ArrayList<>();
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_FAVOURITE_SONGS,
+                SONGS_COLUMNS, null, null, null, null, null);
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+
+            Song item = cursorToGetFavouriteSongs(cursor);
+            songs.add(item);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+        return songs;
+    }
+
+    private Song cursorToGetFavouriteSongs(Cursor cursor) {
+        Song item = new Song();
+        item.setDbId(cursor.getInt(cursor.getColumnIndex(MySQLiteHelper.COLUMN_SONGS_ID)));
+        item.setTitle(cursor.getString(cursor.getColumnIndex(MySQLiteHelper.COLUMN_SONGS_TITLE)));
+        item.setArtist(cursor.getString(cursor.getColumnIndex(MySQLiteHelper.COLUMN_SONGS_ARTIST)));
+        item.setDuration(cursor.getString(cursor.getColumnIndex(MySQLiteHelper
+                .COLUMN_SONGS_DURATION)));
+        return item;
     }
 
 }

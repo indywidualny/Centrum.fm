@@ -1,5 +1,7 @@
 package org.indywidualni.centrumfm.rest.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import org.simpleframework.xml.Attribute;
@@ -29,46 +31,80 @@ public class Channel {
     }
 
     @Root(name = "item", strict = false)
-    public static class Item implements Comparable<Item> {
+    public static class Item implements Comparable<Item>, Parcelable {
 
+        public static final Parcelable.Creator<Item> CREATOR = new Parcelable.Creator<Item>() {
+            @Override
+            public Item createFromParcel(Parcel source) {
+                return new Item(source);
+            }
+
+            @Override
+            public Item[] newArray(int size) {
+                return new Item[size];
+            }
+        };
         @Element(name = "title", required = true)
         private String title;
-
         @Element(name = "link", required = true)
         private String link;
-
         @Element(name = "description", required = true)
         private String description;
-
         @ElementList(entry = "category", inline = true, required = false)
         private List<String> categories;
-
         @Path("enclosure")
         @Attribute(name = "url", required = false)
         private String enclosureUrl;
-
         @Element(name = "guid", required = false)
         private String guid;
-
         @Element(name = "pubDate", required = false)
         private String pubDate;
-
         // it's filled manually
         private String category;
-
         // it's filled manually
         private Date date;
+        // it's filled manually
+        private boolean expanded;
+
+        public Item() {
+        }
+
+        protected Item(Parcel in) {
+            this.title = in.readString();
+            this.link = in.readString();
+            this.description = in.readString();
+            this.categories = in.createStringArrayList();
+            this.enclosureUrl = in.readString();
+            this.guid = in.readString();
+            this.pubDate = in.readString();
+            this.category = in.readString();
+            long tmpDate = in.readLong();
+            this.date = tmpDate == -1 ? null : new Date(tmpDate);
+            this.expanded = in.readByte() != 0;
+        }
 
         public String getTitle() {
             return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
         }
 
         public String getLink() {
             return link;
         }
 
+        public void setLink(String link) {
+            this.link = link;
+        }
+
         public String getDescription() {
             return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
         }
 
         public List<String> getCategories() {
@@ -79,52 +115,48 @@ public class Channel {
             return enclosureUrl;
         }
 
-        public String getGuid() {
-            return guid;
-        }
-
-        public String getPubDate() {
-            return pubDate;
-        }
-
-        public String getCategory() {
-            return category;
-        }
-
-        public Date getDate() {
-            return date;
-        }
-        
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public void setLink(String link) {
-            this.link = link;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
         public void setEnclosureUrl(String enclosureUrl) {
             this.enclosureUrl = enclosureUrl;
+        }
+
+        public String getGuid() {
+            return guid;
         }
 
         public void setGuid(String guid) {
             this.guid = guid;
         }
 
+        public String getPubDate() {
+            return pubDate;
+        }
+
         public void setPubDate(String pubDate) {
             this.pubDate = pubDate;
+        }
+
+        public String getCategory() {
+            return category;
         }
 
         public void setCategory(String category) {
             this.category = category;
         }
-        
+
+        public Date getDate() {
+            return date;
+        }
+
         public void setDate(Date date) {
             this.date = date;
+        }
+
+        public boolean isExpanded() {
+            return expanded;
+        }
+
+        public void setExpanded(boolean expanded) {
+            this.expanded = expanded;
         }
 
         @Override
@@ -147,6 +179,24 @@ public class Channel {
                     '}';
         }
 
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.title);
+            dest.writeString(this.link);
+            dest.writeString(this.description);
+            dest.writeStringList(this.categories);
+            dest.writeString(this.enclosureUrl);
+            dest.writeString(this.guid);
+            dest.writeString(this.pubDate);
+            dest.writeString(this.category);
+            dest.writeLong(this.date != null ? this.date.getTime() : -1);
+            dest.writeByte((byte) (this.expanded ? 1 : 0));
+        }
     }
 
 }

@@ -17,8 +17,10 @@ import butterknife.ButterKnife;
 
 public class AboutFragment extends Fragment {
 
-    @Bind(R.id.aboutRadio) TextView aboutRadio;
-    @Bind(R.id.aboutText) TextView aboutText;
+    @Bind(R.id.aboutRadio)
+    TextView aboutRadio;
+    @Bind(R.id.aboutText)
+    TextView aboutText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

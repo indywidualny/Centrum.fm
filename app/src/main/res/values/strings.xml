@@ -1,6 +1,4 @@
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="PluralsCandidate">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" tools:ignore="PluralsCandidate">
 
     <string name="app_name">Centrum.fm</string>
     <string name="toolbar_default_title">Radio Centrum 98.2 FM</string>
@@ -17,6 +15,8 @@
     <string name="news_external_low_density">więcej</string>
     <string name="news_share">udostępnij</string>
     <string name="app_drawer_second">Aplikacja</string>
+    <string name="app_songs">Piosenki</string>
+    <string name="app_songs_full">Archiwum utworów</string>
     <string name="app_info">Informacje</string>
     <string name="app_settings">Ustawienia</string>
     <string name="error_response">Błąd</string>
@@ -25,6 +25,7 @@
     <string name="drawer_open">Otwórz</string>
     <string name="drawer_close">Zamknij</string>
     <string name="fav_list_empty">Pustka i smutek</string>
+    <string name="songs_list_empty">Brak danych</string>
     <string name="me_google_play">Google Play</string>
     <string name="email_author">Napisz do autora</string>
     <string name="choose_email_client">Wybierz klienta poczty</string>
@@ -64,6 +65,17 @@
     <string name="action_play_stop">Odtwarzaj / zatrzymaj</string>
     <string name="widget_broadcast_receiver">Widget Broadcast Receiver</string>
     <string name="widget_quick_play_label">Szybki start</string>
+    <string name="played_n_times">Na antenie %1$s razy</string>
+    <string name="search">Szukaj</string>
+    <string name="songs_info">Informacje</string>
+    <string name="action_favourite_song">Dodaj do ulubionych</string>
+    <string name="action_unfavourite_song">Usuń z ulubionych</string>
+    <string name="action_play_song">Posłuchaj online</string>
+    <string name="action_share_song">Udostępnij</string>
+    <string name="action_play_song_error">Brak aplikacji do strumieniowania muzyki</string>
+    <string name="action_share_song_title">Utwór z anteny Radia Centrum</string>
+    <string name="unfaved">Usunięto z ulubionych</string>
+    <string name="revert">Cofnij</string>
 
     <!-- Change log strings -->
     <string name="changelog_full_title">Dziennik zmian</string>
@@ -101,5 +113,11 @@
         <item>Kwadrans przed</item>
         <item>Pół godziny przed</item>
     </string-array>
+
+    <array name="archives">
+        <item>Historia</item>
+        <item>Ulubione</item>
+        <item>TOP 100</item>
+    </array>
 
 </resources>

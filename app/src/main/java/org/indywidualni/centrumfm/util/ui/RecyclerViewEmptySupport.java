@@ -36,7 +36,6 @@ public class RecyclerViewEmptySupport extends RecyclerView {
     /**
      * Designate a view as the empty view. When the backing adapter has no
      * data this view will be made visible and the recycler view hidden.
-     *
      */
     public void setEmptyView(View emptyView) {
         mEmptyView = emptyView;

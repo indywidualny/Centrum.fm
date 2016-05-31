@@ -1,65 +1,63 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:background="@color/background"
-    tools:context=".fragment.AboutFragment"
-    tools:showIn="@layout/activity_about"
+    android:orientation="vertical"
+    android:paddingEnd="2dp"
     android:paddingLeft="2dp"
-    android:paddingStart="2dp"
     android:paddingRight="2dp"
-    android:paddingEnd="2dp">
+    android:paddingStart="2dp"
+    tools:context=".fragment.AboutFragment"
+    tools:showIn="@layout/activity_about">
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardView1"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_margin="5dp"
         card_view:cardCornerRadius="4dp"
         card_view:contentPadding="10dp">
 
         <TextView
             android:id="@+id/aboutRadio"
-            android:lineSpacingExtra="4sp"
-            android:textSize="15sp"
-            android:textColor="@color/colorTextPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            />
+            android:lineSpacingExtra="4sp"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="15sp" />
 
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardView2"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginEnd="5dp"
+        android:layout_gravity="center"
         android:layout_marginBottom="-5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
         card_view:cardCornerRadius="4dp">
 
         <ScrollView
-            android:scrollbars="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbarStyle="outsideOverlay"
-            android:padding="10dp"
             android:layout_marginBottom="4dp"
-            android:clipToPadding="false">
+            android:clipToPadding="false"
+            android:padding="10dp"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical">
 
             <TextView
                 android:id="@+id/aboutText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
-                />
+                android:layout_marginBottom="1dp" />
 
         </ScrollView>
 

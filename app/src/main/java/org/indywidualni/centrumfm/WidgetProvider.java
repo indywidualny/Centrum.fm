@@ -12,15 +12,6 @@ public class WidgetProvider extends AppWidgetProvider {
 
     public static final String QUICK_PLAY = "org.indywidualni.centrumfm.intent.action.QUICK_PLAY";
 
-    @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_quick_play);
-        views.setOnClickPendingIntent(R.id.button, buildButtonPendingIntent(context));
-
-        pushWidgetUpdate(context, views);
-    }
-
     public static PendingIntent buildButtonPendingIntent(Context context) {
         Intent intent = new Intent();
         intent.setAction(QUICK_PLAY);
@@ -31,6 +22,15 @@ public class WidgetProvider extends AppWidgetProvider {
         ComponentName myWidget = new ComponentName(context, WidgetProvider.class);
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
         manager.updateAppWidget(myWidget, remoteViews);
+    }
+
+    @Override
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_quick_play);
+        views.setOnClickPendingIntent(R.id.button, buildButtonPendingIntent(context));
+
+        pushWidgetUpdate(context, views);
     }
 
 }

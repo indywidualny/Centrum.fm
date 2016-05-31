@@ -17,10 +17,9 @@ import java.util.List;
 
 public class FavouriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private final int EVENT = 0, LABEL = 1;
     // The items to display in your RecyclerView
     private List<Object> items;
-
-    private final int EVENT = 0, LABEL = 1;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public FavouriteAdapter(List<Object> items) {
@@ -72,6 +71,33 @@ public class FavouriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
+    private void configureViewHolder1(WeekdayAdapter.ViewHolder vh1, int position) {
+        Schedule.Event event = (Schedule.Event) items.get(position);
+        vh1.getStartTime().setText(event.getStartDate().replaceFirst(".{3}$", ""));
+        vh1.getTitle().setText(event.getName());
+        vh1.getBelowTitle().setText(PrettyLength.get(event.getEventLength() / 3600));
+        vh1.getFavourite().setImageResource(R.drawable.ic_favorite_black_24dp);
+    }
+
+    private void configureViewHolder2(LabelViewHolder vh2, int position) {
+        vh2.getLabel().setText((String) items.get(position));
+    }
+
+    public static class LabelViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView label;
+
+        public LabelViewHolder(View itemView) {
+            super(itemView);
+            label = (TextView) itemView.findViewById(R.id.label);
+        }
+
+        public TextView getLabel() {
+            return label;
+        }
+
+    }
+
     private class ViewClicks implements WeekdayAdapter.ViewHolder.IViewHolderClicks {
         public void onFavourite(ImageView caller, int position) {
             // remove from a database
@@ -100,33 +126,6 @@ public class FavouriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             // notify the adapter and delete an event from a database
             notifyDataSetChanged();
         }
-    }
-
-    private void configureViewHolder1(WeekdayAdapter.ViewHolder vh1, int position) {
-        Schedule.Event event = (Schedule.Event) items.get(position);
-        vh1.getStartTime().setText(event.getStartDate().replaceFirst(".{3}$", ""));
-        vh1.getTitle().setText(event.getName());
-        vh1.getBelowTitle().setText(PrettyLength.get(event.getEventLength() / 3600));
-        vh1.getFavourite().setImageResource(R.drawable.ic_favorite_black_24dp);
-    }
-
-    private void configureViewHolder2(LabelViewHolder vh2, int position) {
-        vh2.getLabel().setText((String) items.get(position));
-    }
-
-    public static class LabelViewHolder extends RecyclerView.ViewHolder {
-        
-        private TextView label;
-
-        public TextView getLabel() {
-            return label;
-        }
-
-        public LabelViewHolder(View itemView) {
-            super(itemView);
-            label = (TextView) itemView.findViewById(R.id.label);
-        }
-        
     }
 
 }

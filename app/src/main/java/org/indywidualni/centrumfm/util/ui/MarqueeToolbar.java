@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 public class MarqueeToolbar extends Toolbar {
 
     private static final String TAG = MarqueeToolbar.class.getSimpleName();
+    boolean reflected = false;
     private TextView title;
 
     public MarqueeToolbar(Context context) {
@@ -44,7 +45,6 @@ public class MarqueeToolbar extends Toolbar {
         selectTitle();
     }
 
-    boolean reflected = false;
     private boolean reflectTitle() {
         try {
             Field field = Toolbar.class.getDeclaredField("mTitleTextView");
@@ -69,5 +69,5 @@ public class MarqueeToolbar extends Toolbar {
         if (title != null)
             title.setSelected(true);
     }
-    
+
 }

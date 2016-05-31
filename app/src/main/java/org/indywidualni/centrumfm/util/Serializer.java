@@ -16,9 +16,10 @@ public abstract class Serializer {
 
     /**
      * Serialize serializable object to a file
-     * @param source the given object
+     *
+     * @param source   the given object
      * @param filename filename (without .ser)
-     * @param <T> type of the given object
+     * @param <T>      type of the given object
      */
     public static <T> void serialize(T source, String filename) {
         FileOutputStream fos;
@@ -46,9 +47,10 @@ public abstract class Serializer {
 
     /**
      * Deserialize serialized object
-     * @param target an object for a result
+     *
+     * @param target   an object for a result
      * @param filename filename (without .ser)
-     * @param <T> type of a result
+     * @param <T>      type of a result
      * @return deserialized object (saved into target)
      */
     @SuppressWarnings("unchecked")
@@ -65,9 +67,9 @@ public abstract class Serializer {
             target = (T) ois.readObject();
             ois.close();
             fis.close();
-        } catch(IOException ioe) {
+        } catch (IOException ioe) {
             ioe.printStackTrace();
-        } catch(ClassNotFoundException c) {
+        } catch (ClassNotFoundException c) {
             Log.e("Serializer", "Class not found");
             c.printStackTrace();
         } finally {

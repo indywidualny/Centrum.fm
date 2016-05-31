@@ -2,6 +2,7 @@ package org.indywidualni.centrumfm.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,11 +18,14 @@ import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -51,8 +55,7 @@ import org.indywidualni.centrumfm.util.ChangeLog;
 import org.indywidualni.centrumfm.util.Connectivity;
 import org.indywidualni.centrumfm.util.customtabs.CustomTabActivityHelper;
 import org.indywidualni.centrumfm.util.ui.MarqueeToolbar;
-import org.indywidualni.centrumfm.util.ui.ScrollAwareFABBehavior;
-import org.indywidualni.centrumfm.util.ui.SlidingTabLayout;
+import org.indywidualni.centrumfm.util.ui.ScrollAwareFabBehaviorMain;
 
 import java.util.List;
 
@@ -66,16 +69,45 @@ import retrofit2.Response;
 @SuppressWarnings("UnusedDeclaration")
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        CustomTabActivityHelper.ConnectionCallback {
+        CustomTabActivityHelper.ConnectionCallback, NewsableActivity {
 
+    public static final String STREAM_URL = "http://5.201.13.191:80/live";
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG_FRAGMENT_MAIN = "fragment_main";
+    private static final String TAG_FRAGMENT_SCHEDULE = "fragment_schedule";
+    private static final String TAG_FRAGMENT_FAV = "fragment_favourite";
+    private static final String SELECTED_ID = "selected_id";
+    private static final int RDS_REFRESH_INTERVAL = 30000;
     private static final String WEBSITE_URL = "http://centrum.fm";
     private static final String WEBSITE_PEOPLE = "http://centrum.fm/dyzury/";
-    public static final String STREAM_URL = "http://5.201.13.191:80/live";
     private static final String APP_PLAY_URL = "https://play.google.com/store/apps/details?id=" +
             "org.indywidualni.centrumfm";
-    private static final int RDS_REFRESH_INTERVAL = 30000;
-
+    @Bind(R.id.toolbar)
+    MarqueeToolbar toolbar;
+    @Bind(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+    @Bind(R.id.panel_main)
+    CoordinatorLayout panelMain;
+    @Bind(R.id.sliding_layout)
+    SlidingUpPanelLayout sup;
+    @Bind(R.id.fab)
+    FloatingActionButton fab;
+    @Bind(R.id.main_drawer)
+    NavigationView mDrawer;
+    @Bind(R.id.panel_slider)
+    LinearLayout panelSlider;
+    @Bind(R.id.playerElapsed)
+    TextView playerElapsed;
+    @Bind(R.id.playerConnection)
+    TextView playerConnection;
+    @Bind(R.id.playerPauseResume)
+    ImageView playerPauseResume;
+    @Bind(R.id.playerStop)
+    ImageView playerStop;
+    // to avoid creating new Strings every second
+    String elapsed;
+    String duration;
+    long totalDuration;
     private Handler rdsHandler = new Handler();
     private Handler playerHandler = new Handler();
     private SharedPreferences preferences;
@@ -83,29 +115,98 @@ public class MainActivity extends AppCompatActivity
     private Tracker tracker;
     private StreamService mService;
     private boolean mBound;
-
-    @Bind(R.id.toolbar) MarqueeToolbar toolbar;
-    @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-    @Bind(R.id.panel_main) CoordinatorLayout panelMain;
-    @Bind(R.id.sliding_layout) SlidingUpPanelLayout sup;
-    @Bind(R.id.fab) FloatingActionButton fab;
-    @Bind(R.id.main_drawer) NavigationView mDrawer;
-    @Bind(R.id.panel_slider) LinearLayout panelSlider;
-    @Bind(R.id.tabs) SlidingTabLayout slidingTabLayout;
-
-    @Bind(R.id.playerElapsed) TextView playerElapsed;
-    @Bind(R.id.playerConnection) TextView playerConnection;
-    @Bind(R.id.playerPauseResume) ImageView playerPauseResume;
-    @Bind(R.id.playerStop) ImageView playerStop;
-
     private ActionBarDrawerToggle drawerToggle;
-    @IdRes private int mSelectedId;
+    @IdRes
+    private int mSelectedId;
+    private Runnable rdsRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // Do something here on the main thread
+            getRDS();
+            // Repeat this the same runnable code block again another 30 seconds
+            rdsHandler.postDelayed(rdsRunnable, RDS_REFRESH_INTERVAL);
+        }
+    };
+    private Runnable playerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // Do something here on the main thread
+            if (mBound) {
+                if (mService.isPlaying()) {
+                    totalDuration = mService.getDuration();
+                    if (totalDuration / 1000 == 0)
+                        duration = "\u221e";
+                    else
+                        duration = convertMillisToHuman(totalDuration);
+
+                    elapsed = convertMillisToHuman(mService.getCurrentPosition()) + " / " + duration;
+                    if (playerElapsed != null)
+                        playerElapsed.setText(elapsed);
+                    playerSetConnectionType();
+                } else {
+                    if (mService.isMediaPlayerNull()) {
+                        stopPlayerUpdater();
+                        if (sup != null)
+                            sup.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                        return;
+                    }
+                    if (playerElapsed != null)
+                        playerElapsed.setText(getString(R.string.preparing_playback));
+                }
+            } else {
+                stopPlayerUpdater();
+                return;
+            }
+
+            // Repeat this the same runnable code block again another 1 second
+            playerHandler.postDelayed(playerRunnable, 1000);
+        }
+    };
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            Log.d("ServiceConnection", "connected");
+            StreamService.LocalBinder binder = (StreamService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+
+            // when the service is bound there is no need to display a notification (foreground)
+            mService.foregroundStop();
+
+            if (mService.isPlaying()) {
+                fab.hide();
+                sup.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                panelSlider.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        panelMain.setPadding(0, 0, 0, panelSlider.getHeight());
+                        playerSetConnectionType();
+                        startPlayerUpdater();
+                    }
+                });
+            } else
+                sup.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            Log.d("ServiceConnection", "disconnected");
+            mBound = false;
+        }
+    };
+
+    private static String convertMillisToHuman(long total) {
+        total /= 1000;
+        int minutes = (int) (total % 3600) / 60;
+        int seconds = (int) total % 60;
+        return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Google Analytics tracker
+        // Google Analytics tracker, the sooner the better to track exceptions
         tracker = ((MyApplication) getApplication()).getDefaultTracker();
 
         setContentView(R.layout.activity_main);
@@ -125,8 +226,7 @@ public class MainActivity extends AppCompatActivity
 
         // set the first item as selected by default
         //noinspection ResourceType
-        mSelectedId = savedInstanceState == null ? R.id.navigation_news : savedInstanceState
-                .getInt("SELECTED_ID");
+        mSelectedId = savedInstanceState == null ? R.id.navigation_news : savedInstanceState.getInt(SELECTED_ID);
         itemSelection(mSelectedId);
         mDrawer.setCheckedItem(mSelectedId);
 
@@ -143,18 +243,15 @@ public class MainActivity extends AppCompatActivity
                     public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState
                             previousState, SlidingUpPanelLayout.PanelState newState) {
                         if (newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
-                            ScrollAwareFABBehavior.setDisableBehaviourPermanently(true);
+                            ScrollAwareFabBehaviorMain.setDisableBehaviourPermanently(true);
                             fab.hide();
-
                             playerSetConnectionType();
                             startPlayerUpdater();
                         } else if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-                            ScrollAwareFABBehavior.setDisableBehaviourPermanently(false);
+                            ScrollAwareFabBehaviorMain.setDisableBehaviourPermanently(false);
                             fab.show();
-
                             if (mBound)
                                 mService.stopPlayer();
-
                             stopPlayerUpdater();
                         }
                     }
@@ -172,9 +269,8 @@ public class MainActivity extends AppCompatActivity
         StreamService.shouldServiceStopSoon = false;
 
         // show changelog once for a version
-        ChangeLog cl = new ChangeLog(this);
-        if (cl.isFirstRun())
-            cl.getLogDialog().show();
+        if (new ChangeLog(this).isFirstRun())
+            showChangelog();
     }
 
     @Override
@@ -200,14 +296,6 @@ public class MainActivity extends AppCompatActivity
 
         // schedule RDS updates
         rdsHandler.post(rdsRunnable);
-
-        // schedule player updates
-        if (mBound) {
-            if (mService.isPlaying())
-                startPlayerUpdater();
-            else
-                mService.stopPlayer();
-        }
     }
 
     @Override
@@ -281,47 +369,43 @@ public class MainActivity extends AppCompatActivity
         super.onConfigurationChanged(newConfig);
 
         drawerToggle.onConfigurationChanged(newConfig);
-
-        if (sup.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED)
-            panelMain.setPadding(0, 0, 0, panelSlider.getHeight());
-        else
-            panelMain.setPadding(0, 0, 0, 0);
     }
 
     private void itemSelection(int mSelectedId) {
+        FragmentManager fm = getSupportFragmentManager();
+        MainFragment main = (MainFragment) fm.findFragmentByTag(TAG_FRAGMENT_MAIN);
+        ScheduleFragment schedule = (ScheduleFragment) fm.findFragmentByTag(TAG_FRAGMENT_SCHEDULE);
+        FavouriteFragment favourites = (FavouriteFragment) fm.findFragmentByTag(TAG_FRAGMENT_FAV);
+
         switch (mSelectedId) {
             case R.id.navigation_news:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment,
-                        new MainFragment()).commit();
-                slidingTabLayout.setVisibility(View.GONE);
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-                restoreFab();
+                if (main == null)
+                    main = new MainFragment();
+                fm.beginTransaction().replace(R.id.fragment, main, TAG_FRAGMENT_MAIN).commit();
                 break;
             case R.id.navigation_schedule:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment,
-                        new ScheduleFragment()).commit();
-                slidingTabLayout.setVisibility(View.VISIBLE);
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-                restoreFab();
+                if (schedule == null)
+                    schedule = new ScheduleFragment();
+                fm.beginTransaction().replace(R.id.fragment, schedule, TAG_FRAGMENT_SCHEDULE).commit();
                 break;
             case R.id.navigation_favourite:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment,
-                        new FavouriteFragment()).commit();
-                slidingTabLayout.setVisibility(View.GONE);
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-                restoreFab();
+                if (favourites == null)
+                    favourites = new FavouriteFragment();
+                fm.beginTransaction().replace(R.id.fragment, favourites, TAG_FRAGMENT_FAV).commit();
+                break;
+            case R.id.navigation_songs:
+                startActivity(new Intent(this, SongsActivity.class));
                 break;
             case R.id.navigation_about:
                 startActivity(new Intent(this, AboutActivity.class));
-                slidingTabLayout.setVisibility(View.GONE);
-                mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
             case R.id.navigation_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
-                slidingTabLayout.setVisibility(View.GONE);
-                mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
         }
+
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        restoreFab();
     }
 
     @Override
@@ -335,8 +419,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
-        //save selected item so it will remains same even after orientation change
-        outState.putInt("SELECTED_ID", mSelectedId);
+        // save selected item so it will remains same even after orientation change
+        outState.putInt(SELECTED_ID, mSelectedId);
     }
 
     private void getRDS() {
@@ -356,7 +440,7 @@ public class MainActivity extends AppCompatActivity
                     }
 
                     tracker.send(new HitBuilders.EventBuilder()
-                    .setCategory("Error response")
+                            .setCategory("Error response")
                             .setAction("Get RDS")
                             .setLabel("error " + response.code())
                             .build());
@@ -374,7 +458,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void updateTitle(List<RDS> items){
+    private void updateTitle(List<RDS> items) {
         if (toolbar == null)
             return;
 
@@ -392,6 +476,7 @@ public class MainActivity extends AppCompatActivity
             toolbar.setSubtitle(null);
     }
 
+    @Override
     public void openCustomTab(String pageUrl) {
         tracker.send(new HitBuilders.EventBuilder()
                 .setCategory("Open Custom Tab")
@@ -415,6 +500,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @TargetApi(21)
+    @Override
     public void shareTextUrl(String url, String description) {
         tracker.send(new HitBuilders.EventBuilder()
                 .setCategory("Share")
@@ -438,6 +524,7 @@ public class MainActivity extends AppCompatActivity
         startActivity(Intent.createChooser(share, getString(R.string.action_share)));
     }
 
+    @Override
     public void playEnclosure(String url) {
         if (url == null)
             return;
@@ -532,93 +619,6 @@ public class MainActivity extends AppCompatActivity
             getApplicationContext().unbindService(mConnection);
     }
 
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            Log.d("ServiceConnection", "connected");
-            StreamService.LocalBinder binder = (StreamService.LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
-
-            // when the service is bound there is no need to display a notification (foreground)
-            mService.foregroundStop();
-
-            if (mService.isPlaying()) {
-                sup.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-                panelSlider.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        panelMain.setPadding(0, 0, 0, panelSlider.getHeight());
-                    }
-                });
-            } else
-                sup.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-            Log.d("ServiceConnection", "disconnected");
-            mBound = false;
-        }
-    };
-
-    private Runnable rdsRunnable = new Runnable() {
-        @Override
-        public void run() {
-            // Do something here on the main thread
-            getRDS();
-            // Repeat this the same runnable code block again another 30 seconds
-            rdsHandler.postDelayed(rdsRunnable, RDS_REFRESH_INTERVAL);
-        }
-    };
-
-    // to avoid creating new Strings every second
-    String elapsed;
-    String duration;
-    long totalDuration;
-
-    private static String convertMillisToHuman(long total) {
-        total /= 1000;
-        int minutes = (int) (total % 3600) / 60;
-        int seconds = (int) total % 60;
-        return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
-    }
-
-    private Runnable playerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            // Do something here on the main thread
-            if (mBound) {
-                if (mService.isPlaying()) {
-                    totalDuration = mService.getDuration();
-                    if (totalDuration / 1000 == 0)
-                        duration = "\u221e";
-                    else
-                        duration = convertMillisToHuman(totalDuration);
-
-                    elapsed = convertMillisToHuman(mService.getCurrentPosition()) + " / " + duration;
-                    if (playerElapsed != null)
-                        playerElapsed.setText(elapsed);
-                    playerSetConnectionType();
-                } else {
-                    if (mService.isMediaPlayerNull()) {
-                        stopPlayerUpdater();
-                        if (sup != null)
-                            sup.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-                        return;
-                    }
-                    if (playerElapsed != null)
-                        playerElapsed.setText(getString(R.string.preparing_playback));
-                }
-            } else {
-                stopPlayerUpdater();
-                return;
-            }
-
-            // Repeat this the same runnable code block again another 1 second
-            playerHandler.postDelayed(playerRunnable, 1000);
-        }
-    };
-
     private void startPlayerUpdater() {
         playerHandler.removeCallbacks(playerRunnable);
         playerHandler.postDelayed(playerRunnable, 1000);
@@ -636,6 +636,24 @@ public class MainActivity extends AppCompatActivity
                 playerConnection.setText(getString(R.string.mobile_connection));
             else
                 playerConnection.setText(getString(R.string.wifi_connection));
+        }
+    }
+
+    public void showChangelog() {
+        DialogFragment newFragment = ChangelogDialogFragment.newInstance();
+        newFragment.setCancelable(true);
+        newFragment.show(getSupportFragmentManager(), "changelog_new_version");
+    }
+
+    public static class ChangelogDialogFragment extends DialogFragment {
+        public static ChangelogDialogFragment newInstance() {
+            return new ChangelogDialogFragment();
+        }
+
+        @Override
+        @NonNull
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new ChangeLog(getActivity()).getLogDialog();
         }
     }
 

@@ -3,6 +3,7 @@ package org.indywidualni.centrumfm.util.database;
 import android.os.AsyncTask;
 
 import org.indywidualni.centrumfm.rest.model.Schedule;
+import org.indywidualni.centrumfm.rest.model.Song;
 import org.indywidualni.centrumfm.util.AlarmHelper;
 
 import java.util.List;
@@ -38,6 +39,16 @@ public abstract class AsyncWrapper {
                 DataSource.getInstance().insertFavourite(event);
                 if (AlarmHelper.isEnabled())
                     AlarmHelper.setAlarms(event);
+                return null;
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    public static void removeFavouriteSong(final Song song) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... arg0) {
+                DataSource.getInstance().removeFavouriteSong(song.getDbId());
                 return null;
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

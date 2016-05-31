@@ -40,7 +40,9 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     public static final String ACTION_RESUME = "action_resume";
     private static final String ACTION_NOISY = "android.media.AUDIO_BECOMING_NOISY";
     private static final int NOTIFICATION_ID = 999;
-
+    public static boolean shouldServiceStopSoon = true;
+    private static String currentUrl;
+    private static int reportedErrors;
     private final IBinder mBinder = new LocalBinder();
     private MediaPlayer mMediaPlayer;
     private WifiManager.WifiLock wifiLock;
@@ -48,15 +50,6 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     private IntentFilter intentFilter;
     private NoisyReceiver noisyReceiver;
     private boolean isReceiverRegistered;
-    private static String currentUrl;
-    private static int reportedErrors;
-    public static boolean shouldServiceStopSoon = true;
-
-    public class LocalBinder extends Binder {
-        public StreamService getService() {
-            return StreamService.this;
-        }
-    }
 
     @Override
     public void onCreate() {
@@ -114,10 +107,10 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
             if (reportedErrors < 3) {
                 ((MyApplication) getApplication()).getDefaultTracker()
                         .send(new HitBuilders.EventBuilder()
-                        .setCategory("Playback error " + what + " " + extra)
-                        .setAction("Restart player")
-                        .setLabel("error playback")
-                        .build());
+                                .setCategory("Playback error " + what + " " + extra)
+                                .setAction("Restart player")
+                                .setLabel("error playback")
+                                .build());
                 reportedErrors++;
             }
             // reinitialize the player
@@ -378,6 +371,12 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public class LocalBinder extends Binder {
+        public StreamService getService() {
+            return StreamService.this;
+        }
     }
 
     private class NoisyReceiver extends BroadcastReceiver {

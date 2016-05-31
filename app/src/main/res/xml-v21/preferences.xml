@@ -1,65 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:title="@string/app_settings_category">
+    <PreferenceCategory android:title="@string/app_settings_category">
 
         <SwitchPreference
+            android:defaultValue="false"
             android:key="mobile_streaming"
-            android:title="@string/mobile_connection_stream_pref"
             android:summary="@string/mobile_connection_stream_pref_description"
-            android:defaultValue="false"
-            />
+            android:title="@string/mobile_connection_stream_pref" />
 
         <SwitchPreference
-            android:key="show_all_news"
-            android:title="@string/show_all_news_pref"
-            android:summary="@string/show_all_news_pref_description"
             android:defaultValue="false"
-            />
+            android:key="show_all_news"
+            android:summary="@string/show_all_news_pref_description"
+            android:title="@string/show_all_news_pref" />
 
         <ListPreference
-            android:key="news_keep_max"
-            android:title="@string/number_news_keep_pref"
+            android:defaultValue="10"
             android:entries="@array/newsPrefTitles"
             android:entryValues="@array/newsPrefValues"
-            android:defaultValue="10"
-            />
+            android:key="news_keep_max"
+            android:title="@string/number_news_keep_pref" />
 
         <ListPreference
-            android:key="reminders_mode"
-            android:title="@string/fav_notifications_pref"
+            android:defaultValue="-300000"
             android:entries="@array/reminderPrefTitles"
             android:entryValues="@array/reminderPrefValues"
-            android:defaultValue="-300000"
-            />
+            android:key="reminders_mode"
+            android:title="@string/fav_notifications_pref" />
 
     </PreferenceCategory>
 
 
-    <PreferenceCategory
-        android:title="@string/server_status_category">
+    <PreferenceCategory android:title="@string/server_status_category">
 
         <Preference
             android:key="indywidualni_server_status"
-            android:title="@string/indywidualni_server_pref"
             android:selectable="false"
-            />
+            android:title="@string/indywidualni_server_pref" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/nerd_category">
+    <PreferenceCategory android:title="@string/nerd_category">
 
         <Preference
             android:key="changelog"
-            android:title="@string/changelog_full_title"
-            />
+            android:title="@string/changelog_full_title" />
 
         <Preference
             android:key="open_source_libraries"
-            android:title="@string/open_source_libraries_pref"
-            />
+            android:title="@string/open_source_libraries_pref" />
 
     </PreferenceCategory>
 

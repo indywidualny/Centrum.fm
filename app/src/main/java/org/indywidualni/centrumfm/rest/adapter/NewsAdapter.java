@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import org.indywidualni.centrumfm.MyApplication;
 import org.indywidualni.centrumfm.R;
-import org.indywidualni.centrumfm.activity.MainActivity;
+import org.indywidualni.centrumfm.activity.NewsableActivity;
 import org.indywidualni.centrumfm.rest.model.Channel;
 import org.indywidualni.centrumfm.util.ui.CustomLinkMovementMethod;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -26,16 +26,117 @@ import java.util.Locale;
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     private static PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+    private static Context mContext;
     private SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(
             MyApplication.getContextOfApplication());
-
     private List<Channel.Item> mDataset;
-    private static Context mContext;
     private boolean shouldHide;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    // provide a suitable constructor
+    public NewsAdapter(List<Channel.Item> myDataset, Context context) {
+        mDataset = myDataset;
+        mContext = context;
+    }
 
-        public ViewHolderClicks mListener;
+    // create new views (invoked by the layout manager)
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        final View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_news,
+                viewGroup, false);
+
+        return new ViewHolder(v, new ViewHolder.ViewHolderClicks() {
+            public void onExpand(TextView caller, int position) {
+                // don't continue when all the news should be expanded
+                if (preferences.getBoolean("show_all_news", false))
+                    return;
+
+                final RelativeLayout expandable = (RelativeLayout) v.findViewById(R.id.expandable);
+                if (!expandable.isShown()) {
+                    expandable.setVisibility(View.VISIBLE);
+                    expandable.setAlpha(0.0f);
+                    expandable.animate().alpha(1.0f);
+                    mDataset.get(position).setExpanded(true);
+                } else {
+                    expandable.animate().alpha(0.0f);
+                    shouldHide = true;
+                    mDataset.get(position).setExpanded(false);
+                }
+                expandable.animate().setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        if (shouldHide) {
+                            expandable.setVisibility(View.GONE);
+                            shouldHide = false;
+                        }
+                    }
+                });
+            }
+
+            public void onPlay(TextView caller, int position) {
+                if (mContext instanceof NewsableActivity) {
+                    ((NewsableActivity) mContext).playEnclosure(mDataset.get(position)
+                            .getEnclosureUrl());
+                }
+            }
+
+            public void onMore(TextView caller, int position) {
+                if (mContext instanceof NewsableActivity) {
+                    ((NewsableActivity) mContext).openCustomTab(mDataset.get(position).getLink());
+                }
+            }
+
+            public void onShare(TextView caller, int position) {
+                if (mContext instanceof NewsableActivity) {
+                    ((NewsableActivity) mContext).shareTextUrl(mDataset.get(position).getLink(),
+                            mDataset.get(position).getTitle());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+        // get element from a dataset at this position and replace the contents of the view
+        viewHolder.getTitle().setText(mDataset.get(position).getTitle());
+        viewHolder.getTimeAgo().setText(prettyTime.format(mDataset.get(position).getDate()));
+        viewHolder.getCategory().setText(mDataset.get(position).getCategory());
+
+        viewHolder.getDescription().setText(Html.fromHtml(mDataset.get(position).getDescription()
+                .replace("<strong>", "").replace("</strong>", "")
+                .replaceAll("(.)(p)( ).*?(=)(\".*?\")(>)", "").replace("<p>", "")
+                .replace("</p>", "<br /><br />").replaceFirst("&#187;.*", "")
+                .replaceFirst("Czytaj dalej.*", "").trim()));
+
+        // disable play button when there is nothing to play
+        if (mDataset.get(position).getEnclosureUrl() == null) {
+            viewHolder.getPlay().setEnabled(false);
+            viewHolder.getPlay().setAlpha(0.4f);
+        } else {
+            viewHolder.getPlay().setEnabled(true);
+            viewHolder.getPlay().setAlpha(1);
+        }
+
+        // don't continue when all the news should be expanded
+        if (preferences.getBoolean("show_all_news", false)) {
+            viewHolder.getExpandable().setVisibility(View.VISIBLE);
+            return;
+        }
+
+        // expand items (the first one and recently expanded ones)
+        if (position == 0 || mDataset.get(position).isExpanded())
+            viewHolder.getExpandable().setVisibility(View.VISIBLE);
+        else
+            viewHolder.getExpandable().setVisibility(View.GONE);
+    }
+
+    // return the size of a dataset (invoked by the layout manager)
+    @Override
+    public int getItemCount() {
+        return mDataset.size();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final TextView title;
         private final TextView description;
@@ -45,6 +146,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         private final TextView readMore;
         private final TextView share;
         private final RelativeLayout expandable;
+        public ViewHolderClicks mListener;
 
         public ViewHolder(View v, ViewHolderClicks listener) {
             super(v);
@@ -71,7 +173,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.title:
-                    mListener.onExpand((TextView) v);
+                    mListener.onExpand((TextView) v, getAdapterPosition());
                     break;
                 case R.id.itemPlay:
                     mListener.onPlay((TextView) v, getAdapterPosition());
@@ -85,129 +187,39 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             }
         }
 
-        public interface ViewHolderClicks {
-            void onExpand(TextView caller);
-            void onPlay(TextView caller, int position);
-            void onMore(TextView caller, int position);
-            void onShare(TextView caller, int position);
-        }
-
         public TextView getTitle() {
             return title;
         }
+
         public TextView getDescription() {
             return description;
         }
+
         public TextView getTimeAgo() {
             return timeAgo;
         }
+
         public TextView getCategory() {
             return category;
         }
+
         public TextView getPlay() {
             return play;
         }
+
         public RelativeLayout getExpandable() {
             return expandable;
         }
-    }
 
-    // provide a suitable constructor
-    public NewsAdapter(List<Channel.Item> myDataset, Context context) {
-        mDataset = myDataset;
-        mContext = context;
-    }
+        public interface ViewHolderClicks {
+            void onExpand(TextView caller, int position);
 
-    // create new views (invoked by the layout manager)
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        final View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_news,
-                viewGroup, false);
+            void onPlay(TextView caller, int position);
 
-        return new ViewHolder(v, new ViewHolder.ViewHolderClicks() {
-            public void onExpand(TextView caller) {
-                // don't continue when all the news should be expanded
-                if (preferences.getBoolean("show_all_news", false))
-                    return;
+            void onMore(TextView caller, int position);
 
-                final RelativeLayout expandable = (RelativeLayout) v.findViewById(R.id.expandable);
-                if (!expandable.isShown()) {
-                    expandable.setVisibility(View.VISIBLE);
-                    expandable.setAlpha(0.0f);
-                    expandable.animate().alpha(1.0f);
-                } else {
-                    expandable.animate().alpha(0.0f);
-                    shouldHide = true;
-                }
-                expandable.animate().setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        if (shouldHide) {
-                            expandable.setVisibility(View.GONE);
-                            shouldHide = false;
-                        }
-                    }
-                });
-            }
-            public void onPlay(TextView caller, int position) {
-                if (mContext instanceof MainActivity) {
-                    ((MainActivity) mContext).playEnclosure(mDataset.get(position)
-                            .getEnclosureUrl());
-                }
-            }
-            public void onMore(TextView caller, int position) {
-                if (mContext instanceof MainActivity) {
-                    ((MainActivity) mContext).openCustomTab(mDataset.get(position).getLink());
-                }
-            }
-            public void onShare(TextView caller, int position) {
-                if (mContext instanceof MainActivity) {
-                    ((MainActivity) mContext).shareTextUrl(mDataset.get(position).getLink(),
-                            mDataset.get(position).getTitle());
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        // get element from a dataset at this position and replace the contents of the view
-        viewHolder.getTitle().setText(mDataset.get(position).getTitle());
-        viewHolder.getTimeAgo().setText(prettyTime.format(mDataset.get(position).getDate()));
-        viewHolder.getCategory().setText(mDataset.get(position).getCategory());
-
-        viewHolder.getDescription().setText(Html.fromHtml(mDataset.get(position).getDescription()
-                .replace("<strong>", "").replace("</strong>", "")
-                .replaceAll("(.)(p)( ).*?(=)(\".*?\")(>)", "").replace("<p>", "")
-                .replace("</p>", "<br /><br />").replaceFirst("&#187;.*", "").trim()));
-
-        // disable play button when there is nothing to play
-        if (mDataset.get(position).getEnclosureUrl() == null) {
-            viewHolder.getPlay().setEnabled(false);
-            viewHolder.getPlay().setAlpha(0.4f);
-        } else {
-            viewHolder.getPlay().setEnabled(true);
-            viewHolder.getPlay().setAlpha(1);
+            void onShare(TextView caller, int position);
         }
-
-        // don't continue when all the news should be expanded
-        if (preferences.getBoolean("show_all_news", false)) {
-            viewHolder.getExpandable().setVisibility(View.VISIBLE);
-            return;
-        }
-
-        // expand the first item
-        if (position == 0)
-            viewHolder.getExpandable().setVisibility(View.VISIBLE);
-        else
-            viewHolder.getExpandable().setVisibility(View.GONE);
-    }
-
-    // return the size of a dataset (invoked by the layout manager)
-    @Override
-    public int getItemCount() {
-        return mDataset.size();
     }
 
 }

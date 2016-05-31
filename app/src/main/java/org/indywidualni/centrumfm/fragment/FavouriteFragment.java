@@ -22,12 +22,16 @@ import butterknife.ButterKnife;
 
 public class FavouriteFragment extends TrackedFragment {
 
-    @Bind(R.id.recycler_view) RecyclerViewEmptySupport mRecyclerView;
+    @Bind(R.id.recycler_view)
+    RecyclerViewEmptySupport mRecyclerView;
+
+    private View emptyView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favourite, container, false);
+        emptyView = view.findViewById(R.id.empty_view);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -47,12 +51,13 @@ public class FavouriteFragment extends TrackedFragment {
                 Collections.sort(items);
                 return getFavouritesWithLabels(items);
             }
+
             @Override
             protected void onPostExecute(List<Object> result) {
                 try {
                     FavouriteAdapter adapter = new FavouriteAdapter(result);
                     adapter.setHasStableIds(true);
-                    mRecyclerView.setEmptyView(view.findViewById(R.id.empty_view));
+                    mRecyclerView.setEmptyView(emptyView);
                     mRecyclerView.setAdapter(adapter);
                 } catch (NullPointerException e) {
                     // fragment was destroyed while AsyncTask was running
@@ -68,7 +73,7 @@ public class FavouriteFragment extends TrackedFragment {
             items.add(getResources().getStringArray(R.array.weekdays)[i]);
             for (int j = 0; j < data.size(); ++j) {
                 if (data.get(j).getWeekdays().contains(Integer.toString(i)))
-                items.add(data.get(j));
+                    items.add(data.get(j));
             }
             if (items.get(items.size() - 1) instanceof String)
                 items.remove(items.size() - 1);
@@ -79,6 +84,7 @@ public class FavouriteFragment extends TrackedFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        emptyView = null;
         ButterKnife.unbind(this);
     }
 

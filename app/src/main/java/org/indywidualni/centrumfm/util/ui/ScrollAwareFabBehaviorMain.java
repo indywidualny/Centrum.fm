@@ -8,11 +8,11 @@ import android.util.AttributeSet;
 import android.view.View;
 
 @SuppressWarnings("UnusedDeclaration")
-public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
+public class ScrollAwareFabBehaviorMain extends FloatingActionButton.Behavior {
 
     private static boolean disableBehaviourPermanently;
 
-    public ScrollAwareFABBehavior(Context context, AttributeSet attrs) {
+    public ScrollAwareFabBehaviorMain(Context context, AttributeSet attrs) {
         super();
     }
 

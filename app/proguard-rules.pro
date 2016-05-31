@@ -37,3 +37,6 @@
 -assumenosideeffects class android.util.Log {
     public * ;
 }
+
+# android searchview
+-keep class android.support.v7.widget.SearchView { *; }

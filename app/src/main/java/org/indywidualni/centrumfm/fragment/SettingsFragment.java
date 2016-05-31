@@ -24,17 +24,12 @@ import retrofit2.Response;
 public class SettingsFragment extends PreferenceFragment
         implements Preference.OnPreferenceClickListener {
 
-    private static final String TAG = SettingsFragment.class.getSimpleName();
     public static final String DEFAULT_REMINDER_OFFSET = "-300000";
+    private static final String TAG = SettingsFragment.class.getSimpleName();
     private SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener;
     private SharedPreferences preferences;
     private IFragmentToActivity mCallback;
     private Tracker tracker;
-
-    public interface IFragmentToActivity {
-        void showChangelog();
-        void showLibraries();
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -137,8 +132,8 @@ public class SettingsFragment extends PreferenceFragment
                     // error response, no access to resource?
                     if (isAdded())
                         status.setSummary(String.format(getString(R.string.indywidualni_server_not_ok),
-                               response.code()));
-                            
+                                response.code()));
+
                     tracker.send(new HitBuilders.EventBuilder()
                             .setCategory("Error response")
                             .setAction("Get Server Status")
@@ -155,6 +150,12 @@ public class SettingsFragment extends PreferenceFragment
                     status.setSummary(getString(R.string.indywidualni_server_failure));
             }
         });
+    }
+
+    public interface IFragmentToActivity {
+        void showChangelog();
+
+        void showLibraries();
     }
 
 }

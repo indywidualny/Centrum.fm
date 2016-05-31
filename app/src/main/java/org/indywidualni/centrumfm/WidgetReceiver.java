@@ -18,18 +18,6 @@ import org.indywidualni.centrumfm.util.Connectivity;
 
 public class WidgetReceiver extends BroadcastReceiver {
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        if (WidgetProvider.QUICK_PLAY.equals(intent.getAction()))
-            bindStreamService();
-    }
-
-    private void bindStreamService() {
-        Context context = MyApplication.getContextOfApplication();
-        Intent intent = new Intent(context, StreamService.class);
-        context.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -71,10 +59,23 @@ public class WidgetReceiver extends BroadcastReceiver {
                 }
             }
         }
+
         @Override
         public void onServiceDisconnected(ComponentName className) {
             // silence is golden
         }
     };
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (WidgetProvider.QUICK_PLAY.equals(intent.getAction()))
+            bindStreamService();
+    }
+
+    private void bindStreamService() {
+        Context context = MyApplication.getContextOfApplication();
+        Intent intent = new Intent(context, StreamService.class);
+        context.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
 
 }

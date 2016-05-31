@@ -17,7 +17,8 @@ public class WeekdayFragment extends Fragment {
 
     public static final String ARG_WEEKDAY = "ARG_WEEKDAY";
 
-    @Bind(R.id.recycler_view) RecyclerView mRecyclerView;
+    @Bind(R.id.recycler_view)
+    RecyclerView mRecyclerView;
 
     private int mPage;
 

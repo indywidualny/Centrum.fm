@@ -42,7 +42,7 @@
         <activity
             android:name=".activity.SplashActivity"
             android:label="@string/app_name"
-            android:theme="@style/SplashTheme" >
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -52,7 +52,6 @@
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
-            android:configChanges="screenSize|orientation"
             android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTask">
         </activity>
@@ -89,7 +88,7 @@
             android:label="@string/stream_service"
             android:icon="@mipmap/ic_launcher">
         </service>
-        
+
         <receiver android:name=".AlarmReceiver" />
 
         <receiver
@@ -102,11 +101,14 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
-                <data android:scheme="package" android:path="org.indywidualni.centrumfm" />
+                <data
+                    android:path="org.indywidualni.centrumfm"
+                    android:scheme="package" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".WidgetProvider"
+        <receiver
+            android:name=".WidgetProvider"
             android:label="@string/widget_quick_play_label">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

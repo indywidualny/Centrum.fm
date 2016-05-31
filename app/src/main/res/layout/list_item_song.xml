@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/element"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="5dp"
+    android:paddingTop="5dp">
+
+    <TextView
+        android:id="@+id/id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:padding="17dp"
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="19sp" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="1"
+            android:scrollHorizontally="false"
+            android:singleLine="true"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="1"
+            android:scrollHorizontally="false"
+            android:singleLine="true"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/played"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/artist"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="1"
+            android:scrollHorizontally="false"
+            android:singleLine="true"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="12sp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:padding="17dp"
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="17sp" />
+
+</LinearLayout>

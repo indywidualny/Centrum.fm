@@ -2,15 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardView"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_margin="5dp"
         card_view:cardCornerRadius="4dp"
         card_view:contentPadding="10dp">
@@ -23,33 +23,33 @@
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorTextPrimary"
                 android:layout_alignParentTop="true"
-                android:gravity="start" />
+                android:gravity="start"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <RelativeLayout
                 android:id="@+id/expandable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/title"
-                android:visibility="gone"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorTextSecondary"
-                    android:gravity="start" />
+                    android:gravity="start"
+                    android:textColor="@color/colorTextSecondary" />
 
                 <TableLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/description"
-                    android:layout_marginTop="10dp"
                     android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
                     android:stretchColumns="0,1">
 
                     <TableRow
@@ -61,31 +61,31 @@
                             android:layout_height="wrap_content"
                             android:layout_column="0"
                             android:gravity="start">
+
                             <TextView
-                                android:background="@drawable/button_selector"
-                                android:textSize="12sp"
-                                android:textAllCaps="true"
-                                android:textColor="@color/colorTextPrimary"
                                 android:id="@+id/itemPlay"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/news_play"
+                                android:background="@drawable/button_selector"
+                                android:clickable="true"
                                 android:drawableLeft="@drawable/ic_play_arrow_black_18dp"
-                                android:drawableStart="@drawable/ic_play_arrow_black_18dp"
                                 android:drawablePadding="2dp"
-                                android:gravity="center"
+                                android:drawableStart="@drawable/ic_play_arrow_black_18dp"
                                 android:ellipsize="end"
+                                android:gravity="center"
                                 android:maxLines="1"
+                                android:paddingBottom="4dp"
+                                android:paddingEnd="6dp"
+                                android:paddingLeft="4dp"
+                                android:paddingRight="6dp"
+                                android:paddingStart="4dp"
+                                android:paddingTop="4dp"
                                 android:scrollHorizontally="false"
                                 android:singleLine="true"
-                                android:paddingLeft="4dp"
-                                android:paddingStart="4dp"
-                                android:paddingRight="6dp"
-                                android:paddingEnd="6dp"
-                                android:paddingTop="4dp"
-                                android:paddingBottom="4dp"
-                                android:clickable="true"
-                                />
+                                android:text="@string/news_play"
+                                android:textAllCaps="true"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textSize="12sp" />
                         </RelativeLayout>
 
                         <RelativeLayout
@@ -93,31 +93,31 @@
                             android:layout_height="wrap_content"
                             android:layout_column="1"
                             android:gravity="start">
+
                             <TextView
-                                android:background="@drawable/button_selector"
-                                android:textSize="12sp"
-                                android:textAllCaps="true"
-                                android:textColor="@color/colorTextPrimary"
                                 android:id="@+id/itemReadMore"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/news_external_low_density"
+                                android:background="@drawable/button_selector"
+                                android:clickable="true"
                                 android:drawableLeft="@drawable/ic_open_in_browser_black_18dp"
-                                android:drawableStart="@drawable/ic_open_in_browser_black_18dp"
                                 android:drawablePadding="2dp"
-                                android:gravity="center"
+                                android:drawableStart="@drawable/ic_open_in_browser_black_18dp"
                                 android:ellipsize="end"
+                                android:gravity="center"
                                 android:maxLines="1"
+                                android:paddingBottom="4dp"
+                                android:paddingEnd="6dp"
+                                android:paddingLeft="4dp"
+                                android:paddingRight="6dp"
+                                android:paddingStart="4dp"
+                                android:paddingTop="4dp"
                                 android:scrollHorizontally="false"
                                 android:singleLine="true"
-                                android:paddingLeft="4dp"
-                                android:paddingStart="4dp"
-                                android:paddingRight="6dp"
-                                android:paddingEnd="6dp"
-                                android:paddingTop="4dp"
-                                android:paddingBottom="4dp"
-                                android:clickable="true"
-                                />
+                                android:text="@string/news_external_low_density"
+                                android:textAllCaps="true"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textSize="12sp" />
                         </RelativeLayout>
 
                         <RelativeLayout
@@ -125,31 +125,31 @@
                             android:layout_height="wrap_content"
                             android:layout_column="2"
                             android:gravity="end">
+
                             <TextView
-                                android:background="@drawable/button_selector"
-                                android:textSize="12sp"
-                                android:textAllCaps="true"
-                                android:textColor="@color/colorTextPrimary"
                                 android:id="@+id/itemShare"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/news_share"
+                                android:background="@drawable/button_selector"
+                                android:clickable="true"
                                 android:drawableLeft="@drawable/ic_share_black_18dp"
-                                android:drawableStart="@drawable/ic_share_black_18dp"
                                 android:drawablePadding="2dp"
-                                android:gravity="center"
+                                android:drawableStart="@drawable/ic_share_black_18dp"
                                 android:ellipsize="end"
+                                android:gravity="center"
                                 android:maxLines="1"
+                                android:paddingBottom="4dp"
+                                android:paddingEnd="6dp"
+                                android:paddingLeft="4dp"
+                                android:paddingRight="6dp"
+                                android:paddingStart="4dp"
+                                android:paddingTop="4dp"
                                 android:scrollHorizontally="false"
                                 android:singleLine="true"
-                                android:paddingLeft="4dp"
-                                android:paddingStart="4dp"
-                                android:paddingRight="6dp"
-                                android:paddingEnd="6dp"
-                                android:paddingTop="4dp"
-                                android:paddingBottom="4dp"
-                                android:clickable="true"
-                                />
+                                android:text="@string/news_share"
+                                android:textAllCaps="true"
+                                android:textColor="@color/colorTextPrimary"
+                                android:textSize="12sp" />
                         </RelativeLayout>
 
                     </TableRow>
@@ -162,25 +162,25 @@
                 android:id="@+id/timeAgo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorTextSecondary"
                 android:layout_below="@+id/expandable"
                 android:layout_marginTop="10dp"
-                android:gravity="start" />
+                android:gravity="start"
+                android:textColor="@color/colorTextSecondary" />
 
             <TextView
                 android:id="@+id/category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxWidth="225dp"
-                android:textColor="@color/colorAccent"
-                android:layout_below="@+id/expandable"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/expandable"
                 android:layout_marginTop="10dp"
                 android:ellipsize="end"
+                android:gravity="end"
                 android:maxLines="1"
+                android:maxWidth="225dp"
                 android:scrollHorizontally="false"
-                android:gravity="end" />
+                android:textColor="@color/colorAccent" />
 
         </RelativeLayout>
 

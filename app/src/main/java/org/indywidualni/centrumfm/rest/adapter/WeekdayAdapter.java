@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TableLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.indywidualni.centrumfm.R;
@@ -23,63 +23,11 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.ViewHold
     private List<Schedule.Event> mDataset;
     private int day;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        public IViewHolderClicks mListener;
-
-        private final TextView startTime;
-        private final TextView title;
-        private final TextView belowTitle;
-        private final ImageView favourite;
-        private final TableLayout tableLayout;
-
-        public ViewHolder(View v, IViewHolderClicks listener) {
-            super(v);
-            mListener = listener;
-
-            startTime = (TextView) v.findViewById(R.id.startTime);
-            title = (TextView) v.findViewById(R.id.title);
-            belowTitle = (TextView) v.findViewById(R.id.belowTitle);
-            tableLayout = (TableLayout) v.findViewById(R.id.element);
-            favourite = (ImageView) v.findViewById(R.id.favourite);
-
-            favourite.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (v instanceof ImageView)
-                mListener.onFavourite((ImageView) v, getAdapterPosition());
-        }
-
-        public interface IViewHolderClicks {
-            void onFavourite(ImageView caller, int position);
-        }
-
-        public TextView getStartTime() {
-            return startTime;
-        }
-        public TextView getTitle() {
-            return title;
-        }
-        public TextView getBelowTitle() {
-            return belowTitle;
-        }
-        public TableLayout getTableLayout() {
-            return tableLayout;
-        }
-        public ImageView getFavourite() {
-            return favourite;
-        }
-
-    }
-
     // provide a suitable constructor
     public WeekdayAdapter(List<Schedule.Event> mDataset, int day) {
         this.mDataset = mDataset;
         this.day = day;
     }
-
 
     // create new views (invoked by the layout manager)
     @Override
@@ -89,21 +37,6 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.ViewHold
                 viewGroup, false);
 
         return new ViewHolder(v, new ViewClicks());
-    }
-
-    private class ViewClicks implements ViewHolder.IViewHolderClicks {
-        public void onFavourite(ImageView caller, int position) {
-            ImageView favourite = (ImageView) caller.findViewById(R.id.favourite);
-            if (DataSource.getInstance().isEventFavourite(mDataset.get(position).getId())) {
-                Log.v("onFavourite", "Item " + mDataset.get(position).getId() + " removed");
-                AsyncWrapper.removeFavourite(mDataset.get(position));
-                favourite.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-            } else {
-                Log.v("onFavourite", "Item " + mDataset.get(position).getId() + " inserted");
-                AsyncWrapper.insertFavourite(mDataset.get(position));
-                favourite.setImageResource(R.drawable.ic_favorite_black_24dp);
-            }
-        }
     }
 
     @Override
@@ -126,9 +59,9 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.ViewHold
 
         if ((day == (Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1))
                 && Calendar.getInstance().after(start) && Calendar.getInstance().before(end))
-            viewHolder.getTableLayout().setSelected(true);
+            viewHolder.getLinearLayout().setSelected(true);
         else
-            viewHolder.getTableLayout().setSelected(false);
+            viewHolder.getLinearLayout().setSelected(false);
 
         if (mDataset.get(position).isFavourite())
             viewHolder.getFavourite().setImageResource(R.drawable.ic_favorite_black_24dp);
@@ -140,6 +73,77 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.ViewHold
     @Override
     public int getItemCount() {
         return mDataset.size();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private final TextView startTime;
+        private final TextView title;
+        private final TextView belowTitle;
+        private final ImageView favourite;
+        private final LinearLayout linearLayout;
+        public IViewHolderClicks mListener;
+
+        public ViewHolder(View v, IViewHolderClicks listener) {
+            super(v);
+            mListener = listener;
+
+            startTime = (TextView) v.findViewById(R.id.startTime);
+            title = (TextView) v.findViewById(R.id.title);
+            belowTitle = (TextView) v.findViewById(R.id.belowTitle);
+            linearLayout = (LinearLayout) v.findViewById(R.id.element);
+            favourite = (ImageView) v.findViewById(R.id.favourite);
+
+            favourite.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v instanceof ImageView)
+                mListener.onFavourite((ImageView) v, getAdapterPosition());
+        }
+
+        public TextView getStartTime() {
+            return startTime;
+        }
+
+        public TextView getTitle() {
+            return title;
+        }
+
+        public TextView getBelowTitle() {
+            return belowTitle;
+        }
+
+        public LinearLayout getLinearLayout() {
+            return linearLayout;
+        }
+
+        public ImageView getFavourite() {
+            return favourite;
+        }
+
+        public interface IViewHolderClicks {
+            void onFavourite(ImageView caller, int position);
+        }
+
+    }
+
+    private class ViewClicks implements ViewHolder.IViewHolderClicks {
+        public void onFavourite(ImageView caller, int position) {
+            ImageView favourite = (ImageView) caller.findViewById(R.id.favourite);
+            if (DataSource.getInstance().isEventFavourite(mDataset.get(position).getId())) {
+                Log.v("onFavourite", "Item " + mDataset.get(position).getId() + " removed");
+                mDataset.get(position).setFavourite(false);
+                AsyncWrapper.removeFavourite(mDataset.get(position));
+                favourite.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+            } else {
+                Log.v("onFavourite", "Item " + mDataset.get(position).getId() + " inserted");
+                mDataset.get(position).setFavourite(true);
+                AsyncWrapper.insertFavourite(mDataset.get(position));
+                favourite.setImageResource(R.drawable.ic_favorite_black_24dp);
+            }
+        }
     }
 
 }

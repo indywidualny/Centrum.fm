@@ -2,16 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/github"
-        android:title="@string/github"
+    <item
+        android:id="@+id/github"
         android:icon="@drawable/ic_github"
         android:orderInCategory="0"
+        android:title="@string/github"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/email_me"
-        android:title="@string/email_author"/>
+    <item
+        android:id="@+id/email_me"
+        android:title="@string/email_author" />
 
-    <item android:id="@+id/me_google_play"
-        android:title="@string/me_google_play"/>
+    <item
+        android:id="@+id/me_google_play"
+        android:title="@string/me_google_play" />
 
 </menu>
