@@ -23,7 +23,8 @@ Default value: **9999-12-31**
 #### `POST`  limit 
 Number of records to display  
 Accepted values: **0** to **MAX_INT**  
-Default value: **10**  
+Default value: **10**
+
 To prevent abuse if limit > 500 then limit = 500
 
 #### `POST`  skip 
@@ -37,10 +38,11 @@ Accepted values: **1** to enable or **whatever** to ignore
 Default value: **None**
 
 #### `POST`  count 
-Used only if popular == "1", otherwise ignored  
 Show entries with at least N occurrences  
 Accepted values: **0** to **MAX_INT**  
-Default value: **1**
+Default value: **1**  
+
+Used only if popular == "1", otherwise ignored
 
 ### Example calls
 
