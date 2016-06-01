@@ -1,13 +1,70 @@
 Server
 ==============
 
+Songs API
+--------------
+
+### Endpoint
+
+http://indywidualni.org/centrum/songs.py
+
+### Optional parameters
+
+#### `POST`  from 
+Start of date range (CEST)  
+Accepted values: e.g. **2016-05-31 10:20:11** or **2016-12-01**  
+Default value: **1000-01-01**
+
+#### `POST`  to 
+End of date range (CEST)  
+Accepted values: e.g. **2016-06-01 00:00:00** or **2016-06-01**  
+Default value: **9999-12-31**
+
+#### `POST`  limit 
+Number of records to display  
+Accepted values: **0** to **MAX_INT**  
+Default value: **10**  
+To prevent abuse if limit > 500 then limit = 500
+
+#### `POST`  skip 
+Number of records to skip  
+Accepted values: **0** to **MAX_INT**  
+Default value: **0**
+
+#### `POST`  popular 
+Show the most popular entries  
+Accepted values: **1** to enable or **whatever** to ignore  
+Default value: **None**
+
+#### `POST`  count 
+Used only if popular == "1", otherwise ignored  
+Show entries with at least N occurrences  
+Accepted values: **0** to **MAX_INT**  
+Default value: **1**
+
+### Example calls
+
+#### Two the most popular songs ever
+
+    $  ~  curl --data "limit=2&popular=1" http://indywidualni.org/centrum/songs.py
+    [{"duration": "03:30", "sum": 20, "artist": "Luxtorpeda", "title": "Silnalina [album]"}, {"duration": "02:40", "sum": 20, "artist": "Jake Bugg", "title": "Gimme the love [radio edit]"}]
+
+#### Songs played between 2016-06-01 08:45 and 2016-06-01 09:00
+
+    $  ~  LC_ALL=c date
+    Wed Jun  1 08:52:28 CEST 2016
+    $  ~  curl --data "from=2016-06-01 08:45&to=2016-06-01 09:00" http://indywidualni.org/centrum/songs.py
+    [{"artist": "Joan Jett and the Blackhearts", "duration": "02:54", "title": "I love rock'n'roll", "id": 2523, "played": "2016-06-01T08:52:02"}, {"artist": "The Cuts", "duration": "03:01", "title": "Supernikt", "id": 2522, "played": "2016-06-01T08:49:02"}]
+
+As you can see results are always sorted by DATE DESC
+
 cron jobs
 --------------
 
     0 */6 * * * /home/user/indywidualni.org/centrum/scripts/update_schedule.sh
     * * * * * /home/user/indywidualni.org/centrum/scripts/update_rds.sh
 
-Songs API
+Songs API setup
 --------------
 
     pip install --user PyMySQL
