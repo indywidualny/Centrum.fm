@@ -51,11 +51,11 @@ Used only if popular == "1", otherwise ignored
     $  ~  curl --data "limit=2&popular=1" http://indywidualni.org/centrum/songs.py
     [{"duration": "03:30", "sum": 20, "artist": "Luxtorpeda", "title": "Silnalina [album]"}, {"duration": "02:40", "sum": 20, "artist": "Jake Bugg", "title": "Gimme the love [radio edit]"}]
 
-#### Songs played between 2016-06-01 08:45 and 2016-06-01 09:00
+#### Songs played between 2016-06-01 08:45:00 and 2016-06-01 09:00:00
 
     $  ~  LC_ALL=c date
     Wed Jun  1 08:52:28 CEST 2016
-    $  ~  curl --data "from=2016-06-01 08:45&to=2016-06-01 09:00" http://indywidualni.org/centrum/songs.py
+    $  ~  curl --data "from=2016-06-01 08:45:00&to=2016-06-01 09:00:00" http://indywidualni.org/centrum/songs.py
     [{"artist": "Joan Jett and the Blackhearts", "duration": "02:54", "title": "I love rock'n'roll", "id": 2523, "played": "2016-06-01T08:52:02"}, {"artist": "The Cuts", "duration": "03:01", "title": "Supernikt", "id": 2522, "played": "2016-06-01T08:49:02"}]
 
 As you can see results are always sorted by DATE DESC
