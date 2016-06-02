@@ -43,7 +43,8 @@ public class MainFragment extends TrackedFragment {
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
     @BindView(R.id.swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     private Unbinder unbinder;
-        
+
+    private Call<RSS> call;
     private Tracker tracker;
 
     @Override
@@ -122,6 +123,14 @@ public class MainFragment extends TrackedFragment {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(DATA_PARCEL, (ArrayList<Channel.Item>) rssItems);
     }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        // cancel Retrofit call
+        if (call != null)
+            call.cancel();
+    }
 
     @Override
     public void onDestroyView() {
@@ -130,13 +139,13 @@ public class MainFragment extends TrackedFragment {
     }
 
     private void getRSS() {
-        Call<RSS> call = RestClient.getClientRSS().getRSS();
+        call = RestClient.getClientRSS().getRSS();
         call.enqueue(new Callback<RSS>() {
             @Override
             public void onResponse(Call<RSS> call, final Response<RSS> response) {
                 Log.v(TAG, "getRSS: response " + response.code());
 
-                if (response.isSuccess()) {  // tasks available
+                if (response.isSuccessful()) {  // tasks available
                     new AsyncTask<Void, Void, List<Channel.Item>>() {
                         @Override
                         protected List<Channel.Item> doInBackground(Void... arg0) {

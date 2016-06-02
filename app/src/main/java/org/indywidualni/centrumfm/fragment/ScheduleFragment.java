@@ -49,6 +49,7 @@ public class ScheduleFragment extends TrackedFragment {
         
     private SlidingTabLayout slidingTabLayout;
     
+    private Call<Schedule> call;
     private Tracker tracker;
 
     public static WeekdayAdapter getAdapter(int day) {
@@ -86,6 +87,14 @@ public class ScheduleFragment extends TrackedFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(DATA_PARCEL, (ArrayList<Schedule.Event>) eventList);
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        // cancel Retrofit call
+        if (call != null)
+            call.cancel();
     }
 
     @Override
@@ -129,13 +138,13 @@ public class ScheduleFragment extends TrackedFragment {
     }
 
     private void getSchedule() {
-        Call<Schedule> call = RestClient.getClientXML().getSchedule();
+        call = RestClient.getClientXML().getSchedule();
         call.enqueue(new Callback<Schedule>() {
             @Override
             public void onResponse(Call<Schedule> call, final Response<Schedule> response) {
                 Log.v(TAG, "getSchedule: response " + response.code());
 
-                if (response.isSuccess()) { // tasks available
+                if (response.isSuccessful()) { // tasks available
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... arg0) {

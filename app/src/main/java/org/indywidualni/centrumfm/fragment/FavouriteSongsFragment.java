@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
@@ -27,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FavouriteSongsFragment extends Fragment implements SearchView.OnQueryTextListener,
+public class FavouriteSongsFragment extends TrackedFragment implements SearchView.OnQueryTextListener,
         UpdatableFragment {
 
     private RecyclerViewEmptySupport mRecyclerView;

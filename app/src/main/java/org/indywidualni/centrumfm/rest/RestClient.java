@@ -7,12 +7,13 @@ import org.indywidualni.centrumfm.rest.model.Server;
 import org.indywidualni.centrumfm.rest.model.Song;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
-import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -94,7 +95,14 @@ public class RestClient {
 
         @FormUrlEncoded
         @POST("/centrum/songs.py")
-        Call<List<Song>> getSongs(@Field("popular") String popular, @Field("limit") String limit);
+        Call<List<Song>> getSongs(@FieldMap Map<String, String> params);
+
+        String SONGS_FROM = "from";
+        String SONGS_TO = "to";
+        String SONGS_LIMIT = "limit";
+        String SONGS_SKIP = "skip";
+        String SONGS_POPULAR = "popular";
+        String SONGS_COUNT = "count";
 
     }
 

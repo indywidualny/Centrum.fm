@@ -103,17 +103,14 @@ public class MainActivity extends AppCompatActivity
     private Handler playerHandler = new Handler();
     private SharedPreferences preferences;
     private CustomTabActivityHelper customTabActivityHelper;
+    private Call<List<RDS>> call;
     private Tracker tracker;
     private StreamService mService;
     private ActionBarDrawerToggle drawerToggle;
     private boolean mBound;
     
     @IdRes private int mSelectedId;
-    
-    private String elapsed;
-    private String duration;
-    private long totalDuration;
-    
+
     private Runnable rdsRunnable = new Runnable() {
         @Override
         public void run() {
@@ -130,13 +127,14 @@ public class MainActivity extends AppCompatActivity
             // Do something here on the main thread
             if (mBound) {
                 if (mService.isPlaying()) {
-                    totalDuration = mService.getDuration();
+                    long totalDuration = mService.getDuration();
+                    String duration;
                     if (totalDuration / 1000 == 0)
                         duration = "\u221e";
                     else
                         duration = Miscellany.convertMillisToHuman(totalDuration);
-
-                    elapsed = Miscellany.convertMillisToHuman(mService.getCurrentPosition()) + " / " + duration;
+                    String elapsed = Miscellany.convertMillisToHuman(mService.getCurrentPosition())
+                            + " / " + duration;
                     if (playerElapsed != null)
                         playerElapsed.setText(elapsed);
                     playerSetConnectionType();
@@ -294,6 +292,8 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
 
         // cancel RDS updates
+        if (call != null)
+            call.cancel();
         rdsHandler.removeCallbacks(rdsRunnable);
 
         // stop player updates
@@ -412,13 +412,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getRDS() {
-        Call<List<RDS>> call = RestClient.getClientJSON().getRDS();
+        call = RestClient.getClientJSON().getRDS();
         call.enqueue(new Callback<List<RDS>>() {
             @Override
             public void onResponse(Call<List<RDS>> call, Response<List<RDS>> response) {
                 Log.v(TAG, "getRDS: response " + response.code());
 
-                if (response.isSuccess()) { // tasks available
+                if (response.isSuccessful()) { // tasks available
                     updateTitle(response.body());
                 } else {
                     // error response, no access to resource?

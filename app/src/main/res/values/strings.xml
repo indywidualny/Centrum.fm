@@ -1,4 +1,6 @@
-<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" tools:ignore="PluralsCandidate">
+<resources xmlns:tools="http://schemas.android.com/tools"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    tools:ignore="PluralsCandidate">
 
     <string name="app_name">Centrum.fm</string>
     <string name="toolbar_default_title">Radio Centrum 98.2 FM</string>
@@ -119,5 +121,9 @@
         <item>Ulubione</item>
         <item>TOP 100</item>
     </array>
+
+    <string name="author_email_address" translatable="false">koras@indywidualni.org</string>
+    <string name="google_play_url" translatable="false">https://play.google.com/store/apps/developer?id=Indywidualni</string>
+    <string name="github_url" translatable="false">https://github.com/indywidualny/Centrum.fm</string>
 
 </resources>

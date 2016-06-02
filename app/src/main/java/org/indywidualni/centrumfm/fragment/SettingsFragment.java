@@ -31,6 +31,7 @@ public class SettingsFragment extends PreferenceFragment
     private SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener;
     private SharedPreferences preferences;
     private IFragmentToActivity mCallback;
+    private Call<Server> call;
     private Tracker tracker;
 
     @Override
@@ -98,8 +99,9 @@ public class SettingsFragment extends PreferenceFragment
         super.onPause();
         // unregister listener
         preferences.unregisterOnSharedPreferenceChangeListener(prefChangeListener);
-        // cancel Retrofit calls
-        RestClient.getClientJSON().getServerStatus().cancel();
+        // cancel Retrofit call
+        if (call != null)
+            call.cancel();
     }
 
     @Override
@@ -119,14 +121,14 @@ public class SettingsFragment extends PreferenceFragment
     }
 
     private void getServerStatus() {
-        Call<Server> call = RestClient.getClientJSON().getServerStatus();
+        call = RestClient.getClientJSON().getServerStatus();
         call.enqueue(new Callback<Server>() {
             @Override
             public void onResponse(Call<Server> call, Response<Server> response) {
                 Log.v(TAG, "getServerStatus: response " + response.code());
                 Preference status = findPreference("indywidualni_server_status");
 
-                if (response.isSuccess()) {
+                if (response.isSuccessful()) {
                     if (isAdded())
                         status.setSummary(String.format(getString(R.string.indywidualni_server_ok),
                                 response.body().getVersion()));

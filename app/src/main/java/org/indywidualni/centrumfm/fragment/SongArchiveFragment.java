@@ -16,6 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import org.indywidualni.centrumfm.MyApplication;
 import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.activity.SongsActivity;
 import org.indywidualni.centrumfm.rest.RestClient;
@@ -24,12 +28,21 @@ import org.indywidualni.centrumfm.rest.model.Song;
 import org.indywidualni.centrumfm.util.ui.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_FROM;
+import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_TO;
+import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_LIMIT;
+import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_SKIP;
+import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_POPULAR;
+import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_COUNT;
 
 public class SongArchiveFragment extends Fragment implements SearchView.OnQueryTextListener {
 
@@ -37,14 +50,16 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
     
     private static final String FRAGMENT_TYPE = "fragment_type";
     private static final String DATA_PARCEL = "data_parcel";
+    private static final String QUERY_PARAMETERS = "query_parameters";
 
     private RecyclerViewEmptySupport mRecyclerView;
     private View emptyView;
 
     private IFragmentToActivity mCallback;
     private List<Song> songs = new ArrayList<>();
-    private SongsAdapter adapter;
+    private Map<String, String> queryParameters = new HashMap<>();
     private Call<List<Song>> call;
+    private SongsAdapter adapter;
     private boolean popular;
 
     public static SongArchiveFragment create(boolean popular) {
@@ -87,18 +102,26 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         return view;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
 
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             songs = savedInstanceState.getParcelableArrayList(DATA_PARCEL);
+            queryParameters = (HashMap<String, String>) savedInstanceState
+                    .getSerializable(QUERY_PARAMETERS);
+            
+            mRecyclerView.setEmptyView(emptyView);
+        } else {
+            queryParameters.put(SONGS_POPULAR, popular ? "1" : "0");
+            queryParameters.put(SONGS_LIMIT, popular ? "100" : "500");
+        }
 
         adapter = new SongsAdapter(getContext(), songs);
 
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setEmptyView(emptyView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(adapter);
 
@@ -110,6 +133,15 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
     public void onResume() {
         super.onResume();
         registerForContextMenu(mRecyclerView);
+        
+        // it's not simply an instance of TrackedFragment
+        String affix = "normal";  // we need to know whether it's used for popular songs
+        if (popular) affix = "popular";
+        final Tracker tracker = ((MyApplication) getActivity().getApplication())
+                .getDefaultTracker();
+        tracker.setScreenName(getActivity().getClass().getSimpleName() + "/"
+                + getClass().getSimpleName() + "/" + affix);
+        tracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override
@@ -124,27 +156,29 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(DATA_PARCEL, (ArrayList<Song>) songs);
+        outState.putSerializable(QUERY_PARAMETERS, (HashMap<String, String>) queryParameters);
     }
 
     private void getSongs() {
-        call = RestClient.getClientJSON().getSongs(popular ? "1" : "0",
-                popular ? "100" : "500");
+        call = RestClient.getClientJSON().getSongs(queryParameters);
         call.enqueue(new Callback<List<Song>>() {
             @Override
             public void onResponse(Call<List<Song>> call, Response<List<Song>> response) {
                 Log.v(TAG, "getSongs: response " + response.code());
-                if (response.isSuccess()) {
+                if (response.isSuccessful()) {
                     songs = response.body();
                     adapter.setDataset(songs);
                 } else {
                     // error response, no access to resource?
                     Log.v(TAG, "Cannot obtain list of songs");
                 }
+                mRecyclerView.setEmptyView(emptyView);
             }
 
             @Override
             public void onFailure(Call<List<Song>> call, Throwable t) {
                 Log.e(TAG, "getSongs: " + t.getLocalizedMessage());
+                mRecyclerView.setEmptyView(emptyView);
             }
         });
     }
