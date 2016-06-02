@@ -219,32 +219,36 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
             @Override
             public void onResponse(Call<List<Song>> call, Response<List<Song>> response) {
                 Log.v(TAG, "getSongs: response " + response.code());
-                if (response.isSuccessful()) {
-                    if (appendToList)
-                        songs.addAll(response.body());
-                    else
-                        songs = response.body();
-                    adapter.setDataset(songs);
-                } else {
-                    // error response, no access to resource?
-                    Log.v(TAG, "Cannot obtain list of songs");
-                    showSnackbarNotice(getString(R.string.problem_server_response, response.code()));
+                if (isAdded()) {
+                    if (response.isSuccessful()) {
+                        if (appendToList)
+                            songs.addAll(response.body());
+                        else
+                            songs = response.body();
+                        adapter.setDataset(songs);
+                    } else {
+                        // error response, no access to resource?
+                        Log.v(TAG, "Cannot obtain list of songs");
+                        showSnackbarNotice(getString(R.string.problem_server_response, response.code()));
+                    }
+                    mRecyclerView.changeEmptyView(emptyView);
+                    swipeRefreshLayout.setRefreshing(false);
                 }
-                mRecyclerView.changeEmptyView(emptyView);
-                swipeRefreshLayout.setRefreshing(false);
                 loading = false;
             }
 
             @Override
             public void onFailure(Call<List<Song>> call, Throwable t) {
                 Log.e(TAG, "getSongs: " + t.getLocalizedMessage());
-                mRecyclerView.changeEmptyView(emptyView);
-                swipeRefreshLayout.setRefreshing(false);
-                if (!call.isCanceled()) {
-                    if (!Connectivity.isConnected(getContext()))
-                        showSnackbarNotice(R.string.no_network);
-                    else
-                        showSnackbarNotice(R.string.no_response);
+                if (isAdded()) {
+                    mRecyclerView.changeEmptyView(emptyView);
+                    swipeRefreshLayout.setRefreshing(false);
+                    if (!call.isCanceled()) {
+                        if (!Connectivity.isConnected(getContext()))
+                            showSnackbarNotice(R.string.no_network);
+                        else
+                            showSnackbarNotice(R.string.no_response);
+                    }
                 }
                 loading = false;
             }
