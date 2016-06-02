@@ -2,10 +2,17 @@ package org.indywidualni.centrumfm.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -25,6 +32,8 @@ import org.indywidualni.centrumfm.activity.SongsActivity;
 import org.indywidualni.centrumfm.rest.RestClient;
 import org.indywidualni.centrumfm.rest.adapter.SongsAdapter;
 import org.indywidualni.centrumfm.rest.model.Song;
+import org.indywidualni.centrumfm.util.Connectivity;
+import org.indywidualni.centrumfm.util.Miscellany;
 import org.indywidualni.centrumfm.util.ui.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
@@ -32,17 +41,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_FROM;
-import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_TO;
 import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_LIMIT;
-import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_SKIP;
 import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_POPULAR;
-import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_COUNT;
+import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_SKIP;
+import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_TO;
 
 public class SongArchiveFragment extends Fragment implements SearchView.OnQueryTextListener {
 
@@ -51,16 +62,25 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
     private static final String FRAGMENT_TYPE = "fragment_type";
     private static final String DATA_PARCEL = "data_parcel";
     private static final String QUERY_PARAMETERS = "query_parameters";
+    private static final String ITEMS_PER_REQUEST = "50";
 
-    private RecyclerViewEmptySupport mRecyclerView;
-    private View emptyView;
+    @BindView(R.id.coordinator_layout) CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.recycler_view) RecyclerViewEmptySupport mRecyclerView;
+    @BindView(R.id.swipe_refresh) SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.empty_view) View emptyView;
+    @BindView(R.id.loading) View loadingView;
+    @BindView(R.id.fab) FloatingActionButton fab;
+    private Unbinder unbinder;
 
     private IFragmentToActivity mCallback;
     private List<Song> songs = new ArrayList<>();
     private Map<String, String> queryParameters = new HashMap<>();
+    private LinearLayoutManager linearLayoutManager;
+    private boolean dynamicLoadingEnabled = true;
     private Call<List<Song>> call;
     private SongsAdapter adapter;
     private boolean popular;
+    private boolean loading;
 
     public static SongArchiveFragment create(boolean popular) {
         Bundle args = new Bundle();
@@ -97,8 +117,8 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_song_archive, container, false);
-        mRecyclerView = (RecyclerViewEmptySupport) view.findViewById(R.id.recycler_view);
-        emptyView = view.findViewById(R.id.empty_view);
+        unbinder = ButterKnife.bind(this, view);
+        if (popular) fab.setVisibility(View.GONE);
         return view;
     }
 
@@ -112,21 +132,52 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
             songs = savedInstanceState.getParcelableArrayList(DATA_PARCEL);
             queryParameters = (HashMap<String, String>) savedInstanceState
                     .getSerializable(QUERY_PARAMETERS);
-            
             mRecyclerView.setEmptyView(emptyView);
         } else {
             queryParameters.put(SONGS_POPULAR, popular ? "1" : "0");
-            queryParameters.put(SONGS_LIMIT, popular ? "100" : "500");
+            queryParameters.put(SONGS_LIMIT, ITEMS_PER_REQUEST);
+            if (!popular) {
+                queryParameters.put(SONGS_FROM, Miscellany.constructDateQueryForDay(true));
+                queryParameters.put(SONGS_TO, Miscellany.constructDateQueryForDay(false));
+            }
+            mRecyclerView.setEmptyView(loadingView);
         }
 
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getSongs(false);
+            }
+        });
+
+        linearLayoutManager = new LinearLayoutManager(getActivity());
         adapter = new SongsAdapter(getContext(), songs);
 
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(adapter);
 
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int totalItem = linearLayoutManager.getItemCount();
+                int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+
+                if (dynamicLoadingEnabled && !loading && lastVisibleItem == totalItem - 1) {
+                    // scrolled to bottom
+                    loading = true;
+                    queryParameters.put(SONGS_SKIP, Integer.toString(totalItem));
+                    getSongs(true);
+                }
+            }
+        });
+
+        // no data yet, load it for the first time
         if (songs.isEmpty())
-            getSongs();
+            getSongs(false);
     }
 
     @Override
@@ -135,13 +186,15 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         registerForContextMenu(mRecyclerView);
         
         // it's not simply an instance of TrackedFragment
-        String affix = "normal";  // we need to know whether it's used for popular songs
-        if (popular) affix = "popular";
-        final Tracker tracker = ((MyApplication) getActivity().getApplication())
-                .getDefaultTracker();
-        tracker.setScreenName(getActivity().getClass().getSimpleName() + "/"
-                + getClass().getSimpleName() + "/" + affix);
-        tracker.send(new HitBuilders.ScreenViewBuilder().build());
+        String affix = "Normal";  // we need to know whether it's used for popular songs
+        if (popular) affix = "Popular";
+        if (getUserVisibleHint()) {
+            final Tracker tracker = ((MyApplication) getActivity().getApplication())
+                    .getDefaultTracker();
+            tracker.setScreenName(getActivity().getClass().getSimpleName() + "/"
+                    + getClass().getSimpleName() + "/" + affix);
+            tracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
     @Override
@@ -159,26 +212,41 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         outState.putSerializable(QUERY_PARAMETERS, (HashMap<String, String>) queryParameters);
     }
 
-    private void getSongs() {
+    private void getSongs(final boolean appendToList) {
+        swipeRefreshLayout.setRefreshing(true);
         call = RestClient.getClientJSON().getSongs(queryParameters);
         call.enqueue(new Callback<List<Song>>() {
             @Override
             public void onResponse(Call<List<Song>> call, Response<List<Song>> response) {
                 Log.v(TAG, "getSongs: response " + response.code());
                 if (response.isSuccessful()) {
-                    songs = response.body();
+                    if (appendToList)
+                        songs.addAll(response.body());
+                    else
+                        songs = response.body();
                     adapter.setDataset(songs);
                 } else {
                     // error response, no access to resource?
                     Log.v(TAG, "Cannot obtain list of songs");
+                    showSnackbarNotice(getString(R.string.problem_server_response, response.code()));
                 }
-                mRecyclerView.setEmptyView(emptyView);
+                mRecyclerView.changeEmptyView(emptyView);
+                swipeRefreshLayout.setRefreshing(false);
+                loading = false;
             }
 
             @Override
             public void onFailure(Call<List<Song>> call, Throwable t) {
                 Log.e(TAG, "getSongs: " + t.getLocalizedMessage());
-                mRecyclerView.setEmptyView(emptyView);
+                mRecyclerView.changeEmptyView(emptyView);
+                swipeRefreshLayout.setRefreshing(false);
+                if (!call.isCanceled()) {
+                    if (!Connectivity.isConnected(getContext()))
+                        showSnackbarNotice(R.string.no_network);
+                    else
+                        showSnackbarNotice(R.string.no_response);
+                }
+                loading = false;
             }
         });
     }
@@ -224,6 +292,7 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
     @Override
     public boolean onQueryTextChange(String query) {
         // Here is where we are going to implement our filter logic
+        dynamicLoadingEnabled = TextUtils.isEmpty(query);
         final List<Song> filteredModelList = filter(songs, query);
         adapter.animateTo(filteredModelList);
         mRecyclerView.scrollToPosition(0);
@@ -253,11 +322,18 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         Toast.makeText(getActivity(), "Fab Click!", Toast.LENGTH_SHORT).show();
     }
 
+    public void showSnackbarNotice(@StringRes int resource) {
+        showSnackbarNotice(getString(resource));
+    }
+
+    public void showSnackbarNotice(String string) {
+        Snackbar.make(coordinatorLayout, string, Snackbar.LENGTH_SHORT).show();
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRecyclerView = null;
-        emptyView = null;
+        unbinder.unbind();
     }
 
     public interface IFragmentToActivity {

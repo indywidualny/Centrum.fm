@@ -13,11 +13,13 @@ public abstract class TrackedFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        final Tracker tracker = ((MyApplication) getActivity().getApplication())
-                .getDefaultTracker();
-        tracker.setScreenName(getActivity().getClass().getSimpleName() + "/"
-                + getClass().getSimpleName());
-        tracker.send(new HitBuilders.ScreenViewBuilder().build());
+        if (getUserVisibleHint()) {
+            final Tracker tracker = ((MyApplication) getActivity().getApplication())
+                    .getDefaultTracker();
+            tracker.setScreenName(getActivity().getClass().getSimpleName() + "/"
+                    + getClass().getSimpleName());
+            tracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
 }

@@ -17,7 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class SongsFragment extends TrackedFragment implements SongsActivity.IActivityToFragment {
+public class SongsFragment extends Fragment implements SongsActivity.IActivityToFragment {
 
     public static final String CURRENT_POSITION = "position";
 

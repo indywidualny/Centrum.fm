@@ -22,7 +22,7 @@
     <string name="app_info">Informacje</string>
     <string name="app_settings">Ustawienia</string>
     <string name="error_response">Błąd</string>
-    <string name="no_response">Serwer nie odpowiada. Jesteśmy zgubieni ;)</string>
+    <string name="no_response">Serwer nie odpowiada</string>
     <string name="no_network">Brak internetów. Motyla noga!</string>
     <string name="drawer_open">Otwórz</string>
     <string name="drawer_close">Zamknij</string>
@@ -78,6 +78,7 @@
     <string name="action_share_song_title">Utwór z anteny Radia Centrum</string>
     <string name="unfaved">Usunięto z ulubionych</string>
     <string name="revert">Cofnij</string>
+    <string name="problem_server_response">Problem. Odpowiedź: %1$s</string>
 
     <!-- Change log strings -->
     <string name="changelog_full_title">Dziennik zmian</string>
@@ -119,7 +120,7 @@
     <array name="archives">
         <item>Historia</item>
         <item>Ulubione</item>
-        <item>TOP 100</item>
+        <item>Toplista</item>
     </array>
 
     <string name="author_email_address" translatable="false">koras@indywidualni.org</string>

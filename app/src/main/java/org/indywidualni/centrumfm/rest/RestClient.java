@@ -79,6 +79,7 @@ public class RestClient {
         return apiInterfaceRSS;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public interface ApiEndpointInterface {
 
         @GET("/centrum/")

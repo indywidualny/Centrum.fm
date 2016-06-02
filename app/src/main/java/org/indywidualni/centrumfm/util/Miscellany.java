@@ -9,7 +9,12 @@ import android.util.Log;
 import org.indywidualni.centrumfm.MyApplication;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public abstract class Miscellany {
 
@@ -40,6 +45,13 @@ public abstract class Miscellany {
         int minutes = (int) (total % 3600) / 60;
         int seconds = (int) total % 60;
         return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+    }
+
+    public static String constructDateQueryForDay(boolean dayStart) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        Date today = Calendar.getInstance(TimeZone.getTimeZone("Europe/Warsaw")).getTime();
+        String reportDate = df.format(today);
+        return dayStart ? reportDate + "T00:00:00" : reportDate + "T23:59:59";
     }
 
     // get some information about the device (needed for e-mail signature)

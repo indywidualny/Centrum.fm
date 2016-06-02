@@ -61,4 +61,11 @@ public class RecyclerViewEmptySupport extends RecyclerView {
         }
     }
 
+    public void changeEmptyView(View view) {
+        if (mEmptyView != null)
+            mEmptyView.setVisibility(GONE);
+        setEmptyView(view);
+        updateEmptyView();
+    }
+
 }
