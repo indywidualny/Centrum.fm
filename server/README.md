@@ -12,12 +12,12 @@ http://indywidualni.org/centrum/songs.py
 
 #### `POST`  from 
 Start of date range (CEST)  
-Accepted values: e.g. **2016-05-31 10:20:11** or **2016-12-01**  
+Accepted values: e.g. **2016-05-31 10:20:11** or **2016-05-31T10:20:11** or **2016-12-01**  
 Default value: **1000-01-01**
 
 #### `POST`  to 
 End of date range (CEST)  
-Accepted values: e.g. **2016-06-01 00:00:00** or **2016-06-01**  
+Accepted values: e.g. **2016-06-01 00:00:00** or **2016-06-01T00:00:00** or **2016-06-01**  
 Default value: **9999-12-31**
 
 #### `POST`  limit 
