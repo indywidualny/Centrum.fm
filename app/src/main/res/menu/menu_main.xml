@@ -4,9 +4,9 @@
     tools:context=".activity.MainActivity">
 
     <item
-        android:id="@+id/action_share"
+        android:id="@+id/action_like_this_song"
         android:orderInCategory="0"
-        android:title="@string/action_share"
+        android:title="@string/action_like_this_song"
         app:showAsAction="never" />
 
     <item
@@ -20,4 +20,11 @@
         android:orderInCategory="2"
         android:title="@string/action_website"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_share"
+        android:orderInCategory="3"
+        android:title="@string/action_share"
+        app:showAsAction="never" />
+
 </menu>

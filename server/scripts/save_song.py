@@ -10,9 +10,10 @@ line = now.read()
 now.close()
 
 array = (line.rstrip()).split("|")
-ignore_artists = ['DOOKOLA SPORTU', 'Rockowa Komisja Wyborcza']
+ignore_artists = ['DOOKOLA SPORTU', 'Rockowa Komisja Wyborcza', 'CENTRUM W MROKU', 'KOKTAJL KULTURALNY']
+ignore_titles = ['Podklad 2015', 'podklad']
 
-if not array[2]:
+if not array[2] or (array[2] in ignore_titles):
     array[2] = None
 if not array[3] or (array[3] in ignore_artists):
     array[3] = None

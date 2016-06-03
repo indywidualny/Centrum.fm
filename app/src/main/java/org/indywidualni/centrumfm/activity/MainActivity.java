@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.playerPauseResume) ImageView playerPauseResume;
     @BindView(R.id.playerStop) ImageView playerStop;
     
+    private static List<RDS> rdsLatest;
     private Handler rdsHandler = new Handler();
     private Handler playerHandler = new Handler();
     private SharedPreferences preferences;
@@ -348,6 +349,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.action_share) {
             shareTextUrl(APP_PLAY_URL, getString(R.string.share_app_description));
             return true;
+        } else if (id == R.id.action_like_this_song) {
+            Miscellany.addFavouriteSongFromRds(this, rdsLatest);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -420,8 +424,10 @@ public class MainActivity extends AppCompatActivity
 
                 if (response.isSuccessful()) { // tasks available
                     updateTitle(response.body());
+                    rdsLatest = response.body();
                 } else {
                     // error response, no access to resource?
+                    rdsLatest = null;
                     if (toolbar != null) {
                         toolbar.setTitle(getString(R.string.toolbar_default_title));
                         toolbar.setSubtitle(null);
@@ -438,6 +444,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<List<RDS>> call, Throwable t) {
                 Log.e(TAG, "getRDS: " + t.getLocalizedMessage());
+                rdsLatest = null;
                 if (toolbar != null) {
                     toolbar.setTitle(getString(R.string.toolbar_default_title));
                     toolbar.setSubtitle(null);

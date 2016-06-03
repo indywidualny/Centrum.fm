@@ -43,6 +43,16 @@ public abstract class AsyncWrapper {
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
+    
+    public static void insertFavouriteSong(final Song song) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... arg0) {
+                DataSource.getInstance().insertFavouriteSong(song);
+                return null;
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
 
     public static void removeFavouriteSong(final Song song) {
         new AsyncTask<Void, Void, Void>() {

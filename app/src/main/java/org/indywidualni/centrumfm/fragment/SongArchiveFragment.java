@@ -136,10 +136,7 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         } else {
             queryParameters.put(SONGS_POPULAR, popular ? "1" : "0");
             queryParameters.put(SONGS_LIMIT, ITEMS_PER_REQUEST);
-            if (!popular) {
-                queryParameters.put(SONGS_FROM, Miscellany.constructDateQueryForDay(true));
-                queryParameters.put(SONGS_TO, Miscellany.constructDateQueryForDay(false));
-            }
+            setDefaultDateTimeRange();
             mRecyclerView.setEmptyView(loadingView);
         }
 
@@ -180,11 +177,12 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
             getSongs(false);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onResume() {
         super.onResume();
         registerForContextMenu(mRecyclerView);
-        
+
         // it's not simply an instance of TrackedFragment
         String affix = "Normal";  // we need to know whether it's used for popular songs
         if (popular) affix = "Popular";
@@ -211,8 +209,16 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         outState.putParcelableArrayList(DATA_PARCEL, (ArrayList<Song>) songs);
         outState.putSerializable(QUERY_PARAMETERS, (HashMap<String, String>) queryParameters);
     }
+    
+    private void setDefaultDateTimeRange() {
+        if (!popular) {
+            queryParameters.put(SONGS_FROM, Miscellany.constructDateQueryForDay(true));
+            queryParameters.put(SONGS_TO, Miscellany.constructDateQueryForDay(false));
+        }
+    }
 
     private void getSongs(final boolean appendToList) {
+        if (call != null) call.cancel();
         swipeRefreshLayout.setRefreshing(true);
         call = RestClient.getClientJSON().getSongs(queryParameters);
         call.enqueue(new Callback<List<Song>>() {
@@ -226,6 +232,7 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
                         else
                             songs = response.body();
                         adapter.setDataset(songs);
+                        if (!appendToList) mRecyclerView.scrollToPosition(0);
                     } else {
                         // error response, no access to resource?
                         Log.v(TAG, "Cannot obtain list of songs");
@@ -290,9 +297,25 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         final MenuItem item = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
+        if (!popular) {
+            MenuItem now = menu.add(Menu.NONE, R.id.get_today, 1, R.string.songs_show_today);
+            now.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
-
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.get_today:
+                setDefaultDateTimeRange();
+                getSongs(false);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
     @Override
     public boolean onQueryTextChange(String query) {
         // Here is where we are going to implement our filter logic

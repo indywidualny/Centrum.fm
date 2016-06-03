@@ -1,18 +1,25 @@
 package org.indywidualni.centrumfm.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.indywidualni.centrumfm.MyApplication;
+import org.indywidualni.centrumfm.R;
+import org.indywidualni.centrumfm.rest.model.RDS;
+import org.indywidualni.centrumfm.rest.model.Song;
+import org.indywidualni.centrumfm.util.database.AsyncWrapper;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -52,6 +59,24 @@ public abstract class Miscellany {
         Date today = Calendar.getInstance(TimeZone.getTimeZone("Europe/Warsaw")).getTime();
         String reportDate = df.format(today);
         return dayStart ? reportDate + "T00:00:00" : reportDate + "T23:59:59";
+    }
+    
+    public static void addFavouriteSongFromRds(Context context, List<RDS> rds) {
+        if (rds == null) {
+            String message = context.getString(R.string.cannot_favourite_song);
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        } else {
+            RDS now = rds.get(0);
+            if (!now.getTitle().isEmpty() && !now.getArtist().isEmpty()) {
+                Song song = new Song();
+                song.setTitle(now.getTitle());
+                song.setArtist(now.getArtist());
+                song.setDuration(now.getTotal());
+                AsyncWrapper.insertFavouriteSong(song);
+                String message = "\u2605 " + now.getArtist() + " – " + now.getTitle();
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     // get some information about the device (needed for e-mail signature)

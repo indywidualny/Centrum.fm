@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,19 @@ public class SongsFragment extends Fragment implements SongsActivity.IActivityTo
             }
         });
 
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                setSubtitleNull(position);
+            }
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPx) {}
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
+
         // restore currently selected tab
         viewPager.setCurrentItem(1);
         if (savedInstanceState != null)
@@ -76,6 +90,14 @@ public class SongsFragment extends Fragment implements SongsActivity.IActivityTo
     @Override
     public void favouriteAdded() {
         ((MyFragmentPagerAdapter) viewPager.getAdapter()).update();
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void setSubtitleNull(int position) {
+        assert ((AppCompatActivity) getActivity()).getSupportActionBar() != null;
+        if (position != 0)
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(null);
+        // else todo: set subtitle interface
     }
 
     private class MyFragmentPagerAdapter extends FragmentStatePagerAdapter {

@@ -57,10 +57,12 @@
     <string name="audio_focus_problem">System nie pozwala mi dojść do głosu</string>
     <string name="slide_radio">Strumień</string>
     <string name="slide_reader">Newsy</string>
+    <string name="slide_songs">Piosenki</string>
     <string name="slide_fav">Ramówka</string>
-    <string name="slide_radio_desc">Wysokiej jakości strumień radia. Pamiętaj, że urządzenie może automatycznie zmienić rodzaj połączenia z siecią.</string>
-    <string name="slide_reader_desc">Czytaj, słuchaj, udostępniaj newsy, również offline. Możesz zdecydować ile świeżych newsów ma zostać zachowane.</string>
-    <string name="slide_fav_desc">Inteligentna ramówka i ulubione audycje, również offline. Przypomnienia o nadchodzących ulubionych audycjach.</string>
+    <string name="slide_radio_desc">Wysokiej jakości strumień radia. Wygodny widget szybkiego startu odtwarzacza.</string>
+    <string name="slide_reader_desc">Czytaj newsy, słuchaj załączniki, udostępniaj treści znajomym. Również offline.</string>
+    <string name="slide_songs_desc">Obszerne archiwum historii anteny. Ranking najpopularniejszych utworów i ulubione.</string>
+    <string name="slide_fav_desc">Inteligentna ramówka i ulubione audycje. Przypomnienia o lubianych audycjach.</string>
     <string name="show_all_news_pref">Rozwiń wszystkie newsy</string>
     <string name="show_all_news_pref_description">Nie zwijaj newsów, pokaż całe karty</string>
     <string name="high_quality">Wysoka jakość</string>
@@ -69,6 +71,7 @@
     <string name="widget_quick_play_label">Szybki start</string>
     <string name="played_n_times">Na antenie %1$s razy</string>
     <string name="search">Szukaj</string>
+    <string name="songs_show_today">Bieżący dzień</string>
     <string name="songs_info">Informacje</string>
     <string name="action_favourite_song">Dodaj do ulubionych</string>
     <string name="action_unfavourite_song">Usuń z ulubionych</string>
@@ -79,6 +82,8 @@
     <string name="unfaved">Usunięto z ulubionych</string>
     <string name="revert">Cofnij</string>
     <string name="problem_server_response">Problem. Odpowiedź: %1$s</string>
+    <string name="action_like_this_song">Polub piosenkę</string>
+    <string name="cannot_favourite_song">Brak utworu, wstrzymaj konie</string>
 
     <!-- Change log strings -->
     <string name="changelog_full_title">Dziennik zmian</string>
