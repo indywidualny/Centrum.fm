@@ -153,8 +153,12 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
                     snackbar.setCallback(new Snackbar.Callback() {
                         @Override
                         public void onDismissed(Snackbar snackbar, int event) {
-                            if (event != DISMISS_EVENT_ACTION)
-                                mCallback.unfavouriteSong(removed);
+                            if (event != DISMISS_EVENT_ACTION) {
+                                if (mCallback != null)
+                                    mCallback.unfavouriteSong(removed);
+                                else
+                                    AsyncWrapper.removeFavouriteSong(removed);
+                            }
                         }
                     });
                     snackbar.show();
