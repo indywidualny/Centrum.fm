@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.activity.SongsActivity;
+import org.indywidualni.centrumfm.util.Miscellany;
 import org.indywidualni.centrumfm.util.ui.SlidingTabLayout;
 
 import butterknife.BindView;
@@ -54,7 +55,7 @@ public class SongsFragment extends Fragment implements SongsActivity.IActivityTo
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                setSubtitleNull(position);
+                setSubtitle(position);
             }
 
             @Override
@@ -93,11 +94,13 @@ public class SongsFragment extends Fragment implements SongsActivity.IActivityTo
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void setSubtitleNull(int position) {
+    private void setSubtitle(int position) {
         assert ((AppCompatActivity) getActivity()).getSupportActionBar() != null;
-        if (position != 0)
+        if (position == 0) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(Miscellany.
+                    formatSubtitleRead(getContext(), SongArchiveFragment.currentSubtitle));
+        } else
             ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(null);
-        // else todo: set subtitle interface
     }
 
     private class MyFragmentPagerAdapter extends FragmentStatePagerAdapter {

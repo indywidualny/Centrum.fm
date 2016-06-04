@@ -1,8 +1,6 @@
 package org.indywidualni.centrumfm.rest.adapter;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.indywidualni.centrumfm.MyApplication;
 import org.indywidualni.centrumfm.R;
-import org.indywidualni.centrumfm.activity.SongsActivity;
 import org.indywidualni.centrumfm.rest.model.Song;
 
 import java.util.ArrayList;
@@ -20,12 +18,12 @@ import java.util.List;
 
 public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> {
 
-    private Context context;
     private List<Song> mDataset;
+    private ViewHolder.IViewHolderClicks viewHolderClicks;
 
     // provide a suitable constructor
-    public SongsAdapter(Context context, List<Song> dataset) {
-        this.context = context;
+    public SongsAdapter(ViewHolder.IViewHolderClicks viewHolderClicks, List<Song> dataset) {
+        this.viewHolderClicks = viewHolderClicks != null ? viewHolderClicks : null;
         this.mDataset = new ArrayList<>(dataset);
     }
 
@@ -36,7 +34,7 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_song,
                 viewGroup, false);
 
-        return new ViewHolder(v, new ViewClicks());
+        return new ViewHolder(v, viewHolderClicks);
     }
 
     @SuppressLint("SetTextI18n")
@@ -51,8 +49,8 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
         if (!TextUtils.isEmpty(mDataset.get(position).getPlayed()))
             viewHolder.getPlayed().setText(mDataset.get(position).getPlayed().replace("T", "  "));
         else if (!TextUtils.isEmpty(mDataset.get(position).getSum()))
-            viewHolder.getPlayed().setText(context.getString(R.string.played_n_times,
-                    mDataset.get(position).getSum()));
+            viewHolder.getPlayed().setText(MyApplication.getContextOfApplication()
+                    .getString(R.string.played_n_times, mDataset.get(position).getSum()));
         else
             viewHolder.getPlayed().setVisibility(View.GONE);
     }
@@ -127,7 +125,8 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
         }
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+            View.OnLongClickListener {
 
         private final LinearLayout linearLayout;
         private final TextView id;
@@ -135,7 +134,7 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
         private final TextView artist;
         private final TextView played;
         private final TextView duration;
-        public IViewHolderClicks mListener;
+        private IViewHolderClicks mListener;
 
         public ViewHolder(View v, IViewHolderClicks listener) {
             super(v);
@@ -149,13 +148,20 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
             duration = (TextView) v.findViewById(R.id.duration);
 
             linearLayout.setOnClickListener(this);
+            linearLayout.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            if (v instanceof LinearLayout) {
-                mListener.onContent((LinearLayout) v, getLayoutPosition());
+            if (mListener != null) {
+                if (v instanceof LinearLayout)
+                    mListener.onContentClick((LinearLayout) v, getAdapterPosition());
             }
+        }
+        
+        @Override
+        public boolean onLongClick(View v) {
+            return mListener != null && mListener.onContentLongClick(getAdapterPosition());
         }
 
         public TextView getId() {
@@ -179,16 +185,10 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
         }
 
         public interface IViewHolderClicks {
-            void onContent(LinearLayout caller, int position);
+            void onContentClick(LinearLayout caller, int position);
+            boolean onContentLongClick(int position);
         }
 
-    }
-
-    private class ViewClicks implements ViewHolder.IViewHolderClicks {
-        public void onContent(LinearLayout caller, int position) {
-            SongsActivity.currentPosition = position;
-            ((Activity) context).openContextMenu(caller);
-        }
     }
 
 }

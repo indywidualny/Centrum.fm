@@ -4,8 +4,10 @@ import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -75,6 +77,13 @@ public class SongsActivity extends AppCompatActivity
         if (fragment == null) {
             fragment = new SongsFragment();
             fm.beginTransaction().replace(R.id.fragment, fragment, TAG_FRAGMENT).commit();
+        }
+        
+        // if the activity is being launched for the first time
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (preferences.getBoolean("first_run_songs", true)) {
+            showInfo();
+            preferences.edit().putBoolean("first_run_songs", false).apply();
         }
     }
 

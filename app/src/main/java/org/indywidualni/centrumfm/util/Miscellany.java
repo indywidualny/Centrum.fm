@@ -1,5 +1,6 @@
 package org.indywidualni.centrumfm.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -61,6 +62,13 @@ public abstract class Miscellany {
         return dayStart ? reportDate + "T00:00:00" : reportDate + "T23:59:59";
     }
     
+    public static String constructDateQueryForDay(boolean startDay,
+                                                  int year, int month, int day) {
+        @SuppressLint("DefaultLocale") String reportDate = year + "-" +
+                String.format("%02d", month + 1) + "-" + String.format("%02d", day);
+        return startDay ? reportDate + "T00:00:00" : reportDate + "T23:59:59";
+    }
+    
     public static void addFavouriteSongFromRds(Context context, List<RDS> rds) {
         if (rds == null) {
             String message = context.getString(R.string.cannot_favourite_song);
@@ -77,6 +85,15 @@ public abstract class Miscellany {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public static String formatSubtitleSave(Context context, String subtitle) {
+        return subtitle == null ? null : context.getString(R.string.songs_given_day,
+                subtitle.substring(0, 10));
+    }
+
+    public static String formatSubtitleRead(Context context, String subtitle) {
+        return subtitle == null ? context.getString(R.string.songs_current_day) : subtitle;
     }
 
     // get some information about the device (needed for e-mail signature)

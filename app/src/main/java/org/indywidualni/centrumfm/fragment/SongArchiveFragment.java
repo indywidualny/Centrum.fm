@@ -6,9 +6,11 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -21,7 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -55,7 +57,8 @@ import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SO
 import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_SKIP;
 import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_TO;
 
-public class SongArchiveFragment extends Fragment implements SearchView.OnQueryTextListener {
+public class SongArchiveFragment extends Fragment implements SearchView.OnQueryTextListener,
+        SongsAdapter.ViewHolder.IViewHolderClicks, DatePickerFragment.OnDateSetSpecialListener {
 
     private static final String TAG = SongArchiveFragment.class.getSimpleName();
     
@@ -77,6 +80,7 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
     private Map<String, String> queryParameters = new HashMap<>();
     private LinearLayoutManager linearLayoutManager;
     private boolean dynamicLoadingEnabled = true;
+    public static String currentSubtitle;
     private Call<List<Song>> call;
     private SongsAdapter adapter;
     private boolean popular;
@@ -149,7 +153,7 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         });
 
         linearLayoutManager = new LinearLayoutManager(getActivity());
-        adapter = new SongsAdapter(getContext(), songs);
+        adapter = new SongsAdapter(this, songs);
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -171,6 +175,12 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
                 }
             }
         });
+
+        // reset date picker's listener if needed
+        DatePickerFragment datePickerFragment = (DatePickerFragment) getChildFragmentManager()
+                .findFragmentByTag(DatePickerFragment.TAG_FRAGMENT);
+        if (datePickerFragment != null)
+            datePickerFragment.setSpecialListener(this);
 
         // no data yet, load it for the first time
         if (songs.isEmpty())
@@ -219,6 +229,7 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
 
     private void getSongs(final boolean appendToList) {
         if (call != null) call.cancel();
+        if (!appendToList) queryParameters.put(SONGS_SKIP, "0");
         swipeRefreshLayout.setRefreshing(true);
         call = RestClient.getClientJSON().getSongs(queryParameters);
         call.enqueue(new Callback<List<Song>>() {
@@ -236,7 +247,8 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
                     } else {
                         // error response, no access to resource?
                         Log.v(TAG, "Cannot obtain list of songs");
-                        showSnackbarNotice(getString(R.string.problem_server_response, response.code()));
+                        showSnackbarNotice(getString(R.string.problem_server_response,
+                                response.code()));
                     }
                     mRecyclerView.changeEmptyView(emptyView);
                     swipeRefreshLayout.setRefreshing(false);
@@ -309,11 +321,21 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         switch (item.getItemId()) {
             case R.id.get_today:
                 setDefaultDateTimeRange();
+                setSubtitle(true);
                 getSongs(false);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void setSubtitle(boolean now) {
+        currentSubtitle = Miscellany.formatSubtitleSave(getContext(), now
+                ? null : queryParameters.get(SONGS_FROM));
+        assert ((AppCompatActivity) getActivity()).getSupportActionBar() != null;
+        ((AppCompatActivity) getActivity()).getSupportActionBar()
+                .setSubtitle(Miscellany.formatSubtitleRead(getContext(), currentSubtitle));
     }
     
     @Override
@@ -346,7 +368,30 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
 
     @OnClick(R.id.fab)
     public void fabClicked() {
-        Toast.makeText(getActivity(), "Fab Click!", Toast.LENGTH_SHORT).show();
+        DialogFragment newFragment = new DatePickerFragment();
+        ((DatePickerFragment) newFragment).setSpecialListener(this);
+        newFragment.show(getChildFragmentManager(), DatePickerFragment.TAG_FRAGMENT);
+    }
+    
+    @Override
+    public void onContentClick(LinearLayout caller, int position) {
+        SongsActivity.currentPosition = position;
+        getActivity().openContextMenu(caller);
+    }
+    
+    @Override
+    public boolean onContentLongClick(int position) {
+        return true;
+    }
+
+    @Override
+    public void onDateSet(int year, int month, int day, int currYear, int currMonth, int currDay) {
+        String start = Miscellany.constructDateQueryForDay(true, year, month, day);
+        String end = Miscellany.constructDateQueryForDay(false, year, month, day);
+        queryParameters.put(SONGS_FROM, start);
+        queryParameters.put(SONGS_TO, end);
+        setSubtitle(currYear == year && currMonth == month && currDay == day);
+        getSongs(false);
     }
 
     public void showSnackbarNotice(@StringRes int resource) {

@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.activity.SongsActivity;
@@ -27,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class FavouriteSongsFragment extends TrackedFragment implements SearchView.OnQueryTextListener,
-        UpdatableFragment {
+        SongsAdapter.ViewHolder.IViewHolderClicks, UpdatableFragment {
 
     private RecyclerViewEmptySupport mRecyclerView;
     private CoordinatorLayout coordinatorLayout;
@@ -65,7 +67,7 @@ public class FavouriteSongsFragment extends TrackedFragment implements SearchVie
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_song_favourite, container, false);
-        coordinatorLayout = (CoordinatorLayout) getActivity().findViewById(R.id.coordinator_layout);
+        coordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.coordinator_layout);
         mRecyclerView = (RecyclerViewEmptySupport) view.findViewById(R.id.recycler_view);
         emptyView = view.findViewById(R.id.empty_view);
         return view;
@@ -78,7 +80,7 @@ public class FavouriteSongsFragment extends TrackedFragment implements SearchVie
 
         songs = DataSource.getInstance().getFavouriteSongs();
         Collections.sort(songs);
-        adapter = new SongsAdapter(getContext(), songs);
+        adapter = new SongsAdapter(this, songs);
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setEmptyView(emptyView);
@@ -121,6 +123,8 @@ public class FavouriteSongsFragment extends TrackedFragment implements SearchVie
                 case R.id.context_unfavourite:
                     final Song removed = adapter.removeItem(SongsActivity.currentPosition);
                     songs.remove(removed);
+                    if (SongsActivity.currentPosition == 0) 
+                        adapter.notifyDataSetChanged();
                     // allow to revert this action
                     Snackbar snackbar = Snackbar.make(coordinatorLayout,
                             getString(R.string.unfaved), Snackbar.LENGTH_LONG)
@@ -129,6 +133,8 @@ public class FavouriteSongsFragment extends TrackedFragment implements SearchVie
                                 public void onClick(View view) {
                                     adapter.addItem(SongsActivity.currentPosition, removed);
                                     songs.add(SongsActivity.currentPosition, removed);
+                                    if (SongsActivity.currentPosition == 0) 
+                                        adapter.notifyDataSetChanged();
                                 }
                             });
                     snackbar.setCallback(new Snackbar.Callback() {
@@ -180,6 +186,18 @@ public class FavouriteSongsFragment extends TrackedFragment implements SearchVie
     @Override
     public boolean onQueryTextSubmit(String query) {
         return false;
+    }
+    
+    @Override
+    public void onContentClick(LinearLayout caller, int position) {
+        SongsActivity.currentPosition = position;
+        getActivity().openContextMenu(caller);
+    }
+    
+    @Override
+    public boolean onContentLongClick(int position) {
+        Log.e("Long Click", "Item: " + position);
+        return true;
     }
 
     @Override

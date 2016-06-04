@@ -84,6 +84,8 @@
     <string name="problem_server_response">Problem. Odpowiedź: %1$s</string>
     <string name="action_like_this_song">Polub piosenkę</string>
     <string name="cannot_favourite_song">Brak utworu, wstrzymaj konie</string>
+    <string name="songs_current_day">Widok dnia bieżącego</string>
+    <string name="songs_given_day">Widok dla %1$s</string>
 
     <!-- Change log strings -->
     <string name="changelog_full_title">Dziennik zmian</string>
