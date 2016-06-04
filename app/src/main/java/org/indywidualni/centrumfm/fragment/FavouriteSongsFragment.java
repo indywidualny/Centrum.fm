@@ -29,12 +29,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 public class FavouriteSongsFragment extends Fragment implements SearchView.OnQueryTextListener,
         SongsAdapter.ViewHolder.IViewHolderClicks, UpdatableFragment {
 
-    private RecyclerViewEmptySupport mRecyclerView;
-    private CoordinatorLayout coordinatorLayout;
-    private View emptyView;
+    @BindView(R.id.recycler_view) RecyclerViewEmptySupport mRecyclerView;
+    @BindView(R.id.coordinator_layout) CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.empty_view) View emptyView;
+    private Unbinder unbinder;
 
     private IFragmentToActivity mCallback;
     private List<Song> songs = new ArrayList<>();
@@ -68,9 +73,7 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_song_favourite, container, false);
-        coordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.coordinator_layout);
-        mRecyclerView = (RecyclerViewEmptySupport) view.findViewById(R.id.recycler_view);
-        emptyView = view.findViewById(R.id.empty_view);
+        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -204,9 +207,7 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        coordinatorLayout = null;
-        mRecyclerView = null;
-        emptyView = null;
+        unbinder.unbind();
     }
 
     public interface IFragmentToActivity {
