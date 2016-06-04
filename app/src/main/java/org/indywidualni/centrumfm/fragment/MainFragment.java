@@ -19,7 +19,7 @@ import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.rest.RestClient;
 import org.indywidualni.centrumfm.rest.adapter.NewsAdapter;
 import org.indywidualni.centrumfm.rest.model.Channel;
-import org.indywidualni.centrumfm.rest.model.RSS;
+import org.indywidualni.centrumfm.rest.model.Rss;
 import org.indywidualni.centrumfm.util.Connectivity;
 import org.indywidualni.centrumfm.util.database.DataSource;
 
@@ -44,7 +44,7 @@ public class MainFragment extends TrackedFragment {
     @BindView(R.id.swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     private Unbinder unbinder;
 
-    private Call<RSS> call;
+    private Call<Rss> call;
     private Tracker tracker;
 
     @Override
@@ -64,7 +64,7 @@ public class MainFragment extends TrackedFragment {
             @Override
             public void onRefresh() {
                 if (Connectivity.isConnected(getActivity()))
-                    getRSS();
+                    getRss();
                 else {
                     Snackbar.make(getActivity().findViewById(R.id.panel_main),
                             getString(R.string.no_network), Snackbar.LENGTH_LONG).show();
@@ -107,7 +107,7 @@ public class MainFragment extends TrackedFragment {
                                     mSwipeRefreshLayout.setRefreshing(true);
                                 }
                             });
-                            getRSS();
+                            getRss();
                         }
                     } catch (NullPointerException e) {
                         // fragment was destroyed while AsyncTask was running
@@ -138,12 +138,12 @@ public class MainFragment extends TrackedFragment {
         unbinder.unbind();
     }
 
-    private void getRSS() {
-        call = RestClient.getClientRSS().getRSS();
-        call.enqueue(new Callback<RSS>() {
+    private void getRss() {
+        call = RestClient.getClientRss().getRss();
+        call.enqueue(new Callback<Rss>() {
             @Override
-            public void onResponse(Call<RSS> call, final Response<RSS> response) {
-                Log.v(TAG, "getRSS: response " + response.code());
+            public void onResponse(Call<Rss> call, final Response<Rss> response) {
+                Log.v(TAG, "getRss: response " + response.code());
 
                 if (response.isSuccessful()) {  // tasks available
                     new AsyncTask<Void, Void, List<Channel.Item>>() {
@@ -182,8 +182,8 @@ public class MainFragment extends TrackedFragment {
             }
 
             @Override
-            public void onFailure(Call<RSS> call, Throwable t) {
-                Log.e(TAG, "getRSS: " + t.getLocalizedMessage());
+            public void onFailure(Call<Rss> call, Throwable t) {
+                Log.e(TAG, "getRss: " + t.getLocalizedMessage());
                 if (mSwipeRefreshLayout != null)
                     mSwipeRefreshLayout.setRefreshing(false);
             }

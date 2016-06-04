@@ -138,7 +138,7 @@ public class ScheduleFragment extends TrackedFragment {
     }
 
     private void getSchedule() {
-        call = RestClient.getClientXML().getSchedule();
+        call = RestClient.getClientXml().getSchedule();
         call.enqueue(new Callback<Schedule>() {
             @Override
             public void onResponse(Call<Schedule> call, final Response<Schedule> response) {

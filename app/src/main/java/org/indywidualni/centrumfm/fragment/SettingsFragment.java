@@ -121,7 +121,7 @@ public class SettingsFragment extends PreferenceFragment
     }
 
     private void getServerStatus() {
-        call = RestClient.getClientJSON().getServerStatus();
+        call = RestClient.getClientJson().getServerStatus();
         call.enqueue(new Callback<Server>() {
             @Override
             public void onResponse(Call<Server> call, Response<Server> response) {

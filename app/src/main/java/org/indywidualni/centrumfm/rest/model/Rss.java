@@ -6,7 +6,7 @@ import org.simpleframework.xml.Root;
 
 @SuppressWarnings("UnusedDeclaration")
 @Root
-public class RSS {
+public class Rss {
 
     @Attribute
     private String version;
@@ -24,7 +24,7 @@ public class RSS {
 
     @Override
     public String toString() {
-        return "RSS{version='" + version + '\'' +
+        return "Rss{version='" + version + '\'' +
                 ", channel=" + channel + '}';
     }
 

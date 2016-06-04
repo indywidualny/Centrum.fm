@@ -50,7 +50,7 @@ import org.indywidualni.centrumfm.fragment.FavouriteFragment;
 import org.indywidualni.centrumfm.fragment.MainFragment;
 import org.indywidualni.centrumfm.fragment.ScheduleFragment;
 import org.indywidualni.centrumfm.rest.RestClient;
-import org.indywidualni.centrumfm.rest.model.RDS;
+import org.indywidualni.centrumfm.rest.model.Rds;
 import org.indywidualni.centrumfm.util.ChangeLog;
 import org.indywidualni.centrumfm.util.Connectivity;
 import org.indywidualni.centrumfm.util.Miscellany;
@@ -99,12 +99,12 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.playerPauseResume) ImageView playerPauseResume;
     @BindView(R.id.playerStop) ImageView playerStop;
     
-    private static List<RDS> rdsLatest;
+    private static List<Rds> rdsLatest;
     private Handler rdsHandler = new Handler();
     private Handler playerHandler = new Handler();
     private SharedPreferences preferences;
     private CustomTabActivityHelper customTabActivityHelper;
-    private Call<List<RDS>> call;
+    private Call<List<Rds>> call;
     private Tracker tracker;
     private StreamService mService;
     private ActionBarDrawerToggle drawerToggle;
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void run() {
             // Do something here on the main thread
-            getRDS();
+            getRds();
             // Repeat this the same runnable code block again another 30 seconds
             rdsHandler.postDelayed(rdsRunnable, RDS_REFRESH_INTERVAL);
         }
@@ -415,12 +415,12 @@ public class MainActivity extends AppCompatActivity
         outState.putInt(SELECTED_ID, mSelectedId);
     }
 
-    private void getRDS() {
-        call = RestClient.getClientJSON().getRDS();
-        call.enqueue(new Callback<List<RDS>>() {
+    private void getRds() {
+        call = RestClient.getClientJson().getRds();
+        call.enqueue(new Callback<List<Rds>>() {
             @Override
-            public void onResponse(Call<List<RDS>> call, Response<List<RDS>> response) {
-                Log.v(TAG, "getRDS: response " + response.code());
+            public void onResponse(Call<List<Rds>> call, Response<List<Rds>> response) {
+                Log.v(TAG, "getRds: response " + response.code());
 
                 if (response.isSuccessful()) { // tasks available
                     updateTitle(response.body());
@@ -442,8 +442,8 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            public void onFailure(Call<List<RDS>> call, Throwable t) {
-                Log.e(TAG, "getRDS: " + t.getLocalizedMessage());
+            public void onFailure(Call<List<Rds>> call, Throwable t) {
+                Log.e(TAG, "getRds: " + t.getLocalizedMessage());
                 rdsLatest = null;
                 if (toolbar != null) {
                     toolbar.setTitle(getString(R.string.toolbar_default_title));
@@ -453,12 +453,12 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void updateTitle(List<RDS> items) {
+    private void updateTitle(List<Rds> items) {
         if (toolbar == null)
             return;
 
-        RDS now = items.get(0);
-        RDS soon = items.get(1);
+        Rds now = items.get(0);
+        Rds soon = items.get(1);
 
         if (!now.getTitle().isEmpty() && !now.getArtist().isEmpty())
             toolbar.setTitle("\u266A " + now.getArtist() + " – " + now.getTitle());

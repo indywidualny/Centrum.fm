@@ -1,7 +1,7 @@
 package org.indywidualni.centrumfm.rest;
 
-import org.indywidualni.centrumfm.rest.model.RDS;
-import org.indywidualni.centrumfm.rest.model.RSS;
+import org.indywidualni.centrumfm.rest.model.Rds;
+import org.indywidualni.centrumfm.rest.model.Rss;
 import org.indywidualni.centrumfm.rest.model.Schedule;
 import org.indywidualni.centrumfm.rest.model.Server;
 import org.indywidualni.centrumfm.rest.model.Song;
@@ -27,56 +27,56 @@ public class RestClient {
     private static final Object LOCK_XML = new Object();
     private static final Object LOCK_RSS = new Object();
     
-    private static volatile ApiEndpointInterface apiInterfaceJSON;
-    private static volatile ApiEndpointInterface apiInterfaceXML;
-    private static volatile ApiEndpointInterface apiInterfaceRSS;
+    private static volatile ApiEndpointInterface apiInterfaceJson;
+    private static volatile ApiEndpointInterface apiInterfaceXml;
+    private static volatile ApiEndpointInterface apiInterfaceRss;
 
     private RestClient() {
     }
 
-    public static ApiEndpointInterface getClientJSON() {
-        if (apiInterfaceJSON == null) {
+    public static ApiEndpointInterface getClientJson() {
+        if (apiInterfaceJson == null) {
             synchronized (LOCK_JSON) {
-                if (apiInterfaceJSON == null) {
+                if (apiInterfaceJson == null) {
                     Retrofit client = new Retrofit.Builder()
                             .baseUrl(BASE_URL)
                             .addConverterFactory(GsonConverterFactory.create())
                             .build();
-                    apiInterfaceJSON = client.create(ApiEndpointInterface.class);
+                    apiInterfaceJson = client.create(ApiEndpointInterface.class);
                 }
             }
         }
-        return apiInterfaceJSON;
+        return apiInterfaceJson;
     }
 
-    public static ApiEndpointInterface getClientXML() {
-        if (apiInterfaceXML == null) {
+    public static ApiEndpointInterface getClientXml() {
+        if (apiInterfaceXml == null) {
             synchronized (LOCK_XML) {
-                if (apiInterfaceXML == null) {
+                if (apiInterfaceXml == null) {
                     Retrofit client = new Retrofit.Builder()
                             .baseUrl(BASE_URL)
                             .addConverterFactory(SimpleXmlConverterFactory.create())
                             .build();
-                    apiInterfaceXML = client.create(ApiEndpointInterface.class);
+                    apiInterfaceXml = client.create(ApiEndpointInterface.class);
                 }
             }
         }
-        return apiInterfaceXML;
+        return apiInterfaceXml;
     }
 
-    public static ApiEndpointInterface getClientRSS() {
-        if (apiInterfaceRSS == null) {
+    public static ApiEndpointInterface getClientRss() {
+        if (apiInterfaceRss == null) {
             synchronized (LOCK_RSS) {
-                if (apiInterfaceRSS == null) {
+                if (apiInterfaceRss == null) {
                     Retrofit client = new Retrofit.Builder()
                             .baseUrl(RSS_URL)
                             .addConverterFactory(SimpleXmlConverterFactory.create())
                             .build();
-                    apiInterfaceRSS = client.create(ApiEndpointInterface.class);
+                    apiInterfaceRss = client.create(ApiEndpointInterface.class);
                 }
             }
         }
-        return apiInterfaceRSS;
+        return apiInterfaceRss;
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -86,13 +86,13 @@ public class RestClient {
         Call<Server> getServerStatus();
 
         @GET("/centrum/rds.php")
-        Call<List<RDS>> getRDS();
+        Call<List<Rds>> getRds();
 
         @GET("/centrum/ramowka.xml")
         Call<Schedule> getSchedule();
 
         @GET("/RadioCentrum")
-        Call<RSS> getRSS();
+        Call<Rss> getRss();
 
         @FormUrlEncoded
         @POST("/centrum/songs.py")

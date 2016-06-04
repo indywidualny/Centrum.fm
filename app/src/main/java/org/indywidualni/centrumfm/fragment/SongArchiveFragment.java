@@ -215,7 +215,7 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         if (call != null) call.cancel();
         if (!appendToList) queryParameters.put(SONGS_SKIP, "0");
         swipeRefreshLayout.setRefreshing(true);
-        call = RestClient.getClientJSON().getSongs(queryParameters);
+        call = RestClient.getClientJson().getSongs(queryParameters);
         call.enqueue(new Callback<List<Song>>() {
             @Override
             public void onResponse(Call<List<Song>> call, Response<List<Song>> response) {

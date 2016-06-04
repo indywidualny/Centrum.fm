@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import org.indywidualni.centrumfm.MyApplication;
 import org.indywidualni.centrumfm.R;
-import org.indywidualni.centrumfm.rest.model.RDS;
+import org.indywidualni.centrumfm.rest.model.Rds;
 import org.indywidualni.centrumfm.rest.model.Song;
 import org.indywidualni.centrumfm.util.database.AsyncWrapper;
 
@@ -69,12 +69,12 @@ public abstract class Miscellany {
         return startDay ? reportDate + "T00:00:00" : reportDate + "T23:59:59";
     }
     
-    public static void addFavouriteSongFromRds(Context context, List<RDS> rds) {
+    public static void addFavouriteSongFromRds(Context context, List<Rds> rds) {
         if (rds == null) {
             String message = context.getString(R.string.cannot_favourite_song);
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         } else {
-            RDS now = rds.get(0);
+            Rds now = rds.get(0);
             if (!now.getTitle().isEmpty() && !now.getArtist().isEmpty()) {
                 Song song = new Song();
                 song.setTitle(now.getTitle());
