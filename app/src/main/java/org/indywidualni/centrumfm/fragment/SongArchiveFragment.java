@@ -25,10 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
-import org.indywidualni.centrumfm.MyApplication;
 import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.activity.SongsActivity;
 import org.indywidualni.centrumfm.rest.RestClient;
@@ -187,22 +183,10 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
             getSongs(false);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onResume() {
         super.onResume();
         registerForContextMenu(mRecyclerView);
-
-        // it's not simply an instance of TrackedFragment
-        String affix = "Normal";  // we need to know whether it's used for popular songs
-        if (popular) affix = "Popular";
-        if (getUserVisibleHint()) {
-            final Tracker tracker = ((MyApplication) getActivity().getApplication())
-                    .getDefaultTracker();
-            tracker.setScreenName(getActivity().getClass().getSimpleName() + "/"
-                    + getClass().getSimpleName() + "/" + affix);
-            tracker.send(new HitBuilders.ScreenViewBuilder().build());
-        }
     }
 
     @Override
