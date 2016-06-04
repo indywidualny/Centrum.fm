@@ -282,9 +282,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onResume() {
-        super.onResume();  // Always call the superclass method first
+        super.onResume();
 
         // schedule RDS updates
+        rdsLatest = null;
         rdsHandler.post(rdsRunnable);
     }
 

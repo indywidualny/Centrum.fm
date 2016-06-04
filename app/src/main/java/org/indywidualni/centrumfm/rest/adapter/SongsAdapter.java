@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import org.indywidualni.centrumfm.MyApplication;
@@ -16,7 +16,7 @@ import org.indywidualni.centrumfm.rest.model.Song;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> {
+public class SongsAdapter extends SelectableAdapter<SongsAdapter.ViewHolder> {
 
     private List<Song> mDataset;
     private ViewHolder.IViewHolderClicks viewHolderClicks;
@@ -53,12 +53,21 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
                     .getString(R.string.played_n_times, mDataset.get(position).getSum()));
         else
             viewHolder.getPlayed().setVisibility(View.GONE);
+
+        viewHolder.getSelectedOverlay().setVisibility(isSelected(position)
+                ? View.VISIBLE : View.INVISIBLE);
     }
 
     // return the size of a dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataset.size();
+    }
+
+    // to use setHasStableIds(true)
+    @Override
+    public long getItemId(int position) {
+        return mDataset.get(position).hashCode();
     }
 
     // get current dataset
@@ -128,34 +137,37 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
             View.OnLongClickListener {
 
-        private final LinearLayout linearLayout;
+        private final FrameLayout frameLayout;
         private final TextView id;
         private final TextView title;
         private final TextView artist;
         private final TextView played;
         private final TextView duration;
+        private final View selectedOverlay;
+
         private IViewHolderClicks mListener;
 
         public ViewHolder(View v, IViewHolderClicks listener) {
             super(v);
             mListener = listener;
 
-            linearLayout = (LinearLayout) v.findViewById(R.id.element);
+            frameLayout = (FrameLayout) v.findViewById(R.id.element);
             id = (TextView) v.findViewById(R.id.id);
             title = (TextView) v.findViewById(R.id.title);
             artist = (TextView) v.findViewById(R.id.artist);
             played = (TextView) v.findViewById(R.id.played);
             duration = (TextView) v.findViewById(R.id.duration);
+            selectedOverlay = v.findViewById(R.id.selectedOverlay);
 
-            linearLayout.setOnClickListener(this);
-            linearLayout.setOnLongClickListener(this);
+            frameLayout.setOnClickListener(this);
+            frameLayout.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             if (mListener != null) {
-                if (v instanceof LinearLayout)
-                    mListener.onContentClick((LinearLayout) v, getAdapterPosition());
+                if (v instanceof FrameLayout)
+                    mListener.onContentClick((FrameLayout) v, getAdapterPosition());
             }
         }
         
@@ -184,8 +196,12 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
             return duration;
         }
 
+        public View getSelectedOverlay() {
+            return selectedOverlay;
+        }
+
         public interface IViewHolderClicks {
-            void onContentClick(LinearLayout caller, int position);
+            void onContentClick(FrameLayout caller, int position);
             boolean onContentLongClick(int position);
         }
 

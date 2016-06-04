@@ -23,7 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
 import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.activity.SongsActivity;
@@ -358,7 +358,7 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
     }
     
     @Override
-    public void onContentClick(LinearLayout caller, int position) {
+    public void onContentClick(FrameLayout caller, int position) {
         SongsActivity.currentPosition = position;
         getActivity().openContextMenu(caller);
     }

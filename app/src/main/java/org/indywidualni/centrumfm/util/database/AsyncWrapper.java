@@ -64,4 +64,15 @@ public abstract class AsyncWrapper {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    public static void removeFavouriteSongs(final List<Song> songs) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... arg0) {
+                for (Song song : songs)
+                    DataSource.getInstance().removeFavouriteSong(song.getDbId());
+                return null;
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
 }

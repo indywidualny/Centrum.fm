@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/context_listen"
         android:title="@string/action_play_song" />
@@ -9,4 +10,5 @@
     <item
         android:id="@+id/context_unfavourite"
         android:title="@string/action_unfavourite_song" />
+
 </menu>

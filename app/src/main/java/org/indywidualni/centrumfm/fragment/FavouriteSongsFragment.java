@@ -6,9 +6,9 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,14 +16,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
 import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.activity.SongsActivity;
 import org.indywidualni.centrumfm.rest.adapter.SongsAdapter;
 import org.indywidualni.centrumfm.rest.model.Song;
+import org.indywidualni.centrumfm.util.database.AsyncWrapper;
 import org.indywidualni.centrumfm.util.database.DataSource;
+import org.indywidualni.centrumfm.util.ui.AnimatedLayoutManager;
 import org.indywidualni.centrumfm.util.ui.RecyclerViewEmptySupport;
+import org.indywidualni.centrumfm.util.ui.SlidingTabLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,8 +44,12 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
     @BindView(R.id.empty_view) View emptyView;
     private Unbinder unbinder;
 
+    private SlidingTabLayout slidingTabLayout;
+
     private IFragmentToActivity mCallback;
     private List<Song> songs = new ArrayList<>();
+    private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private ActionMode actionMode;
     private SongsAdapter adapter;
 
     @Override
@@ -73,6 +80,7 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_song_favourite, container, false);
+        slidingTabLayout = ButterKnife.findById(getActivity(), R.id.tabs);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -85,10 +93,11 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
         songs = DataSource.getInstance().getFavouriteSongs();
         Collections.sort(songs);
         adapter = new SongsAdapter(this, songs);
+        adapter.setHasStableIds(true);
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setEmptyView(emptyView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new AnimatedLayoutManager(getActivity()));
         mRecyclerView.setAdapter(adapter);
     }
 
@@ -193,20 +202,29 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
     }
     
     @Override
-    public void onContentClick(LinearLayout caller, int position) {
-        SongsActivity.currentPosition = position;
-        getActivity().openContextMenu(caller);
+    public void onContentClick(FrameLayout caller, int position) {
+        if (actionMode != null)
+            toggleSelection(position);
+        else {
+            SongsActivity.currentPosition = position;
+            getActivity().openContextMenu(caller);
+        }
     }
     
     @Override
     public boolean onContentLongClick(int position) {
-        Log.e("Long Click", "Item: " + position);
+        if (actionMode == null) {
+            actionMode = ((AppCompatActivity) getActivity())
+                    .startSupportActionMode(actionModeCallback);
+        }
+        toggleSelection(position);
         return true;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        slidingTabLayout = null;
         unbinder.unbind();
     }
 
@@ -214,6 +232,71 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
         void unfavouriteSong(Song song);
         void playSong(Song song);
         void shareSong(Song song);
+    }
+
+    /**
+     * Toggle the selection state of an item.
+     *
+     * If the item was the last one in the selection and is unselected, the selection is stopped.
+     * Note that the selection must already be started (actionMode must not be null).
+     *
+     * @param position Position of the item to toggle the selection state
+     */
+    private void toggleSelection(int position) {
+        adapter.toggleSelection(position);
+        int count = adapter.getSelectedItemCount();
+
+        if (count == 0) {
+            actionMode.finish();
+        } else {
+            actionMode.setTitle(getResources().getQuantityString(R.plurals.songs_n_selected,
+                    count, count));
+            actionMode.invalidate();
+        }
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @SuppressWarnings("unused")
+        private final String TAG = ActionModeCallback.class.getSimpleName();
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate (R.menu.menu_actionmode_selected, menu);
+            slidingTabLayout.setVisibility(View.GONE);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.delete_selected:
+                    List<Integer> selected = adapter.getSelectedItems();
+                    List<Song> toRemove = new ArrayList<>();
+                    for (int position : selected)
+                        toRemove.add(adapter.getDataset().get(position));
+                    songs.removeAll(toRemove);
+                    adapter.getDataset().removeAll(toRemove);
+                    adapter.notifyDataSetChanged();
+                    AsyncWrapper.removeFavouriteSongs(toRemove);
+                    mode.finish();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            adapter.clearSelection();
+            actionMode = null;
+            slidingTabLayout.setVisibility(View.VISIBLE);
+        }
     }
 
 }

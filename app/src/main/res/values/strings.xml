@@ -86,6 +86,7 @@
     <string name="cannot_favourite_song">Brak utworu, wstrzymaj konie</string>
     <string name="songs_current_day">Widok dnia bieżącego</string>
     <string name="songs_given_day">Widok dla %1$s</string>
+    <string name="songs_delete_selected">Usuń zaznaczone</string>
 
     <!-- Change log strings -->
     <string name="changelog_full_title">Dziennik zmian</string>
@@ -98,6 +99,12 @@
         <item quantity="one">Audycja trwa godzinę</item>
         <item quantity="few">Audycja trwa %d godziny</item>
         <item quantity="other">Audycja trwa %d godzin</item>
+    </plurals>
+
+    <plurals name="songs_n_selected">
+        <item quantity="one">Jedna piosenka</item>
+        <item quantity="few">%d piosenki</item>
+        <item quantity="other">%d piosenek</item>
     </plurals>
 
     <array name="weekdays">
