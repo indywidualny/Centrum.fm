@@ -4,6 +4,10 @@
 -keepattributes Signature
 -keepattributes Exceptions
 
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+
 -dontwarn okio.**
 -dontwarn org.simpleframework.xml.stream.**
 
