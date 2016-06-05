@@ -7,14 +7,13 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
-import com.github.paolorotolo.appintro.AppIntro2;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 
 import org.indywidualni.centrumfm.MyApplication;
 import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.util.ChangeLog;
 
-public class IntroActivity extends AppIntro2 {
+public class IntroActivity extends AppIntro2Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +21,7 @@ public class IntroActivity extends AppIntro2 {
 
         ((MyApplication) getApplication()).getDefaultTracker();
         int color = ContextCompat.getColor(this, R.color.colorPrimaryDark);
-        //setSkipButtonEnabled(false);
+        setSkipButtonEnabled(false);
 
         addSlide(AppIntroFragment.newInstance(getString(R.string.slide_radio),
                 getString(R.string.slide_radio_desc), R.drawable.slide_radio, color));
@@ -47,7 +46,7 @@ public class IntroActivity extends AppIntro2 {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.edit().putBoolean("show_intro_1", false).apply();
     }
-    
+
     @Override
     public void onSkipPressed(Fragment currentFragment) {
         super.onSkipPressed(currentFragment);

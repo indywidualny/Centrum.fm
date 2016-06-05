@@ -16,6 +16,9 @@ public class ScrollAwareFabBehaviorMain extends FloatingActionButton.Behavior {
         super();
     }
 
+    /* This is bad solution because it blocks all the instances but it was fast to achieve.
+     * Better solution is in SongArchiveFragment which uses ScrollAwareFabBehaviorSongs.
+     */
     public static void setDisableBehaviourPermanently(boolean value) {
         disableBehaviourPermanently = value;
     }

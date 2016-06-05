@@ -118,7 +118,13 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_song_archive, container, false);
         unbinder = ButterKnife.bind(this, view);
-        if (popular) fab.setVisibility(View.GONE);
+
+        // disable fab's layout behaviour for popular songs and hide it
+        if (popular) {
+            ((CoordinatorLayout.LayoutParams) fab.getLayoutParams()).setBehavior(null);
+            fab.requestLayout();
+            fab.setVisibility(View.GONE);
+        }
         return view;
     }
 

@@ -13,7 +13,7 @@
     <color name="background">#E5E5E5</color>
     <color name="activeTab">#FFFFFF</color>
     <color name="inactiveTab">#CCFFFFFF</color>
-    <color name="activeButton">#40FF9800</color>
+    <color name="activeButton">#33F57C00</color>
     <color name="likeButton">#FF0000</color>
     <color name="labelBackground">#E6E5E5E5</color>
 </resources>

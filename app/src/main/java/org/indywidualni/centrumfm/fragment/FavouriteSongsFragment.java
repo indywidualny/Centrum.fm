@@ -25,6 +25,7 @@ import org.indywidualni.centrumfm.rest.model.Song;
 import org.indywidualni.centrumfm.util.database.AsyncWrapper;
 import org.indywidualni.centrumfm.util.database.DataSource;
 import org.indywidualni.centrumfm.util.ui.AnimatedLayoutManager;
+import org.indywidualni.centrumfm.util.ui.NonSwipeableViewPager;
 import org.indywidualni.centrumfm.util.ui.RecyclerViewEmptySupport;
 import org.indywidualni.centrumfm.util.ui.SlidingTabLayout;
 
@@ -45,6 +46,7 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
     private Unbinder unbinder;
 
     private SlidingTabLayout slidingTabLayout;
+    private NonSwipeableViewPager viewPager;
 
     private IFragmentToActivity mCallback;
     private List<Song> songs = new ArrayList<>();
@@ -81,6 +83,7 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_song_favourite, container, false);
         slidingTabLayout = ButterKnife.findById(getActivity(), R.id.tabs);
+        viewPager = ButterKnife.findById(getActivity(), R.id.pager);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -136,7 +139,7 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
                 case R.id.context_unfavourite:
                     final Song removed = adapter.removeItem(SongsActivity.currentPosition);
                     songs.remove(removed);
-                    if (SongsActivity.currentPosition == 0) 
+                    if (SongsActivity.currentPosition == 0)
                         adapter.notifyDataSetChanged();
                     // allow to revert this action
                     Snackbar snackbar = Snackbar.make(coordinatorLayout,
@@ -146,7 +149,7 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
                                 public void onClick(View view) {
                                     adapter.addItem(SongsActivity.currentPosition, removed);
                                     songs.add(SongsActivity.currentPosition, removed);
-                                    if (SongsActivity.currentPosition == 0) 
+                                    if (SongsActivity.currentPosition == 0)
                                         adapter.notifyDataSetChanged();
                                 }
                             });
@@ -229,6 +232,7 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
     public void onDestroyView() {
         super.onDestroyView();
         slidingTabLayout = null;
+        viewPager = null;
         unbinder.unbind();
     }
 
@@ -267,6 +271,7 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mode.getMenuInflater().inflate (R.menu.menu_actionmode_selected, menu);
             slidingTabLayout.setVisibility(View.GONE);
+            viewPager.setSwipeEnabled(false);
             return true;
         }
 
@@ -300,6 +305,7 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
             adapter.clearSelection();
             actionMode = null;
             slidingTabLayout.setVisibility(View.VISIBLE);
+            viewPager.setSwipeEnabled(true);
         }
     }
 

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.activity.SongsActivity;
 import org.indywidualni.centrumfm.util.Miscellany;
+import org.indywidualni.centrumfm.util.ui.NonSwipeableViewPager;
 import org.indywidualni.centrumfm.util.ui.SlidingTabLayout;
 
 import butterknife.BindView;
@@ -23,7 +24,7 @@ public class SongsFragment extends Fragment implements SongsActivity.IActivityTo
 
     public static final String CURRENT_POSITION = "position";
 
-    @BindView(R.id.pager) ViewPager viewPager;
+    @BindView(R.id.pager) NonSwipeableViewPager viewPager;
     private Unbinder unbinder;
 
     private SlidingTabLayout slidingTabLayout;
