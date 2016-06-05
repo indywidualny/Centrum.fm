@@ -495,6 +495,7 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
+    @SuppressWarnings("deprecation")
     @TargetApi(21)
     @Override
     public void shareTextUrl(String url, String description) {
@@ -506,10 +507,9 @@ public class MainActivity extends AppCompatActivity
         Intent share = new Intent(android.content.Intent.ACTION_SEND);
         share.setType("text/plain");
 
-        if (Build.VERSION.SDK_INT < 21) {
-            //noinspection deprecation
+        if (Build.VERSION.SDK_INT < 21)
             share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        } else
+        else
             share.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
 
         // add data to the intent, the receiving app will decide

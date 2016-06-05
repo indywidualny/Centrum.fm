@@ -70,10 +70,10 @@ public abstract class Miscellany {
     }
     
     public static void addFavouriteSongFromRds(Context context, List<Rds> rds) {
-        if (rds == null) {
-            String message = context.getString(R.string.cannot_favourite_song);
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-        } else {
+        String error = context.getString(R.string.cannot_favourite_song);
+        if (rds == null)
+            Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
+        else {
             Rds now = rds.get(0);
             if (!now.getTitle().isEmpty() && !now.getArtist().isEmpty()) {
                 Song song = new Song();
@@ -83,7 +83,8 @@ public abstract class Miscellany {
                 AsyncWrapper.insertFavouriteSong(song);
                 String message = "\u2605 " + now.getArtist() + " – " + now.getTitle();
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            }
+            } else
+                Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
         }
     }
 
