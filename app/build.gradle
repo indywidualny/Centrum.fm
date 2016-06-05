@@ -53,9 +53,10 @@ dependencies {
     compile 'com.sothree.slidinguppanel:library:3.3.0'
     compile 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
     compile 'com.github.paolorotolo:appintro:4.0.0'
-    compile 'com.google.android.gms:play-services-analytics:9.0.0'
     compile 'com.jakewharton:butterknife:8.0.1'
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
+    //noinspection GradleDependency
+    compile 'com.google.android.gms:play-services-analytics:8.4.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
