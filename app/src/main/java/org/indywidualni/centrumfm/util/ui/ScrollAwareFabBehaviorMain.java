@@ -12,6 +12,10 @@ public class ScrollAwareFabBehaviorMain extends FloatingActionButton.Behavior {
 
     private static boolean disableBehaviourPermanently;
 
+    public ScrollAwareFabBehaviorMain() {
+        super();
+    }
+
     public ScrollAwareFabBehaviorMain(Context context, AttributeSet attrs) {
         super();
     }

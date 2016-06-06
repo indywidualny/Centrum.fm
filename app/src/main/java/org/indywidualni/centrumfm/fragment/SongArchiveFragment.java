@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.activity.SongsActivity;
@@ -33,6 +34,7 @@ import org.indywidualni.centrumfm.rest.model.Song;
 import org.indywidualni.centrumfm.util.Connectivity;
 import org.indywidualni.centrumfm.util.Miscellany;
 import org.indywidualni.centrumfm.util.ui.RecyclerViewEmptySupport;
+import org.indywidualni.centrumfm.util.ui.ScrollAwareFabBehaviorSongs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,12 +120,9 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_song_archive, container, false);
         unbinder = ButterKnife.bind(this, view);
-
-        // disable fab's layout behaviour for popular songs and hide it
         if (popular) {
-            ((CoordinatorLayout.LayoutParams) fab.getLayoutParams()).setBehavior(null);
-            fab.requestLayout();
             fab.setVisibility(View.GONE);
+            disableFabBehaviour();
         }
         return view;
     }
@@ -310,9 +309,14 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.get_today:
-                setDefaultDateTimeRange();
-                setSubtitle(true);
-                getSongs(false);
+                if (dynamicLoadingEnabled) {
+                    setDefaultDateTimeRange();
+                    setSubtitle(true);
+                    getSongs(false);
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.songs_search_blocked_data),
+                            Toast.LENGTH_SHORT).show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -330,8 +334,15 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
     
     @Override
     public boolean onQueryTextChange(String query) {
-        // Here is where we are going to implement our filter logic
         dynamicLoadingEnabled = TextUtils.isEmpty(query);
+        swipeRefreshLayout.setEnabled(dynamicLoadingEnabled);
+        if (!popular) {
+            if (dynamicLoadingEnabled)
+                enableFabBehaviour();
+            else
+                disableFabBehaviour();
+        }
+        // Here is where we are going to implement our filter logic
         final List<Song> filteredModelList = filter(songs, query);
         adapter.animateTo(filteredModelList);
         mRecyclerView.scrollToPosition(0);
@@ -390,6 +401,19 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
 
     public void showSnackbarNotice(String string) {
         Snackbar.make(coordinatorLayout, string, Snackbar.LENGTH_SHORT).show();
+    }
+    
+    private void disableFabBehaviour() {
+        ((CoordinatorLayout.LayoutParams) fab.getLayoutParams()).setBehavior(null);
+        fab.requestLayout();
+        fab.hide();
+    }
+    
+    private void enableFabBehaviour() {
+        ((CoordinatorLayout.LayoutParams) fab.getLayoutParams())
+                .setBehavior(new ScrollAwareFabBehaviorSongs());
+        fab.requestLayout();
+        fab.show();
     }
 
     @Override

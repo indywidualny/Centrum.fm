@@ -62,11 +62,11 @@ public abstract class Miscellany {
         return dayStart ? reportDate + "T00:00:00" : reportDate + "T23:59:59";
     }
     
-    public static String constructDateQueryForDay(boolean startDay,
+    public static String constructDateQueryForDay(boolean dayStart,
                                                   int year, int month, int day) {
         @SuppressLint("DefaultLocale") String reportDate = year + "-" +
                 String.format("%02d", month + 1) + "-" + String.format("%02d", day);
-        return startDay ? reportDate + "T00:00:00" : reportDate + "T23:59:59";
+        return dayStart ? reportDate + "T00:00:00" : reportDate + "T23:59:59";
     }
     
     public static void addFavouriteSongFromRds(Context context, List<Rds> rds) {

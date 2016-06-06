@@ -9,8 +9,12 @@ import android.view.View;
 @SuppressWarnings("UnusedDeclaration")
 public class ScrollAwareFabBehaviorSongs extends ScrollAwareFabBehaviorMain {
 
+    public ScrollAwareFabBehaviorSongs() {
+        super();
+    }
+
     public ScrollAwareFabBehaviorSongs(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        super();
     }
 
     @Override

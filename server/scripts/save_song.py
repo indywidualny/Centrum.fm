@@ -11,7 +11,7 @@ now.close()
 
 array = (line.rstrip()).split("|")
 ignore_artists = ['DOOKOLA SPORTU', 'Rockowa Komisja Wyborcza', 'CENTRUM W MROKU', 'KOKTAJL KULTURALNY']
-ignore_titles = ['Podklad 2015', 'podklad', 'PROMO 2015']
+ignore_titles = ['Podklad 2015', 'podklad', 'PROMO 2015', 'Promo 2015']
 
 if not array[2] or (array[2] in ignore_titles):
     array[2] = None
