@@ -24,7 +24,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import org.indywidualni.centrumfm.R;
 import org.indywidualni.centrumfm.activity.SongsActivity;
@@ -304,19 +303,21 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
-    
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (!popular)
+            menu.findItem(R.id.get_today).setEnabled(dynamicLoadingEnabled);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.get_today:
-                if (dynamicLoadingEnabled) {
-                    setDefaultDateTimeRange();
-                    setSubtitle(true);
-                    getSongs(false);
-                } else {
-                    Toast.makeText(getActivity(), getString(R.string.songs_search_blocked_data),
-                            Toast.LENGTH_SHORT).show();
-                }
+                setDefaultDateTimeRange();
+                setSubtitle(true);
+                getSongs(false);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

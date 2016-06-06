@@ -87,7 +87,6 @@
     <string name="songs_current_day">Widok dnia bieżącego</string>
     <string name="songs_given_day">Widok dla %1$s</string>
     <string name="songs_delete_selected">Usuń zaznaczone</string>
-    <string name="songs_search_blocked_data">Nie podczas szukania</string>
 
     <!-- Change log strings -->
     <string name="changelog_full_title">Dziennik zmian</string>
