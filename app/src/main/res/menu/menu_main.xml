@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activity.MainActivity">
 
+    <!-- TODO: Temporarily disabled on request of the radio station -->
     <item
         android:id="@+id/action_like_this_song"
         android:orderInCategory="0"
         android:title="@string/action_like_this_song"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:visible="false" />
 
     <item
         android:id="@+id/action_people"

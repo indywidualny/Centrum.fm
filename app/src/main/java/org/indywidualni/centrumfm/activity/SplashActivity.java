@@ -15,7 +15,7 @@ public class SplashActivity extends Activity {
         Intent startIntent;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (preferences.getBoolean("show_intro_1", true))
+        if (preferences.getBoolean("show_intro_0", true))  // TODO: 1 when 2.0
             startIntent = new Intent(SplashActivity.this, IntroActivity.class);
         else
             startIntent = new Intent(SplashActivity.this, MainActivity.class);

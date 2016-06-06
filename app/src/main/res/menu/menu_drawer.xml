@@ -17,10 +17,13 @@
             android:icon="@drawable/ic_star_black_24dp"
             android:title="@string/fragment_favourite" />
 
+        <!-- TODO: Temporarily disabled on request of the radio station -->
         <item
             android:id="@+id/navigation_songs"
             android:icon="@drawable/ic_music_note_black_24dp"
-            android:title="@string/app_songs" />
+            android:title="@string/app_songs"
+            android:visible="false" />
+
         <item
             android:id="@+id/navigation_subheader"
             android:title="@string/app_drawer_second">
