@@ -7,10 +7,8 @@ Nieoficjalna aplikacja dla miłośników lubelskiego Radia Centrum (98.2 FM)
 * [Serwer (źródło)](/server)
 
 ## Nowości
-* widget szybkiego startu odtwarzania strumienia
+* liczne poprawki i ulepszenia dotychczasowych funkcji aplikacji
 * możliwość rozwinięcia wszystkich kart newsów
-* poprawki wyglądu dla małych ekranów
-* odtwarzacz spróbuje wznowić pracę po błędzie w tle innym niż brak sieci
 
 ## Listing
 * odtwarzaj strumień radia gdziekolwiek jesteś (pomarańczowy guzik play)
@@ -18,6 +16,7 @@ Nieoficjalna aplikacja dla miłośników lubelskiego Radia Centrum (98.2 FM)
 * inteligentna ramówka (również offline) z możliwością dodania audycji do ulubionych
 * powiadomienia o zbliżających się ulubionych audycjach
 * dziel się ze znajomymi ulubionymi treściami ze strony radia
+* widget szybkiego startu odtwarzania strumienia
 
 Pamiętaj, że niezależnie od preferencji odtwarzania, telefon może automatycznie zmienić rodzaj połączenia, w trakcie odtwarzania strumienia. Odtwarzanie wysokiej jakości strumienia radia wymaga pobierania dużej ilości danych. Podczas połączenia mobilnego twój operator komórkowy może naliczać opłaty. Jeśli chcesz mieć pewność, że tryb mobilny nigdy się nie włączy, uprzednio deaktywuj mobilne połączenie z siecią w opcjach urządzenia.
 
