@@ -27,11 +27,8 @@ public class IntroActivity extends AppIntro2Activity {
                 getString(R.string.slide_radio_desc), R.drawable.slide_radio, color));
         addSlide(AppIntroFragment.newInstance(getString(R.string.slide_reader),
                 getString(R.string.slide_reader_desc), R.drawable.slide_reader, color));
-
-        // TODO: Temporarily disabled on request of the radio station
-/*        addSlide(AppIntroFragment.newInstance(getString(R.string.slide_songs),
-                getString(R.string.slide_songs_desc), R.drawable.slide_songs, color));*/
-
+        addSlide(AppIntroFragment.newInstance(getString(R.string.slide_songs),
+                getString(R.string.slide_songs_desc), R.drawable.slide_songs, color));
         addSlide(AppIntroFragment.newInstance(getString(R.string.slide_fav),
                 getString(R.string.slide_fav_desc), R.drawable.slide_fav, color));
         
@@ -47,7 +44,7 @@ public class IntroActivity extends AppIntro2Activity {
 
     private void rememberShown() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        preferences.edit().putBoolean("show_intro_0", false).apply();  // TODO: 1 when 2.0
+        preferences.edit().putBoolean("show_intro_1", false).apply();
     }
 
     @Override

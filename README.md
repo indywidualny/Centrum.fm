@@ -7,8 +7,9 @@ Nieoficjalna aplikacja dla miłośników lubelskiego Radia Centrum (98.2 FM)
 * [Serwer (źródło)](/server)
 
 ## Nowości
-* liczne poprawki i ulepszenia dotychczasowych funkcji aplikacji
-* możliwość rozwinięcia wszystkich kart newsów
+* historia anteny z możliwością podglądu konkretnych dni
+* ulubione piosenki, słuchanie utworów w zewnętrznych aplikacjach
+* toplista, czyli globalny ranking piosenek według ich popularności
 
 ## Listing
 * odtwarzaj strumień radia gdziekolwiek jesteś (pomarańczowy guzik play)
