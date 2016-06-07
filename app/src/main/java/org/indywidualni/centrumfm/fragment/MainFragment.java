@@ -1,5 +1,6 @@
 package org.indywidualni.centrumfm.fragment;
 
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -149,8 +150,12 @@ public class MainFragment extends TrackedFragment {
                     new AsyncTask<Void, Void, List<Channel.Item>>() {
                         @Override
                         protected List<Channel.Item> doInBackground(Void... arg0) {
-                            DataSource.getInstance().insertNews(response.body()
-                                    .getChannel().getItems());
+                            try {
+                                DataSource.getInstance().insertNews(response.body()
+                                        .getChannel().getItems());
+                            } catch (SQLiteConstraintException e) {
+                                e.printStackTrace();
+                            }
                             return DataSource.getInstance().getAllNews();
                         }
 
