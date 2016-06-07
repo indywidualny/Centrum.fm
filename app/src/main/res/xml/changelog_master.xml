@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-
-	<!-- TODO: Temporarily disabled on request of the radio station -->
-    <!--
-    <release
-        version="2.0"
-        versioncode="20">
-        <change>historia anteny z możliwością podglądu konkretnych dni</change>
-        <change>ulubione piosenki, słuchanie ulubionych w zewnętrznych aplikacjach</change>
-        <change>toplista, czyli globalny ranking piosenek według ich popularności</change>
-    </release> 
-    -->
-
     <release
         version="1.8"
         versioncode="18">
+        <change>historia anteny z możliwością podglądu konkretnych dni</change>
+        <change>ulubione piosenki, słuchanie utworów w zewnętrznych aplikacjach</change>
+        <change>toplista, czyli globalny ranking piosenek według ich popularności</change>
         <change>liczne poprawki i ulepszenia dotychczasowych funkcji aplikacji</change>
     </release>
     <release
