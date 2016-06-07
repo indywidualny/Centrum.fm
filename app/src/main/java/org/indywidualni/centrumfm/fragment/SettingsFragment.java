@@ -108,11 +108,13 @@ public class SettingsFragment extends PreferenceFragment
     public boolean onPreferenceClick(Preference preference) {
         switch (preference.getKey()) {
             case "open_source_libraries":
-                mCallback.showLibraries();
+                if (mCallback != null)
+                    mCallback.showLibraries();
                 return true;
 
             case "changelog":
-                mCallback.showChangelog();
+                if (mCallback != null)
+                    mCallback.showChangelog();
                 return true;
 
             default:

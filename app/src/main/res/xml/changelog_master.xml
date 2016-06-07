@@ -13,14 +13,8 @@
     -->
 
     <release
-        version="1.6"
-        versioncode="16">
-        <change>znaczne zmniejszenie użycia procesora</change>
-        <change>poprawka rzadkiego błędu podczas pobierania newsów</change>
-    </release>
-    <release
-        version="1.5"
-        versioncode="15">
+        version="1.8"
+        versioncode="18">
         <change>liczne poprawki i ulepszenia dotychczasowych funkcji aplikacji</change>
     </release>
     <release
