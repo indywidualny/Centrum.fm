@@ -7,11 +7,16 @@
         version="2.0"
         versioncode="20">
         <change>historia anteny z możliwością podglądu konkretnych dni</change>
-        <change>ulubione piosenki, słuchanie ulubionych w zewnętrznych aplikacjach</change>
+        <change>ulubione piosenki, słuchanie utworów w zewnętrznych aplikacjach</change>
         <change>toplista, czyli globalny ranking piosenek według ich popularności</change>
     </release> 
     -->
 
+    <release
+        version="1.9"
+        versioncode="19">
+        <change>drobna poprawka stabilności ekranu newsów</change>
+    </release>
     <release
         version="1.8"
         versioncode="18">
