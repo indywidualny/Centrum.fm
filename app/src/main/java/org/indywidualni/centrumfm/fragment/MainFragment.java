@@ -105,7 +105,8 @@ public class MainFragment extends TrackedFragment {
                             mSwipeRefreshLayout.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mSwipeRefreshLayout.setRefreshing(true);
+                                    if (mSwipeRefreshLayout != null)
+                                        mSwipeRefreshLayout.setRefreshing(true);
                                 }
                             });
                             getRss();
