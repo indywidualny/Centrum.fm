@@ -24,10 +24,10 @@ import java.util.Random;
 public class DataSource {
   
     private static volatile DataSource instance;
-    private SQLiteDatabase database;
-    private Random random = new Random();
+    private final SQLiteDatabase database;
+    private final Random random = new Random();
     
-    private SharedPreferences preferences = PreferenceManager
+    private final SharedPreferences preferences = PreferenceManager
             .getDefaultSharedPreferences(MyApplication.getContextOfApplication());
 
     private static final String[] NEWS_COLUMNS = {

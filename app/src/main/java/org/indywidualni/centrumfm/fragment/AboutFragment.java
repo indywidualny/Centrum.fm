@@ -30,12 +30,20 @@ public class AboutFragment extends Fragment {
         return view;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         aboutRadio.setMovementMethod(LinkMovementMethod.getInstance());
-        aboutRadio.setText(Html.fromHtml(Miscellany.readFromAssets("radio.html")));
         aboutText.setMovementMethod(LinkMovementMethod.getInstance());
-        aboutText.setText(Html.fromHtml(Miscellany.readFromAssets("about.html")));
+        if (android.os.Build.VERSION.SDK_INT >= 24) {
+            aboutRadio.setText(Html.fromHtml(Miscellany.readFromAssets("radio.html"),
+                    Html.FROM_HTML_MODE_LEGACY));
+            aboutText.setText(Html.fromHtml(Miscellany.readFromAssets("about.html"),
+                    Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            aboutRadio.setText(Html.fromHtml(Miscellany.readFromAssets("radio.html")));
+            aboutText.setText(Html.fromHtml(Miscellany.readFromAssets("about.html")));
+        }
     }
 
     @Override

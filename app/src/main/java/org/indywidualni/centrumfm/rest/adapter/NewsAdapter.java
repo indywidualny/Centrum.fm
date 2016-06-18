@@ -25,12 +25,12 @@ import java.util.Locale;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
-    private static PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+    private static final PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
     private static Context mContext;
-    private List<Channel.Item> mDataset;
+    private final List<Channel.Item> mDataset;
     private boolean shouldHide;
 
-    private SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(
+    private final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(
             MyApplication.getContextOfApplication());
 
     // provide a suitable constructor
@@ -103,11 +103,20 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         viewHolder.getTimeAgo().setText(prettyTime.format(mDataset.get(position).getDate()));
         viewHolder.getCategory().setText(mDataset.get(position).getCategory());
 
-        viewHolder.getDescription().setText(Html.fromHtml(mDataset.get(position).getDescription()
-                .replace("<strong>", "").replace("</strong>", "")
-                .replaceAll("(.)(p)( ).*?(=)(\".*?\")(>)", "").replace("<p>", "")
-                .replace("</p>", "<br /><br />").replaceFirst("&#187;.*", "")
-                .replaceFirst("Czytaj dalej.*", "").trim()));
+        if (android.os.Build.VERSION.SDK_INT >= 24) {
+            viewHolder.getDescription().setText(Html.fromHtml(mDataset.get(position).getDescription()
+                    .replace("<strong>", "").replace("</strong>", "")
+                    .replaceAll("(.)(p)( ).*?(=)(\".*?\")(>)", "").replace("<p>", "")
+                    .replace("</p>", "<br /><br />").replaceFirst("&#187;.*", "")
+                    .replaceFirst("Czytaj dalej.*", "").trim(), Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            //noinspection deprecation
+            viewHolder.getDescription().setText(Html.fromHtml(mDataset.get(position).getDescription()
+                    .replace("<strong>", "").replace("</strong>", "")
+                    .replaceAll("(.)(p)( ).*?(=)(\".*?\")(>)", "").replace("<p>", "")
+                    .replace("</p>", "<br /><br />").replaceFirst("&#187;.*", "")
+                    .replaceFirst("Czytaj dalej.*", "").trim()));
+        }
 
         // disable play button when there is nothing to play
         if (mDataset.get(position).getEnclosureUrl() == null) {
@@ -147,7 +156,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         private final TextView readMore;
         private final TextView share;
         private final RelativeLayout expandable;
-        public ViewHolderClicks mListener;
+        public final ViewHolderClicks mListener;
 
         public ViewHolder(View v, ViewHolderClicks listener) {
             super(v);

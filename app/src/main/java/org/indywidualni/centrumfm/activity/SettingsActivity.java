@@ -89,7 +89,14 @@ public class SettingsActivity extends BaseActivity implements SettingsFragment.I
 
             TextView msg = new TextView(getActivity());
             msg.setMovementMethod(LinkMovementMethod.getInstance());
-            msg.setText(Html.fromHtml(Miscellany.readFromAssets("libraries.html")));
+
+            if (android.os.Build.VERSION.SDK_INT >= 24) {
+                msg.setText(Html.fromHtml(Miscellany.readFromAssets("libraries.html"),
+                        Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                //noinspection deprecation
+                msg.setText(Html.fromHtml(Miscellany.readFromAssets("libraries.html")));
+            }
 
             scroller.addView(msg);
 

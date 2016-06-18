@@ -13,16 +13,16 @@ import java.util.TimeZone;
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
-    public static String TAG_FRAGMENT = "date_picker";
+    public static final String TAG_FRAGMENT = "date_picker";
 
     private static final int DATABASE_EARLIEST_YEAR = 2016;
     private static final int DATABASE_EARLIEST_MONTH = Calendar.MAY;
     private static final int DATABASE_EARLIEST_DAY = 23;
 
     private final Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Europe/Warsaw"));
-    private int year = c.get(Calendar.YEAR);
-    private int month = c.get(Calendar.MONTH);
-    private int day = c.get(Calendar.DAY_OF_MONTH);
+    private final int year = c.get(Calendar.YEAR);
+    private final int month = c.get(Calendar.MONTH);
+    private final int day = c.get(Calendar.DAY_OF_MONTH);
 
     private OnDateSetSpecialListener listener;
 

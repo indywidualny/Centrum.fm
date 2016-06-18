@@ -20,7 +20,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final int EVENT = 0, LABEL = 1;
     
     // The items to display in your RecyclerView
-    private List<Object> items;
+    private final List<Object> items;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public FavouriteAdapter(List<Object> items) {
@@ -86,7 +86,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public static class LabelViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView label;
+        private final TextView label;
 
         public LabelViewHolder(View itemView) {
             super(itemView);
