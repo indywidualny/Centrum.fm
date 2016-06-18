@@ -7,8 +7,9 @@ jdk:
 
 android:
   components:
+    - tools
+    - tools
     - platform-tools
-    - tools     # see https://github.com/travis-ci/travis-ci/issues/5036
     - android-24
     - build-tools-24.0.0
     - extra-google-m2repository
