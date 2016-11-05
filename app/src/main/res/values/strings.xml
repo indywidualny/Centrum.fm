@@ -81,7 +81,7 @@
     <string name="action_share_song_title">Utwór z anteny Radia Centrum</string>
     <string name="unfaved">Usunięto z ulubionych</string>
     <string name="revert">Cofnij</string>
-    <string name="problem_server_response">Problem. Odpowiedź: %1$s</string>
+    <string name="problem_server_response">Problem. Odpowiedź: %1$d</string>
     <string name="action_like_this_song">Polub piosenkę</string>
     <string name="cannot_favourite_song">Brak utworu, wstrzymaj konie</string>
     <string name="songs_current_day">Widok dnia bieżącego</string>
