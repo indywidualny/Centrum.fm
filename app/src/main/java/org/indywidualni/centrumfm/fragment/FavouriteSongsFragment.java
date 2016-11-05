@@ -50,7 +50,7 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
 
     private IFragmentToActivity mCallback;
     private List<Song> songs = new ArrayList<>();
-    private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private final ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
     private SongsAdapter adapter;
 

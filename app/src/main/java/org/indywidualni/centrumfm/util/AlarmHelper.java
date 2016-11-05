@@ -19,12 +19,12 @@ import java.util.List;
 
 public abstract class AlarmHelper {
   
-    private static Context context = MyApplication.getContextOfApplication();
+    private static final Context context = MyApplication.getContextOfApplication();
     
     public static final String EVENT_TITLE = "event_title";
     public static final String TIME_TO_START = "time_to_start";
 
-    private static SharedPreferences preferences = PreferenceManager
+    private static final SharedPreferences preferences = PreferenceManager
             .getDefaultSharedPreferences(context);
 
     public static boolean isEnabled() {

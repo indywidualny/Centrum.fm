@@ -20,8 +20,8 @@ import java.util.List;
 
 public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.ViewHolder> {
 
-    private List<Schedule.Event> mDataset;
-    private int day;
+    private final List<Schedule.Event> mDataset;
+    private final int day;
 
     // provide a suitable constructor
     public WeekdayAdapter(List<Schedule.Event> mDataset, int day) {
@@ -82,7 +82,7 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.ViewHold
         private final TextView belowTitle;
         private final ImageView favourite;
         private final LinearLayout linearLayout;
-        public IViewHolderClicks mListener;
+        public final IViewHolderClicks mListener;
 
         public ViewHolder(View v, IViewHolderClicks listener) {
             super(v);

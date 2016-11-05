@@ -19,7 +19,7 @@ import java.util.List;
 public class SongsAdapter extends SelectableAdapter<SongsAdapter.ViewHolder> {
 
     private List<Song> mDataset;
-    private ViewHolder.IViewHolderClicks viewHolderClicks;
+    private final ViewHolder.IViewHolderClicks viewHolderClicks;
 
     // provide a suitable constructor
     public SongsAdapter(ViewHolder.IViewHolderClicks viewHolderClicks, List<Song> dataset) {
@@ -145,7 +145,7 @@ public class SongsAdapter extends SelectableAdapter<SongsAdapter.ViewHolder> {
         private final TextView duration;
         private final View selectedOverlay;
 
-        private IViewHolderClicks mListener;
+        private final IViewHolderClicks mListener;
 
         public ViewHolder(View v, IViewHolderClicks listener) {
             super(v);

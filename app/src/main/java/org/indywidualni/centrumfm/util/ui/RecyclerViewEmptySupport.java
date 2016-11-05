@@ -13,7 +13,7 @@ public class RecyclerViewEmptySupport extends RecyclerView {
 
     private View mEmptyView;
 
-    private AdapterDataObserver mDataObserver = new AdapterDataObserver() {
+    private final AdapterDataObserver mDataObserver = new AdapterDataObserver() {
         @Override
         public void onChanged() {
             super.onChanged();

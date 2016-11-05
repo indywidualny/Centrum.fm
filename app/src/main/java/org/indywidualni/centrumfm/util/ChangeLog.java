@@ -95,7 +95,7 @@ public class ChangeLog {
     /**
      * Last version code read from {@code SharedPreferences} or {@link #NO_VERSION}.
      */
-    private int mLastVersionCode;
+    private final int mLastVersionCode;
 
     /**
      * Version code of the current installation.

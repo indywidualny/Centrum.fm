@@ -177,7 +177,14 @@ public class SongsActivity extends AppCompatActivity
 
             TextView msg = new TextView(getActivity());
             msg.setMovementMethod(LinkMovementMethod.getInstance());
-            msg.setText(Html.fromHtml(Miscellany.readFromAssets("songs_info.html")));
+
+            if (android.os.Build.VERSION.SDK_INT >= 24) {
+                msg.setText(Html.fromHtml(Miscellany.readFromAssets("songs_info.html"),
+                        Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                //noinspection deprecation
+                msg.setText(Html.fromHtml(Miscellany.readFromAssets("songs_info.html")));
+            }
 
             scroller.addView(msg);
 

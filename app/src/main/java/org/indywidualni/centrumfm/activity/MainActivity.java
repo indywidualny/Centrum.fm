@@ -100,8 +100,8 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.playerStop) ImageView playerStop;
     
     private static List<Rds> rdsLatest;
-    private Handler rdsHandler = new Handler();
-    private Handler playerHandler = new Handler();
+    private final Handler rdsHandler = new Handler();
+    private final Handler playerHandler = new Handler();
     private SharedPreferences preferences;
     private CustomTabActivityHelper customTabActivityHelper;
     private Call<List<Rds>> call;
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity
     
     @IdRes private int mSelectedId;
 
-    private Runnable rdsRunnable = new Runnable() {
+    private final Runnable rdsRunnable = new Runnable() {
         @Override
         public void run() {
             // Do something here on the main thread
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity
         }
     };
     
-    private Runnable playerRunnable = new Runnable() {
+    private final Runnable playerRunnable = new Runnable() {
         @Override
         public void run() {
             // Do something here on the main thread
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity
         }
     };
     
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             Log.d("ServiceConnection", "connected");
@@ -402,7 +402,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem menuItem) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         menuItem.setChecked(true);
         mSelectedId = menuItem.getItemId();
         itemSelection(mSelectedId);

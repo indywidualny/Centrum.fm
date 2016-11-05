@@ -12,7 +12,7 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder>
 
     private static final String TAG = SelectableAdapter.class.getSimpleName();
 
-    private SparseBooleanArray selectedItems;
+    private final SparseBooleanArray selectedItems;
 
     public SelectableAdapter() {
         selectedItems = new SparseBooleanArray();

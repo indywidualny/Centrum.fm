@@ -11,7 +11,7 @@ import org.indywidualni.centrumfm.activity.MainActivity;
 
 public class CustomLinkMovementMethod extends LinkMovementMethod {
 
-    private static CustomLinkMovementMethod linkMovementMethod = new CustomLinkMovementMethod();
+    private static final CustomLinkMovementMethod linkMovementMethod = new CustomLinkMovementMethod();
     private static Context context;
 
     public static android.text.method.MovementMethod getInstance(Context handlingActivity) {

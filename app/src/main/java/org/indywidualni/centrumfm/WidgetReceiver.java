@@ -18,7 +18,7 @@ import org.indywidualni.centrumfm.util.Connectivity;
 
 public class WidgetReceiver extends BroadcastReceiver {
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             StreamService.LocalBinder binder = (StreamService.LocalBinder) service;
