@@ -9,8 +9,8 @@ android {
         applicationId "org.indywidualni.centrumfm"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 19
-        versionName "1.9"
+        versionCode 20
+        versionName "2.0"
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
