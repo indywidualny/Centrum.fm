@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="12dp"
+    android:layout_margin="3dp"
     android:background="@android:color/transparent">
 
     <ImageView
@@ -13,7 +13,7 @@
         android:adjustViewBounds="true"
         android:background="@drawable/background_circle"
         android:contentDescription="@string/action_play_stop"
-        android:padding="8dp"
+        android:padding="15dp"
         android:src="@drawable/ic_play_arrow_white_48dp" />
 
 </RelativeLayout>
