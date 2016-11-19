@@ -63,11 +63,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-@SuppressWarnings("UnusedDeclaration")
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         CustomTabActivityHelper.ConnectionCallback, NewsableActivity {
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity
     private final Handler playerHandler = new Handler();
     private SharedPreferences preferences;
     private CustomTabActivityHelper customTabActivityHelper;
-    private Call<List<Rds>> call;
+    private Subscription subscription;
     private Tracker tracker;
     private StreamService mService;
     private ActionBarDrawerToggle drawerToggle;
@@ -294,8 +296,8 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
 
         // cancel RDS updates
-        if (call != null)
-            call.cancel();
+        if (subscription != null)
+            subscription.unsubscribe();
         rdsHandler.removeCallbacks(rdsRunnable);
 
         // stop player updates
@@ -417,41 +419,53 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getRds() {
-        call = RestClient.getClientJson().getRds();
-        call.enqueue(new Callback<List<Rds>>() {
-            @Override
-            public void onResponse(Call<List<Rds>> call, Response<List<Rds>> response) {
-                Log.v(TAG, "getRds: response " + response.code());
-
-                if (response.isSuccessful()) { // tasks available
-                    updateTitle(response.body());
-                    rdsLatest = response.body();
-                } else {
-                    // error response, no access to resource?
-                    rdsLatest = null;
-                    if (toolbar != null) {
-                        toolbar.setTitle(getString(R.string.toolbar_default_title));
-                        toolbar.setSubtitle(null);
+        Observable<List<Rds>> call = RestClient.getClientJson().getRds();
+        subscription = call
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Rds>>() {
+                    @Override
+                    public void onCompleted() {
+                        // Notifies the Observer that the Observable has finished sending push-based
+                        // notifications.
                     }
 
-                    tracker.send(new HitBuilders.EventBuilder()
-                            .setCategory("Error response")
-                            .setAction("Get RDS")
-                            .setLabel("error " + response.code())
-                            .build());
-                }
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        // cast to retrofit.HttpException to get the response code
+                        if (e instanceof HttpException) {
+                            HttpException response = (HttpException) e;
+                            int code = response.code();
 
-            @Override
-            public void onFailure(Call<List<Rds>> call, Throwable t) {
-                Log.e(TAG, "getRds: " + t.getLocalizedMessage());
-                rdsLatest = null;
-                if (toolbar != null) {
-                    toolbar.setTitle(getString(R.string.toolbar_default_title));
-                    toolbar.setSubtitle(null);
-                }
-            }
-        });
+                            // error response, no access to resource?
+                            Log.v(TAG, "getRds: response " + code);
+                            resetRds();
+
+                            tracker.send(new HitBuilders.EventBuilder()
+                                    .setCategory("Error response")
+                                    .setAction("Get RDS")
+                                    .setLabel("error " + code)
+                                    .build());
+                        } else {
+                            Log.e(TAG, "getRds: " + e.getLocalizedMessage());
+                            resetRds();
+                        }
+                    }
+
+                    @Override
+                    public void onNext(List<Rds> rds) {
+                        Log.v(TAG, "getRds: response 200");
+                        updateTitle(rds);
+                        rdsLatest = rds;
+                    }
+                });
+    }
+
+    private void resetRds() {
+        rdsLatest = null;
+        if (toolbar != null) {
+            toolbar.setTitle(getString(R.string.toolbar_default_title));
+            toolbar.setSubtitle(null);
+        }
     }
 
     private void updateTitle(List<Rds> items) {

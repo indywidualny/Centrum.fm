@@ -1,27 +1,17 @@
 package org.indywidualni.centrumfm.rest;
 
-import org.indywidualni.centrumfm.rest.model.Rds;
-import org.indywidualni.centrumfm.rest.model.Rss;
-import org.indywidualni.centrumfm.rest.model.Schedule;
-import org.indywidualni.centrumfm.rest.model.Server;
-import org.indywidualni.centrumfm.rest.model.Song;
-
-import java.util.List;
-import java.util.Map;
-
-import retrofit2.Call;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
-import retrofit2.http.FieldMap;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
+import rx.schedulers.Schedulers;
 
 public class RestClient {
 
     private static final String BASE_URL = "http://indywidualni.org";
     private static final String RSS_URL = "http://feeds.feedburner.com";
+
+    private static final RxJavaCallAdapterFactory rxAdapter;
     
     private static final Object LOCK_JSON = new Object();
     private static final Object LOCK_XML = new Object();
@@ -30,6 +20,10 @@ public class RestClient {
     private static volatile ApiEndpointInterface apiInterfaceJson;
     private static volatile ApiEndpointInterface apiInterfaceXml;
     private static volatile ApiEndpointInterface apiInterfaceRss;
+
+    static {
+        rxAdapter = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
+    }
 
     private RestClient() {
     }
@@ -41,6 +35,7 @@ public class RestClient {
                     Retrofit client = new Retrofit.Builder()
                             .baseUrl(BASE_URL)
                             .addConverterFactory(GsonConverterFactory.create())
+                            .addCallAdapterFactory(rxAdapter)
                             .build();
                     apiInterfaceJson = client.create(ApiEndpointInterface.class);
                 }
@@ -56,6 +51,7 @@ public class RestClient {
                     Retrofit client = new Retrofit.Builder()
                             .baseUrl(BASE_URL)
                             .addConverterFactory(SimpleXmlConverterFactory.create())
+                            .addCallAdapterFactory(rxAdapter)
                             .build();
                     apiInterfaceXml = client.create(ApiEndpointInterface.class);
                 }
@@ -71,40 +67,13 @@ public class RestClient {
                     Retrofit client = new Retrofit.Builder()
                             .baseUrl(RSS_URL)
                             .addConverterFactory(SimpleXmlConverterFactory.create())
+                            .addCallAdapterFactory(rxAdapter)
                             .build();
                     apiInterfaceRss = client.create(ApiEndpointInterface.class);
                 }
             }
         }
         return apiInterfaceRss;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public interface ApiEndpointInterface {
-
-        @GET("/centrum/")
-        Call<Server> getServerStatus();
-
-        @GET("/centrum/rds.php")
-        Call<List<Rds>> getRds();
-
-        @GET("/centrum/ramowka.xml")
-        Call<Schedule> getSchedule();
-
-        @GET("/RadioCentrum")
-        Call<Rss> getRss();
-
-        @FormUrlEncoded
-        @POST("/centrum/songs.py")
-        Call<List<Song>> getSongs(@FieldMap Map<String, String> params);
-
-        String SONGS_FROM = "from";
-        String SONGS_TO = "to";
-        String SONGS_LIMIT = "limit";
-        String SONGS_SKIP = "skip";
-        String SONGS_POPULAR = "popular";
-        String SONGS_COUNT = "count";
-
     }
 
 }

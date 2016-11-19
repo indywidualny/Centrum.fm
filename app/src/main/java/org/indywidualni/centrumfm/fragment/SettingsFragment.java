@@ -17,9 +17,12 @@ import org.indywidualni.centrumfm.rest.RestClient;
 import org.indywidualni.centrumfm.rest.model.Server;
 import org.indywidualni.centrumfm.util.AlarmHelper;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class SettingsFragment extends PreferenceFragment
         implements Preference.OnPreferenceClickListener {
@@ -31,7 +34,7 @@ public class SettingsFragment extends PreferenceFragment
     private SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener;
     private SharedPreferences preferences;
     private IFragmentToActivity mCallback;
-    private Call<Server> call;
+    private Subscription subscription;
     private Tracker tracker;
 
     @Override
@@ -100,8 +103,8 @@ public class SettingsFragment extends PreferenceFragment
         // unregister listener
         preferences.unregisterOnSharedPreferenceChangeListener(prefChangeListener);
         // cancel Retrofit call
-        if (call != null)
-            call.cancel();
+        if (subscription != null)
+            subscription.unsubscribe();
     }
 
     @Override
@@ -123,39 +126,51 @@ public class SettingsFragment extends PreferenceFragment
     }
 
     private void getServerStatus() {
-        call = RestClient.getClientJson().getServerStatus();
-        call.enqueue(new Callback<Server>() {
-            @Override
-            public void onResponse(Call<Server> call, Response<Server> response) {
-                Log.v(TAG, "getServerStatus: response " + response.code());
-                Preference status = findPreference("indywidualni_server_status");
+        Observable<Server> call = RestClient.getClientJson().getServerStatus();
+        subscription = call
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Server>() {
+                    @Override
+                    public void onCompleted() {
+                        // Notifies the Observer that the Observable has finished sending push-based
+                        // notifications.
+                    }
 
-                if (response.isSuccessful()) {
-                    if (isAdded())
-                        status.setSummary(String.format(getString(R.string.indywidualni_server_ok),
-                                response.body().getVersion()));
-                } else {
-                    // error response, no access to resource?
-                    if (isAdded())
-                        status.setSummary(String.format(getString(R.string.indywidualni_server_not_ok),
-                                response.code()));
+                    @Override
+                    public void onError(Throwable e) {
+                        Preference status = findPreference("indywidualni_server_status");
+                        // cast to retrofit.HttpException to get the response code
+                        if (e instanceof HttpException) {
+                            HttpException response = (HttpException) e;
+                            int code = response.code();
 
-                    tracker.send(new HitBuilders.EventBuilder()
+                            // error response, no access to resource?
+                            Log.v(TAG, "getServerStatus: response " + code);
+                            if (isAdded())
+                                status.setSummary(String.format(getString(R.string.indywidualni_server_not_ok),
+                                        code));
+
+                            tracker.send(new HitBuilders.EventBuilder()
                             .setCategory("Error response")
                             .setAction("Get Server Status")
-                            .setLabel("error " + response.code())
+                            .setLabel("error " + code)
                             .build());
-                }
-            }
+                        } else {
+                            Log.e(TAG, "getServerStatus: " + e.getLocalizedMessage());
+                            if (isAdded())
+                                status.setSummary(getString(R.string.indywidualni_server_failure));
+                        }
+                    }
 
-            @Override
-            public void onFailure(Call<Server> call, Throwable t) {
-                Log.e(TAG, "getServerStatus: " + t.getLocalizedMessage());
-                Preference status = findPreference("indywidualni_server_status");
-                if (isAdded())
-                    status.setSummary(getString(R.string.indywidualni_server_failure));
-            }
-        });
+                    @Override
+                    public void onNext(Server server) {
+                        Log.v(TAG, "getServerStatus: response 200");
+                        Preference status = findPreference("indywidualni_server_status");
+                        if (isAdded())
+                            status.setSummary(String.format(getString(R.string.indywidualni_server_ok),
+                                    server.getVersion()));
+                    }
+                });
     }
 
     public interface IFragmentToActivity {
