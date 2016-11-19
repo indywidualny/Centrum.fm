@@ -50,6 +50,9 @@
     rx.internal.util.atomic.LinkedQueueNode consumerNode;
 }
 
+# retrolambda
+-dontwarn java.lang.invoke.*
+
 # fragment classes names
 -keepnames class org.indywidualni.centrumfm.fragment.*
 

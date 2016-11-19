@@ -68,19 +68,17 @@ public class SettingsFragment extends PreferenceFragment
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         // shared preference changed
-        prefChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                switch (key) {
-                    case "reminders_mode":
-                        // reset reminders
-                        if (prefs.getString("reminders_mode", DEFAULT_REMINDER_OFFSET).equals("0"))
-                            AlarmHelper.cancelAllAlarms();
-                        else
-                            AlarmHelper.setAllAlarms();
-                        break;
-                }
-                Log.v("SharedPreferenceChange", key + " changed in SettingsFragment");
+        prefChangeListener = (prefs, key) -> {
+            switch (key) {
+                case "reminders_mode":
+                    // reset reminders
+                    if (prefs.getString("reminders_mode", DEFAULT_REMINDER_OFFSET).equals("0"))
+                        AlarmHelper.cancelAllAlarms();
+                    else
+                        AlarmHelper.setAllAlarms();
+                    break;
             }
+            Log.v("SharedPreferenceChange", key + " changed in SettingsFragment");
         };
 
         // set listeners

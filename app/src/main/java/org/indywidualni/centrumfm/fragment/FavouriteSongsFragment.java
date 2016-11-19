@@ -144,14 +144,11 @@ public class FavouriteSongsFragment extends Fragment implements SearchView.OnQue
                     // allow to revert this action
                     Snackbar snackbar = Snackbar.make(coordinatorLayout,
                             getString(R.string.unfaved), Snackbar.LENGTH_LONG)
-                            .setAction(getString(R.string.revert), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    adapter.addItem(SongsActivity.currentPosition, removed);
-                                    songs.add(SongsActivity.currentPosition, removed);
-                                    if (SongsActivity.currentPosition == 0)
-                                        adapter.notifyDataSetChanged();
-                                }
+                            .setAction(getString(R.string.revert), view -> {
+                                adapter.addItem(SongsActivity.currentPosition, removed);
+                                songs.add(SongsActivity.currentPosition, removed);
+                                if (SongsActivity.currentPosition == 0)
+                                    adapter.notifyDataSetChanged();
                             });
                     snackbar.setCallback(new Snackbar.Callback() {
                         @Override
