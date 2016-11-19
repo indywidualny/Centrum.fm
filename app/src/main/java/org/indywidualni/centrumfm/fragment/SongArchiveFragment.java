@@ -44,15 +44,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_FROM;
-import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_LIMIT;
-import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_POPULAR;
-import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_SKIP;
-import static org.indywidualni.centrumfm.rest.RestClient.ApiEndpointInterface.SONGS_TO;
+import static org.indywidualni.centrumfm.rest.ApiEndpointInterface.SONGS_FROM;
+import static org.indywidualni.centrumfm.rest.ApiEndpointInterface.SONGS_LIMIT;
+import static org.indywidualni.centrumfm.rest.ApiEndpointInterface.SONGS_POPULAR;
+import static org.indywidualni.centrumfm.rest.ApiEndpointInterface.SONGS_SKIP;
+import static org.indywidualni.centrumfm.rest.ApiEndpointInterface.SONGS_TO;
 
 public class SongArchiveFragment extends Fragment implements SearchView.OnQueryTextListener,
         SongsAdapter.ViewHolder.IViewHolderClicks, DatePickerFragment.OnDateSetSpecialListener {
@@ -78,7 +81,7 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
     private LinearLayoutManager linearLayoutManager;
     private boolean dynamicLoadingEnabled = true;
     public static String currentSubtitle;
-    private Call<List<Song>> call;
+    private Subscription subscription;
     private SongsAdapter adapter;
     private boolean popular;
     private boolean loading;
@@ -197,8 +200,8 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
     public void onPause() {
         super.onPause();
         unregisterForContextMenu(mRecyclerView);
-        if (call != null)
-            call.cancel();
+        if (subscription != null)
+            subscription.unsubscribe();
     }
 
     @Override
@@ -216,50 +219,73 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
     }
 
     private void getSongs(final boolean appendToList) {
-        if (call != null) call.cancel();
-        if (!appendToList) queryParameters.put(SONGS_SKIP, "0");
+        if (subscription != null)
+            subscription.unsubscribe();
+        if (!appendToList)
+            queryParameters.put(SONGS_SKIP, "0");
         swipeRefreshLayout.setRefreshing(true);
-        call = RestClient.getClientJson().getSongs(queryParameters);
-        call.enqueue(new Callback<List<Song>>() {
-            @Override
-            public void onResponse(Call<List<Song>> call, Response<List<Song>> response) {
-                Log.v(TAG, "getSongs: response " + response.code());
-                if (isAdded()) {
-                    if (response.isSuccessful()) {
-                        if (appendToList)
-                            songs.addAll(response.body());
-                        else
-                            songs = response.body();
-                        adapter.setDataset(songs);
-                        if (!appendToList) mRecyclerView.scrollToPosition(0);
-                    } else {
-                        // error response, no access to resource?
-                        Log.v(TAG, "Cannot obtain list of songs");
-                        showSnackbarNotice(getString(R.string.problem_server_response,
-                                response.code()));
-                    }
-                    mRecyclerView.changeEmptyView(emptyView);
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-                loading = false;
-            }
 
-            @Override
-            public void onFailure(Call<List<Song>> call, Throwable t) {
-                Log.e(TAG, "getSongs: " + t.getLocalizedMessage());
-                if (isAdded()) {
-                    mRecyclerView.changeEmptyView(emptyView);
-                    swipeRefreshLayout.setRefreshing(false);
-                    if (!call.isCanceled()) {
-                        if (!Connectivity.isConnected(getContext()))
-                            showSnackbarNotice(R.string.no_network);
-                        else
-                            showSnackbarNotice(R.string.no_response);
+        final Observable<List<Song>> call = RestClient.getClientJson().getSongs(queryParameters);
+        subscription = call
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Song>>() {
+                    @Override
+                    public void onCompleted() {
+                        // Notifies the Observer that the Observable has finished sending push-based
+                        // notifications.
                     }
-                }
-                loading = false;
-            }
-        });
+
+                    @Override
+                    public void onError(Throwable e) {
+                        // cast to retrofit.HttpException to get the response code
+                        if (e instanceof HttpException) {
+                            HttpException response = (HttpException) e;
+                            int code = response.code();
+
+                            // error response, no access to resource?
+                            Log.v(TAG, "getSongs: response " + code);
+                            if (isAdded()) {
+                                Log.v(TAG, "Cannot obtain list of songs");
+                                showSnackbarNotice(getString(R.string.problem_server_response, code));
+                                changeEmptyView();
+                            }
+                            loading = false;
+                        } else {
+                            Log.e(TAG, "getSongs: " + e.getLocalizedMessage());
+                            if (isAdded()) {
+                                changeEmptyView();
+                                if (!subscription.isUnsubscribed()) {
+                                    if (!Connectivity.isConnected(getContext()))
+                                        showSnackbarNotice(R.string.no_network);
+                                    else
+                                        showSnackbarNotice(R.string.no_response);
+                                }
+                            }
+                            loading = false;
+                        }
+                    }
+
+                    @Override
+                    public void onNext(final List<Song> song) {
+                        Log.v(TAG, "getSongs: response 200");
+                        if (isAdded()) {
+                            if (appendToList)
+                                songs.addAll(song);
+                            else
+                                songs = song;
+                            adapter.setDataset(songs);
+                            if (!appendToList)
+                                mRecyclerView.scrollToPosition(0);
+                            changeEmptyView();
+                        }
+                        loading = false;
+                    }
+                });
+    }
+
+    private void changeEmptyView() {
+        mRecyclerView.changeEmptyView(emptyView);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

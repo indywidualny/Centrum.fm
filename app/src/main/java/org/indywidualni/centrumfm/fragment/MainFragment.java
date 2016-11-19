@@ -30,9 +30,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainFragment extends TrackedFragment {
 
@@ -45,7 +48,7 @@ public class MainFragment extends TrackedFragment {
     @BindView(R.id.swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     private Unbinder unbinder;
 
-    private Call<Rss> call;
+    private Subscription subscription;
     private Tracker tracker;
 
     @Override
@@ -130,8 +133,8 @@ public class MainFragment extends TrackedFragment {
     public void onPause() {
         super.onPause();
         // cancel Retrofit call
-        if (call != null)
-            call.cancel();
+        if (subscription != null)
+            subscription.unsubscribe();
     }
 
     @Override
@@ -141,59 +144,71 @@ public class MainFragment extends TrackedFragment {
     }
 
     private void getRss() {
-        call = RestClient.getClientRss().getRss();
-        call.enqueue(new Callback<Rss>() {
-            @Override
-            public void onResponse(Call<Rss> call, final Response<Rss> response) {
-                Log.v(TAG, "getRss: response " + response.code());
+        Observable<Rss> call = RestClient.getClientRss().getRss();
+        subscription = call
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Rss>() {
+                    @Override
+                    public void onCompleted() {
+                        // Notifies the Observer that the Observable has finished sending push-based
+                        // notifications.
+                    }
 
-                if (response.isSuccessful()) {  // tasks available
-                    new AsyncTask<Void, Void, List<Channel.Item>>() {
-                        @Override
-                        protected List<Channel.Item> doInBackground(Void... arg0) {
-                            try {
-                                DataSource.getInstance().insertNews(response.body()
-                                        .getChannel().getItems());
-                            } catch (SQLiteConstraintException e) {
-                                e.printStackTrace();
-                            }
-                            return DataSource.getInstance().getAllNews();
-                        }
+                    @Override
+                    public void onError(Throwable e) {
+                        // cast to retrofit.HttpException to get the response code
+                        if (e instanceof HttpException) {
+                            HttpException response = (HttpException) e;
+                            int code = response.code();
 
-                        @Override
-                        protected void onPostExecute(List<Channel.Item> result) {
-                            try {
-                                rssItems.clear();
-                                mRecyclerView.getAdapter().notifyDataSetChanged();
-                                rssItems.addAll(result);
-                                mRecyclerView.getAdapter().notifyDataSetChanged();
+                            // error response, no access to resource?
+                            Log.v(TAG, "getRss: response " + code);
+                            if (mSwipeRefreshLayout != null)
                                 mSwipeRefreshLayout.setRefreshing(false);
-                            } catch (NullPointerException e) {
-                                // fragment was destroyed while AsyncTask was running
-                                e.printStackTrace();
-                            }
+
+                            tracker.send(new HitBuilders.EventBuilder()
+                                    .setCategory("Error response")
+                                    .setAction("Get RSS")
+                                    .setLabel("error " + code)
+                                    .build());
+                        } else {
+                            Log.e(TAG, "getRss: " + e.getLocalizedMessage());
+                            if (mSwipeRefreshLayout != null)
+                                mSwipeRefreshLayout.setRefreshing(false);
                         }
-                    }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-                } else {
-                    // error response, no access to resource?
-                    if (mSwipeRefreshLayout != null)
-                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
 
-                    tracker.send(new HitBuilders.EventBuilder()
-                            .setCategory("Error response")
-                            .setAction("Get RSS")
-                            .setLabel("error " + response.code())
-                            .build());
-                }
-            }
+                    @Override
+                    public void onNext(final Rss rss) {
+                        Log.v(TAG, "getRss: response 200");
+                        new AsyncTask<Void, Void, List<Channel.Item>>() {
+                            @Override
+                            protected List<Channel.Item> doInBackground(Void... arg0) {
+                                try {
+                                    DataSource.getInstance().insertNews(rss.getChannel()
+                                            .getItems());
+                                } catch (SQLiteConstraintException e) {
+                                    e.printStackTrace();
+                                }
+                                return DataSource.getInstance().getAllNews();
+                            }
 
-            @Override
-            public void onFailure(Call<Rss> call, Throwable t) {
-                Log.e(TAG, "getRss: " + t.getLocalizedMessage());
-                if (mSwipeRefreshLayout != null)
-                    mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
+                            @Override
+                            protected void onPostExecute(List<Channel.Item> result) {
+                                try {
+                                    rssItems.clear();
+                                    mRecyclerView.getAdapter().notifyDataSetChanged();
+                                    rssItems.addAll(result);
+                                    mRecyclerView.getAdapter().notifyDataSetChanged();
+                                    mSwipeRefreshLayout.setRefreshing(false);
+                                } catch (NullPointerException e) {
+                                    // fragment was destroyed while AsyncTask was running
+                                    e.printStackTrace();
+                                }
+                            }
+                        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                    }
+                });
     }
 
 }

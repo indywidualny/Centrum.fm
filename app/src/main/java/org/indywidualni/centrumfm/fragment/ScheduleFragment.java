@@ -32,9 +32,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class ScheduleFragment extends TrackedFragment {
 
@@ -46,10 +49,10 @@ public class ScheduleFragment extends TrackedFragment {
     @BindView(R.id.pager) ViewPager viewPager;
     @BindView(R.id.loading) RelativeLayout loading;
     private Unbinder unbinder;
-        
+
     private SlidingTabLayout slidingTabLayout;
     
-    private Call<Schedule> call;
+    private Subscription subscription;
     private Tracker tracker;
 
     public static WeekdayAdapter getAdapter(int day) {
@@ -93,8 +96,8 @@ public class ScheduleFragment extends TrackedFragment {
     public void onPause() {
         super.onPause();
         // cancel Retrofit call
-        if (call != null)
-            call.cancel();
+        if (subscription != null)
+            subscription.unsubscribe();
     }
 
     @Override
@@ -138,47 +141,60 @@ public class ScheduleFragment extends TrackedFragment {
     }
 
     private void getSchedule() {
-        call = RestClient.getClientXml().getSchedule();
-        call.enqueue(new Callback<Schedule>() {
-            @Override
-            public void onResponse(Call<Schedule> call, final Response<Schedule> response) {
-                Log.v(TAG, "getSchedule: response " + response.code());
+        Observable<Schedule> call = RestClient.getClientXml().getSchedule();
+        subscription = call
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Schedule>() {
+                    @Override
+                    public void onCompleted() {
+                        // Notifies the Observer that the Observable has finished sending push-based
+                        // notifications.
+                    }
 
-                if (response.isSuccessful()) { // tasks available
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... arg0) {
-                            eventList = response.body().getEvents();
-                            for (Schedule.Event event : eventList) {
-                                event.setFavourite(DataSource.getInstance()
-                                        .isEventFavourite(event.getId()));
+                    @Override
+                    public void onError(Throwable e) {
+                        // cast to retrofit.HttpException to get the response code
+                        if (e instanceof HttpException) {
+                            HttpException response = (HttpException) e;
+                            int code = response.code();
+
+                            // error response, no access to resource?
+                            Log.v(TAG, "getSchedule: response " + code);
+                            new LoadFallback().execute();
+
+                            tracker.send(new HitBuilders.EventBuilder()
+                                    .setCategory("Error response")
+                                    .setAction("Get Schedule")
+                                    .setLabel("error " + code)
+                                    .build());
+                        } else {
+                            Log.e(TAG, "getSchedule: " + e.getLocalizedMessage());
+                            new LoadFallback().execute();
+                        }
+                    }
+
+                    @Override
+                    public void onNext(final Schedule schedule) {
+                        Log.v(TAG, "getSchedule: response 200");
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... arg0) {
+                                eventList = schedule.getEvents();
+                                for (Schedule.Event event : eventList) {
+                                    event.setFavourite(DataSource.getInstance()
+                                            .isEventFavourite(event.getId()));
+                                }
+                                AsyncWrapper.insertSchedule(eventList);
+                                return null;
                             }
-                            AsyncWrapper.insertSchedule(eventList);
-                            return null;
-                        }
 
-                        @Override
-                        protected void onPostExecute(Void arg) {
-                            onItemsLoadComplete();
-                        }
-                    }.execute();
-                } else {
-                    new LoadFallback().execute();
-
-                    tracker.send(new HitBuilders.EventBuilder()
-                            .setCategory("Error response")
-                            .setAction("Get Schedule")
-                            .setLabel("error " + response.code())
-                            .build());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Schedule> call, Throwable t) {
-                Log.e(TAG, "getSchedule: " + t.getLocalizedMessage());
-                new LoadFallback().execute();
-            }
-        });
+                            @Override
+                            protected void onPostExecute(Void arg) {
+                                onItemsLoadComplete();
+                            }
+                        }.execute();
+                    }
+                });
     }
 
     private class LoadFallback extends AsyncTask<Void, Void, Void> {
