@@ -34,7 +34,6 @@
 package org.indywidualni.centrumfm.util;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -261,37 +260,26 @@ public class ChangeLog {
                 // OK button
                 .setPositiveButton(
                         mContext.getResources().getString(R.string.changelog_ok_button),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // The user clicked "OK" so save the current version code as
-                                // "last version code".
-                                updateVersionInPreferences();
-                            }
+                        (dialog, which) -> {
+                            // The user clicked "OK" so save the current version code as
+                            // "last version code".
+                            updateVersionInPreferences();
                         });
 
         if (!full) {
             // Show "More" button if we're only displaying a partial change log.
             builder.setNegativeButton(R.string.changelog_show_full,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int id) {
-                            getFullLogDialog().show();
-                        }
-                    });
+                    (dialog, id) -> getFullLogDialog().show());
         }
 
         final AlertDialog dialog = builder.create();
 
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface arg0) {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat
+        dialog.setOnShowListener(arg0 -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat
+                    .getColor(mContext, R.color.colorAccent));
+            if (!full) {
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat
                         .getColor(mContext, R.color.colorAccent));
-                if (!full) {
-                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat
-                            .getColor(mContext, R.color.colorAccent));
-                }
             }
         });
 
@@ -517,16 +505,13 @@ public class ChangeLog {
      * </p>
      */
     protected Comparator<ReleaseItem> getChangeLogComparator() {
-        return new Comparator<ReleaseItem>() {
-            @Override
-            public int compare(ReleaseItem lhs, ReleaseItem rhs) {
-                if (lhs.versionCode < rhs.versionCode) {
-                    return 1;
-                } else if (lhs.versionCode > rhs.versionCode) {
-                    return -1;
-                } else {
-                    return 0;
-                }
+        return (lhs, rhs) -> {
+            if (lhs.versionCode < rhs.versionCode) {
+                return 1;
+            } else if (lhs.versionCode > rhs.versionCode) {
+                return -1;
+            } else {
+                return 0;
             }
         };
     }

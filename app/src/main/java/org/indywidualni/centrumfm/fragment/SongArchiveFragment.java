@@ -148,12 +148,7 @@ public class SongArchiveFragment extends Fragment implements SearchView.OnQueryT
         }
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getSongs(false);
-            }
-        });
+        swipeRefreshLayout.setOnRefreshListener(() -> getSongs(false));
 
         linearLayoutManager = new LinearLayoutManager(getActivity());
         adapter = new SongsAdapter(this, songs);

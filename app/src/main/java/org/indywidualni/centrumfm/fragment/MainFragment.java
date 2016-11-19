@@ -64,16 +64,13 @@ public class MainFragment extends TrackedFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (Connectivity.isConnected(getActivity()))
-                    getRss();
-                else {
-                    Snackbar.make(getActivity().findViewById(R.id.panel_main),
-                            getString(R.string.no_network), Snackbar.LENGTH_LONG).show();
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            if (Connectivity.isConnected(getActivity()))
+                getRss();
+            else {
+                Snackbar.make(getActivity().findViewById(R.id.panel_main),
+                        getString(R.string.no_network), Snackbar.LENGTH_LONG).show();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -105,12 +102,9 @@ public class MainFragment extends TrackedFragment {
 
                         // now go online and update items
                         if (Connectivity.isConnected(getActivity())) {
-                            mSwipeRefreshLayout.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (mSwipeRefreshLayout != null)
-                                        mSwipeRefreshLayout.setRefreshing(true);
-                                }
+                            mSwipeRefreshLayout.post(() -> {
+                                if (mSwipeRefreshLayout != null)
+                                    mSwipeRefreshLayout.setRefreshing(true);
                             });
                             getRss();
                         }

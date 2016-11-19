@@ -366,13 +366,9 @@ public class StreamService extends Service implements MediaPlayer.OnPreparedList
     // show a Focus Problem Toast while not being on UI Thread
     private void focusProblemToast() {
         Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), getString(R.string.audio_focus_problem),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+        handler.post(() -> Toast.makeText(getApplicationContext(),
+                getString(R.string.audio_focus_problem),
+                Toast.LENGTH_SHORT).show());
     }
 
     public class LocalBinder extends Binder {

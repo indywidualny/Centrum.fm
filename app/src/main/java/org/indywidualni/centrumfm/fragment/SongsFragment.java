@@ -46,12 +46,8 @@ public class SongsFragment extends Fragment implements SongsActivity.IActivityTo
         slidingTabLayout.setViewPager(viewPager);
 
         // setting custom color for the scroll bar indicator of the tab view
-        slidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return ContextCompat.getColor(getActivity(), R.color.icon);
-            }
-        });
+        slidingTabLayout.setCustomTabColorizer(position -> ContextCompat.getColor(getActivity(),
+                R.color.icon));
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

@@ -1,7 +1,6 @@
 package org.indywidualni.centrumfm.activity;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -175,13 +174,10 @@ public class MainActivity extends AppCompatActivity
             if (mService.isPlaying()) {
                 fab.hide();
                 sup.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-                panelSlider.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        panelMain.setPadding(0, 0, 0, panelSlider.getHeight());
-                        playerSetConnectionType();
-                        startPlayerUpdater();
-                    }
+                panelSlider.post(() -> {
+                    panelMain.setPadding(0, 0, 0, panelSlider.getHeight());
+                    playerSetConnectionType();
+                    startPlayerUpdater();
                 });
             } else
                 sup.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
@@ -500,12 +496,9 @@ public class MainActivity extends AppCompatActivity
                         .setExitAnimations(this, R.anim.slide_in_left, R.anim.slide_out_right)
                         .build();
         CustomTabActivityHelper.openCustomTab(this, customTabsIntent, Uri.parse(pageUrl),
-                new CustomTabActivityHelper.CustomTabFallback() {
-                    @Override
-                    public void openUri(Activity activity, Uri uri) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                        startActivity(intent);
-                    }
+                (activity, uri) -> {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
                 });
     }
 
@@ -562,13 +555,8 @@ public class MainActivity extends AppCompatActivity
                         && !preferences.getBoolean("mobile_streaming", false)) {
                     Snackbar snackbar = Snackbar.make(panelMain,
                             getString(R.string.mobile_restriction), Snackbar.LENGTH_LONG)
-                            .setAction(getString(R.string.app_settings), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    startActivity(new Intent(getApplicationContext(),
-                                            SettingsActivity.class));
-                                }
-                            });
+                            .setAction(getString(R.string.app_settings), view -> startActivity(
+                                    new Intent(getApplicationContext(), SettingsActivity.class)));
                     snackbar.show();
                 } else {
                     mService.playUrl(STREAM_URL);
