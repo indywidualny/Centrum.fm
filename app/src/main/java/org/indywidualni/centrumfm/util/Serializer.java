@@ -1,8 +1,7 @@
 package org.indywidualni.centrumfm.util;
 
+import android.content.Context;
 import android.util.Log;
-
-import org.indywidualni.centrumfm.MyApplication;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class Serializer {
@@ -21,13 +21,13 @@ public abstract class Serializer {
      * @param filename filename (without .ser)
      * @param <T>      type of the given object
      */
-    public static <T> void serialize(T source, String filename) {
+    public static <T extends Serializable> void serialize(Context ctx, T source, String filename) {
         FileOutputStream fos;
         ObjectOutputStream oos = null;
 
         // serialization
         try {
-            fos = new FileOutputStream(MyApplication.getContextOfApplication()
+            fos = new FileOutputStream(ctx.getApplicationContext()
                     .getFilesDir().getPath() + File.separator + filename + ".ser");
             oos = new ObjectOutputStream(fos);
             oos.writeObject(source);
@@ -54,13 +54,13 @@ public abstract class Serializer {
      * @return deserialized object (saved into target)
      */
     @SuppressWarnings("unchecked")
-    public static <T> T deserialize(T target, String filename) {
+    public static <T extends Serializable> T deserialize(Context ctx, T target, String filename) {
         FileInputStream fis;
         ObjectInputStream ois = null;
 
         try {
             // deserialization
-            fis = new FileInputStream(MyApplication.getContextOfApplication()
+            fis = new FileInputStream(ctx.getApplicationContext()
                     .getFilesDir().getPath() + File.separator + filename + ".ser");
             ois = new ObjectInputStream(fis);
             // read object from a file
